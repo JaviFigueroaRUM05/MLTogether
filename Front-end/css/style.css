@@ -17,10 +17,6 @@
   background-color: #f7f7f7
 }
 
-/* .new-project-button{
-	  margin-left: auto;
-} */
-
 .intro, .intro-box{
   margin: 0 auto;
   transform-origin: center;
@@ -34,7 +30,6 @@
     background-image: url("../images/LogoMLTRound.png");
 }
 
-/* The switch - the box around the slider */
 .switch-theme {
  position: relative;
  display: inline-block;
@@ -42,16 +37,12 @@
  height: 34px;
 }
 
-
-
-/* Hide default HTML checkbox */
 .switch-theme input {
  opacity: 0;
  width: 0;
  height: 0;
 }
 
-/* The slider */
 .slider {
  position: absolute;
  cursor: pointer;
@@ -90,7 +81,6 @@ input:checked + .slider:before {
  transform: translateX(26px);
 }
 
-/* Rounded sliders */
 .slider.round {
  border-radius: 34px;
 }
@@ -118,8 +108,6 @@ input:checked + .slider:before {
   display:flex;
 }
 #link{
-	/* padding-top: 1px; */
-	/* max-width: 50%; */
 	margin-left: auto;
 	color: #9b59b6;
 	margin-bottom: -0.5rem;
@@ -140,7 +128,6 @@ input:checked + .slider:before {
     word-wrap: break-word;
     background-color: #fff;
 		background-clip: border-box;
-		/* border: 0 solid rgba(0,0,0,.125); */
     border-radius: .25rem;
 }
 .card-primary.card-outline {
@@ -231,11 +218,6 @@ input:checked + .slider:before {
 	width: 60%;
 }
 
-/* .project-list-item-unread .name,
-.project-list-item-unread .status {
-	font-weight: bold;
-} */
-
 .project-list-item .status,
 #project-area #navbar #details {
 	white-space: nowrap;
@@ -251,16 +233,7 @@ input:checked + .slider:before {
 	background: #f8f9fa;
   background-image: url("../images/color.png");
   background-size:auto;
-  /* background-image: linear-gradient(#60a3bc, #9b59b6); */
 }
-
-/* #input-area {
-	background: hsl(0, 0%, 95%);
-} */
-
-/* #input-area #input {
-	outline: none;
-} */
 
 .project-item {
 	position:relative;
@@ -333,4 +306,114 @@ input:checked + .slider:before {
 	top: 0;
 	left: 0;
 	z-index: 99;
+}
+
+
+/*-----------------------------------------------------------------------------
+                               404.html
+-----------------------------------------------------------------------------*/
+
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#notfound {
+  position: relative;
+  height: 100vh;
+  background-image: linear-gradient(#60a3bc, #9b59b6);
+}
+
+#notfound .notfound {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+
+.notfound {
+  max-width: 767px;
+  width: 100%;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.notfound .notfound-404 {
+  position: relative;
+  height: 180px;
+  margin-bottom: 20px;
+  z-index: -1;
+}
+
+.notfound .notfound-404 h1 {
+  font-family: 'Oxanium', sans-serif;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50% , -50%);
+      -ms-transform: translate(-50% , -50%);
+          transform: translate(-50% , -50%);
+  font-size: 224px;
+  font-weight: 900;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: -12px;
+  color: #9b59b6;
+  text-transform: uppercase;
+  text-shadow: -1px -1px 0px #4a3571, 1px 1px 0px #4f4f4f;
+  letter-spacing: -20px;
+}
+
+
+.notfound .notfound-404 h2 {
+  font-family: 'Oxanium', sans-serif;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 110px;
+  font-size: 60px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0px 2px 0px #484849;
+  letter-spacing: 4px;
+  margin: 0;
+}
+
+.notfound a {
+  font-family: 'Montserrat', sans-serif;
+  display: inline-block;
+  text-transform: uppercase;
+  color: #28759a;
+  text-decoration: none;
+  border: 2px solid;
+  background: transparent;
+  padding: 10px 40px;
+  font-size: 14px;
+  font-weight: 700;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.notfound a:hover {
+  color: #28759a;
+}
+
+@media only screen and (max-width: 767px) {
+    .notfound .notfound-404 h2 {
+        font-size: 24px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+  .notfound .notfound-404 h1 {
+      font-size: 182px;
+  }
 }
