@@ -12,7 +12,14 @@ const init = async () => {
     // WebSockets handlers
     const onMessage = (socket, message) => {
         console.log(socket.id + " Sends:", message);
-        return "received!"
+        var msg = JSON.parse(message);
+
+        if (msg.event == "next") { // Get next task from Task Brocker
+            return JSON.stringify({ function: "reduce", data: 20 });
+        }
+        if (msg.event == "result") { // Push Result to Task Brocker
+            
+        }
     };
 
     const onConnection = (socket) => {
@@ -31,23 +38,6 @@ const init = async () => {
         path: '/',
         handler: (request, h) => {
             return 'Hello World!';
-        }
-    });
-
-    // WebSocket Routes
-    server.route({
-        method: 'GET',
-        path: '/project/next',
-        config: {
-            handler: (request, h) => {
-
-                const test_payload = {
-                    function: "reduce",
-                    data: 20
-                };
-
-                return JSON.stringify(test_payload);
-            }
         }
     });
 

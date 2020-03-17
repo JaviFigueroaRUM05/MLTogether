@@ -21,7 +21,7 @@ const reduce = (n) => { // Reduce = fibonacci(n)
 // Helper Functions
 const next_task = async () => { // Asks Task Broker for next task
     var payload, result;
-    payload = await client.request('/project/next');
+    payload = await client.message(JSON.stringify({ event: "next" }));
     payload = JSON.parse(payload.payload)
     if      (payload.function == "map")    { result = { result: map(payload.data) }; }
     else if (payload.function == "reduce") { result = { result: reduce(payload.data) }; }
@@ -31,7 +31,7 @@ const next_task = async () => { // Asks Task Broker for next task
 };
 
 const return_result = async (result) => { // Returns results to the server
-    await client.message(JSON.stringify(result));
+    await client.message(JSON.stringify({ event: "result", result: result }));
 };
 
 // Main
