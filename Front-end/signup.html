@@ -23,13 +23,25 @@
 						<img src="images/LogoMLTRound.png" class="logo" alt="Logo"> <!-- Logo Pic -->
 					</div>
 				</div>
-				<div class="d-flex justify-content-center form_container"> <!-- Login form -->
+				<div class="d-flex justify-content-center form_container"> <!-- Sign-up form -->
 					<form>
-						<div class="input-group mb-3"> <!-- mb-3 to ensure that the input group gets a proper margin bottom -->
+            <div class="input-group mb-2"> <!-- smaller margin -->
+							<div class="input-group-append">
+								<span class="input-group-text"><i class="fas fa-user-ninja"></i></span> <!-- Name icon -->
+							</div>
+							<input type="text" name="" class="form-control" value="" placeholder="full name">
+						</div>
+						<div class="input-group mb-2"> <!-- mb-3 to ensure that the input group gets a proper margin bottom -->
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span> <!-- user icon -->
 							</div>
 							<input type="text" name="" class="form-control input_user" value="" placeholder="username">
+						</div>
+            <div class="input-group mb-2"> <!-- smaller margin -->
+							<div class="input-group-append">
+								<span class="input-group-text"><i class="fas fa-envelope"></i></span> <!-- Email icon -->
+							</div>
+							<input type="email" name="" class="form-control" value="" placeholder="email">
 						</div>
 						<div class="input-group mb-2"> <!-- smaller margin -->
 							<div class="input-group-append">
@@ -37,24 +49,15 @@
 							</div>
 							<input type="password" name="" class="form-control input_pass" value="" placeholder="password">
 						</div>
-						<div class="form-group">
-							<div class="custom-control custom-checkbox"> <!-- Remember me box -->
-								<input type="checkbox" class="custom-control-input" id="customControlInline">
-								<label class="custom-control-label" for="customControlInline">Remember me</label>
-							</div>
-						</div>
-						<div class="d-flex justify-content-center mt-3 login_container"> <!-- Login button -->
-							<button type="button" name="button" class="btn login_btn">Login</button>
+						<div class="d-flex justify-content-center mt-3 login_container"> <!-- Sign-up button -->
+							<button type="button" name="button" class="btn login_btn">Sign-up</button>
 						</div>
 					</form>
 				</div>
 
 				<div class="mt-4"> <!-- No account box -->
 					<div class="d-flex justify-content-center links">
-						Don't have an account? <a href="signup.html" class="ml-2">Sign Up</a>
-					</div>
-					<div class="d-flex justify-content-center links">
-						<a href="#">Forgot your password?</a>
+						Already have an account? <a href="login.html" class="ml-2">Log-in</a>
 					</div>
 				</div>
 			</div>
