@@ -30,6 +30,7 @@ const init = async () => {
         console.log("Socket Disconnected: " + socket.id);
     };
 
+    // Hapi plugins
     await server.register({ plugin: Nes, options: { onMessage, onDisconnection, onConnection } });
 
     // HTTP Routes
@@ -38,6 +39,31 @@ const init = async () => {
         path: '/',
         handler: (request, h) => {
             return 'Hello World!';
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/vc',
+        handler: (request, h) => {
+            
+            const functions = { // 
+                map: (n) => { // Map = factorial(n)
+                    var result = 1;
+                    if (n == 0) { return result; }
+                    for (var i = 1; i <= n; i += 1) {
+                        result *= i;
+                    }
+                    return result;
+                },
+                reduce: (n) => { // Reduce = fibonacci(n)
+                    if (n == 0) { return 0; }
+                    if (n == 1) { return 1; }
+                    return reduce(n-1) + reduce(n-2)
+                }
+            };
+             
+            return functions;
         }
     });
 
