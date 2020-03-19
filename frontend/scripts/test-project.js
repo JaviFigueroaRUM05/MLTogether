@@ -1,6 +1,6 @@
 const Nes = require('nes');
 
-var client = new Nes.Client('ws://localhost:3000');
+var ws = new Nes.Client('ws://localhost:3000');
 
 // Map-Reduce Functions
 const map = (n) => { // Map = factorial(n)
@@ -21,7 +21,7 @@ const reduce = (n) => { // Reduce = fibonacci(n)
 // Helper Functions
 const next_task = async () => { // Asks Task Broker for next task
     var payload, result;
-    payload = await client.message(JSON.stringify({ event: "next" }));
+    payload = await ws.message(JSON.stringify({ event: "next" }));
     payload = JSON.parse(payload.payload)
     if      (payload.function == "map")    { result = { result: map(payload.data) }; }
     else if (payload.function == "reduce") { result = { result: reduce(payload.data) }; }
@@ -31,12 +31,12 @@ const next_task = async () => { // Asks Task Broker for next task
 };
 
 const return_result = async (result) => { // Returns results to the server
-    await client.message(JSON.stringify({ event: "result", result: result }));
+    await ws.message(JSON.stringify({ event: "result", result: result }));
 };
 
 // Main
 const main = async () => {
-    await client.connect();
+    await ws.connect();
 
     while (true) {
         var result = await next_task();
