@@ -10,14 +10,17 @@
     "test": "test"
   },
   "scripts": {
-    "start": "node server",
+    "start": "nodemon server",
     "test": "lab -a @hapi/code -L",
     "lint": "eslint ."
   },
   "dependencies": {
     "@hapi/boom": "9.x.x",
     "@hapi/joi": "17.x.x",
-    "haute-couture": "3.x.x"
+    "amqplib": "^0.5.5",
+    "haute-couture": "3.x.x",
+    "nes": "^10.0.2",
+    "nodemon": "^2.0.2"
   },
   "devDependencies": {
     "@hapi/code": "8.x.x",
