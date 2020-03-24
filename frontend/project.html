@@ -12,32 +12,31 @@
 	<!-- JQuery -->
 	<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
-	<link rel="stylesheet" href="css/project.css"> <!-- login/Signup css file -->
+	<link rel="stylesheet" href="css/project.css"> <!-- Project css file -->
 </head>
 <body>
-	<div class="container h-100"> <!-- Will hold the login card -->
+	<div class="container h-100"> <!-- Will hold the Terms and project cards -->
 		<div class="d-flex justify-content-center h-100"> <!-- Flex everything to the middle -->
-			<div class="image-card">
-				<div class="cont-img">
-					<div class="cont-text">
-						<!-- need to make white bg, image bg and div with text -->
-						<h1 id="project-name">Project Name</h1>
-						<h4 id="author">Author: Developer</h4>
-						<h4 id="desc-title">Description: </h4>
-						<div class="container w-100" id="description">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-								eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-								ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-								aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
-								in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-								sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-								mollit anim id est laborum.</p>
-						</div>
+			<div class="image-card"> <!--Contains image and project info (white-bg)-->
+				<div class="cont-img"></div> <!-- Contains image -->
+				<div class="cont-text"> <!--Contains project info -->
+					<h1 id="project-name">Project Name</h1>
+					<h4 id="author">Author: Developer</h4>
+					<h4 id="desc-title">Description: </h4>
+					<div class="container w-100" id="description">
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+							eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+							ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+							aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+							in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+							sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+							mollit anim id est laborum.</p>
 					</div>
 				</div>
 			</div>
-			<div class="accept_card" id="demo"> <!-- Login card -->
+			<div class="accept_card" id="demo"> <!-- Agreement card -->
 				<h2 id="terms-title"><strong>Terms and Conditions</strong></h2>
+				<!-- Terms and conditions (Start) -->
 				<div class="terms-card container w-100">
 					<h5><strong>Welcome to MLTogether!</strong></h5>
 
@@ -161,18 +160,31 @@
 
 					<p>As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.</p>
 				</div>
-				<div class="buttons" style="margin-bottom:-35px">
-					<div class="custom-control custom-checkbox" style="margin-bottom: 15px; margin-top: -20px"> <!-- Remember me box -->
+				<!-- Terms and conditions (End) -->
+				<div class="buttons" style="margin-bottom:-35px"> <!--Contains all the buttons and checkbox -->
+					<div class="custom-control custom-checkbox" style="margin-bottom: 15px; margin-top: -20px"> <!-- Agreement box -->
 						<input type="checkbox" class="custom-control-input" id="customControlInline">
-						<label class="custom-control-label" for="customControlInline">I have read and comprehend the terms and conditions.</label>
+						<label class="custom-control-label" for="customControlInline">I have read and agree with the terms and conditions.</label>
 					</div>
+					<!-- If decline redirect to home page, if accept begin working -->
 					<button type="button" name="button" class="btn accept_btn" style="background-color: rgb(196, 54, 54)" onclick="window.location.href='home.html'">Decline</button>
-					<button type="button" onclick="myFunction()" name="button" class="btn accept_btn" style="background-color: rgb(54, 196, 60)">Accept</button>
+					<button type="button" onclick="myFunction()" name="button" class="btn accept_btn" style="background-color: rgb(54, 196, 60)">Begin Working</button>
 					<script>
 	            function myFunction() {
-	                document.getElementById("demo").innerHTML = "Working!";
+								// If checkbox not marked
+								if(document.getElementById("customControlInline").checked==true){
+									document.getElementById("demo2").style.display = "flex";
+								}
+								else{
+									window.alert("You must agree with the terms and conditions to begin working")
+								}
 	            }
 	        </script>
+				</div>
+				<!-- The following div is only shown when working -->
+				<div class="accepted_card container w-100 h-100" style="background-color:white; position:absolute; display:none;" id="demo2">
+					<img src="images/gears.gif" alt="gears" style="align-self: center;">
+					<h2 id="working-title">Working!</h2>
 				</div>
 			</div>
 		</div>
