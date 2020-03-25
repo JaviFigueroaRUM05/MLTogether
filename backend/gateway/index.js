@@ -47,7 +47,8 @@ const init = async () => {
         path: '/vc',
         handler: (request, h) => {
             
-            const functions = { // 
+            // Fetch functions from project DB
+            const functions = { 
                 map: (n) => { // Map = factorial(n)
                     var result = 1;
                     if (n == 0) { return result; }
