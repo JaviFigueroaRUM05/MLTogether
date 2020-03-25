@@ -1,71 +1,61 @@
-async function fetchFromQueue(channel, queue) {
-  return new Promise((resolve, reject) => {
-    channel.consume(queue, function onConsume(msg) {
-      var secs = msg.content.toString().split('.').length - 1;
+'use strict';
 
-      console.log(" [x] Received %s", msg.content.toString());
-      resolve(msg.content)
-    }, {
-      noAck: false
-    });
+const QueueActions = require('./queue-actions');
 
-  })
-}
+const onMessage = (server) =>
 
-async function pushResultsToQueue(results, channel, queue) {
-  // TODO: Place results to the queue
-  return new Promise((resolve, reject) => {
-    setTimeout(function onTimeout() {
-      resolve()
-    }, 1000);
-  })
-}
+    async function (socket, message) {
 
-const onMessage = (server) => async (socket, message) => {
-  console.log(socket.id + " Sends:", message);
+        server.log( ['debug'],socket.id + ' Sends:', message);
 
-  let msg = JSON.parse(message);
-  let channel = server.methods.amqp.channel();
-  let tasksQueue = 'task_queue';
-  let resultsQueue = 'task_queue';
+        const msg = JSON.parse(message);
+        const channel = server.methods.amqp.channel();
+        const tasksQueue = 'task_queue';
+        const resultsQueue = 'task_queue';
 
 
-  // bring more tasks
-  if (msg.event == "next") {
+        // bring more tasks
+        if (msg.event === 'next') {
 
-    let task = await fetchFromQueue(channel, tasksQueue)
+            const task = await QueueActions.fetchFromQueue(channel, tasksQueue);
+            server.log(['debug'],task);
 
-    // TODO: Place logic for mapping fetch results to send out the message
+            // TODO: Place logic for mapping fetch results to send out the message
 
-    return JSON.stringify({
-      function: "reduce",
-      data: 20
-    });
+            return JSON.stringify({
+                function: 'reduce',
+                data: 20
+            });
 
-  } else if (msg.event == "result") {
-    // TODO: Push Result to Task Broker
-    let results = "Test"
-    await pushResultsToQueue(results, channel, resultsQueue);
+        }
+        else if (msg.event === 'result') {
+            // TODO: Push Result to Task Broker
+            const results = 'Test';
+            await QueueActions.pushResultsToQueue(results, channel, resultsQueue);
 
-  } else {
-    // TODO: Return error because event does not exist
-  }
-};
+        }
+        else {
+            // TODO: Return error because event does not exist
+        }
+    };
 
 const onConnection = (socket) => {
-  console.log("Socket Connected: " + socket.id);
+
+    console.log('Socket Connected: ' + socket.id);
 };
 
 const onDisconnection = (socket) => {
-  console.log("Socket Disconnected: " + socket.id);
+
+    console.log('Socket Disconnected: ' + socket.id);
 };
 
 
 
 module.exports = function createOptions(server) {
-  return {
-    onMessage: onMessage(server),
-    onConnection,
-    onDisconnection
-  }
-}
+
+    return {
+        onMessage: onMessage(server),
+        onConnection,
+        onDisconnection
+    };
+};
