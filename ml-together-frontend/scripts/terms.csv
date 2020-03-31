@@ -1,0 +1,23 @@
+﻿Name,Short Description,Type
+Training Data,Representation of the data needed to train the model.,Value Object
+Function,Actual code that is going to be executed by workers.,Value Object
+Task,"A Function together with the Training Data. It is the smallest unit of computation that can be distributed.  ",Value Object
+Worker Machine,Machine that will provide computational resources to complete tasks.,Value Object
+Model,Collection of all Functions. Model to be trained by completing Tasks.,Value Object
+Project,Representation of a cause in which multiple tasks can be done to complete the project's objective.,Entity
+Initiator,The initiator represents a user which wants to train models using the system.,Entity
+Worker,The client that is doing the computation.,Entity
+Task Queue,Queue that stores tasks to be picked up by the workers. There is one Task Queue per Function.,Service
+Task Broker,Assigns training data with corresponding function to apply to the corresponding volunteer queues. Contains all the Task Queues.,Service
+Data Forwarder,Fetches training data to volunteers.,Service
+Project Manager,"Manages project creation, deletion and modification. Instantiates Task Generator, Task Broker, Data Forwarder and Intermediate Results Data Base. ",Service
+Credential Manager,Manages authentication for the Initiator.,Service
+Intermediate Results Storage,Stores intermediates results temporarily for future computations.,Service
+Users Storage,Stores user info.,Service
+Data Storage,Stores training data. This is provided by the initiator.,Service
+Project Storage,Stores information about the project,Service
+Session Manager,Manages and keeps information regarding connection times and task completions of workers.,Service
+Project Validator,Runs every task once using the initiator as a worker and checks for errors.,Service
+"Gateway ",Handles API calls from the workers and redirects them to the correct service.,Service
+Web Server,Serves the web page loaded with the Map and Reduce functions to be used by the workers.,Service
+,,

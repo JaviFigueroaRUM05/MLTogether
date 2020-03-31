@@ -367,7 +367,7 @@ body {
   margin-left: -12px;
   color: #9b59b6;
   text-transform: uppercase;
-  text-shadow: -1px -1px 0px #4a3571, 1px 1px 0px #4f4f4f;
+  text-shadow: -1px -1px 0px #ffffff, 1px 1px 0px #4f4f4f;
   letter-spacing: -20px;
 }
 
@@ -391,10 +391,10 @@ body {
   font-family: 'Montserrat', sans-serif;
   display: inline-block;
   text-transform: uppercase;
-  color: #28759a;
+  color: #ffffff;
   text-decoration: none;
   border: 2px solid;
-  background: transparent;
+  background: #60a3bc;
   padding: 10px 40px;
   font-size: 14px;
   font-weight: 700;
