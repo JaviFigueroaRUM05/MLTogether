@@ -31,7 +31,7 @@ html {
 .image-card{
     height: 100%;
     width: 345px;
-    margin-left: -145px;
+    /* margin-left: -145px; */
     /* padding: 10px; */
     background-color: white;
     /* opacity: 0.2; */
@@ -42,11 +42,71 @@ html {
     position:relative;
 }
 
-/* .cont-img img{
-  width: inherit;
-  height: inherit;
-  opacity: 0.3;
-} */
+@media (max-width: 800px) {
+  .image-card {
+    display: none;
+  }
+  .accept_card {
+    margin-left: 0px !important;
+  }
+  .accepted_card {
+    margin-left: 0px !important;
+  }
+  #terms-title{
+    margin-top: -40px !important;
+  }
+  #proj-button-mob{
+    display: block !important;
+  }
+  #nav-mobile {
+    display: block !important;
+  }
+}
+
+.sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: white;
+  overflow-x: hidden;
+  transition: 0.5s;
+  /* padding-top: 60px; */
+}
+
+.sidebar a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  color: #c61af1;
+}
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  z-index: 100;
+}
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: rgba(17, 17, 17, 0);
+  color: white;
+  padding: 10px 15px;
+  position:relative;
+  top:50%;
+  border: none;
+}
 
 .accept_card {
   height: 440px;
@@ -54,6 +114,7 @@ html {
   margin-top: auto;
   margin-bottom: auto;
   margin-left: 154px;
+  margin-right: 10px;
   background: #ffff; /* white */
   position: relative;
   display: flex;
@@ -69,12 +130,25 @@ html {
 }
 
 .accepted_card{
+  height: 440px;
+  width: 450px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 154px;
+  margin-right: 20px;
+  background: #ffff; /* white */
+  position: relative;
   display: flex;
   justify-content: center;
   flex-direction: column;
+  padding: 10px;
+  /* Shadows */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  /* Soften border */
+  border-radius: 5px;
 }
-
-
 
 .form_container {
   margin-top: 100px;
