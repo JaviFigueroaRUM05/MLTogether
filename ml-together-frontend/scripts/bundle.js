@@ -186,7 +186,7 @@ process.umask = function() { return 0; };
 
 },{}],2:[function(require,module,exports){
 (function (process){
-const Nes = require('nes');
+const Nes = require('@hapi/nes/lib/client');
 
 var client = new Nes.Client('ws://localhost:3000');
 
@@ -225,7 +225,7 @@ const return_result = async (result) => { // Returns results to the server
 // Main
 const main = async () => {
     await client.connect();
-    console.log('Running');
+
     while (true) {
         var result = await next_task();
         if (result.result == "nop") { break; }
@@ -236,9 +236,798 @@ const main = async () => {
 };
 main();
 }).call(this,require('_process'))
-},{"_process":1,"nes":3}],3:[function(require,module,exports){
+},{"@hapi/nes/lib/client":3,"_process":1}],3:[function(require,module,exports){
 (function (global){
-'use strict';var _typeof='function'==typeof Symbol&&'symbol'==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&'function'==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?'symbol':typeof a};(function(a,b){'object'===('undefined'==typeof exports?'undefined':_typeof(exports))&&'object'===('undefined'==typeof module?'undefined':_typeof(module))?module.exports=b():'function'==typeof define&&define.amd?define(b):'object'===('undefined'==typeof exports?'undefined':_typeof(exports))?exports.nes=b():a.nes=b()})('undefined'==typeof window?global:window,function(){var a=function(){},b=function(a){try{return JSON.stringify(a)}catch(a){throw new e(a,d.USER)}},c=function(a){return function(b){setTimeout(function(){return a(b)},0)}},d={TIMEOUT:'timeout',DISCONNECT:'disconnect',SERVER:'server',PROTOCOL:'protocol',WS:'ws',USER:'user'},e=function(a,b){'string'==typeof a&&(a=new Error(a)),a.type=b,a.isNes=!0;try{throw a}catch(a){return a}},f={1000:'Normal closure',1001:'Going away',1002:'Protocol error',1003:'Unsupported data',1004:'Reserved',1005:'No status received',1006:'Abnormal closure',1007:'Invalid frame payload data',1008:'Policy violation',1009:'Message too big',1010:'Mandatory extension',1011:'Internal server error',1015:'TLS handshake'},g=function(b,c){c=c||{},this._isBrowser='undefined'!=typeof WebSocket,this._isBrowser||(c.ws=c.ws||{},void 0===c.ws.maxPayload&&(c.ws.maxPayload=0)),this._url=b,this._settings=c,this._heartbeatTimeout=!1,this._ws=null,this._reconnection=null,this._reconnectionTimer=null,this._ids=0,this._requests={},this._subscriptions={},this._heartbeat=null,this._packets=[],this._disconnectListeners=null,this._disconnectRequested=!1,this.onError=function(a){return console.error(a)},this.onConnect=a,this.onDisconnect=a,this.onHeartbeatTimeout=a,this.onUpdate=a,this.id=null};return g.WebSocket='undefined'==typeof WebSocket?null:WebSocket,g.prototype.connect=function(a){var b=this;return(a=a||{},this._reconnection)?Promise.reject(new e('Cannot connect while client attempts to reconnect',d.USER)):this._ws?Promise.reject(new e('Already connected',d.USER)):(this._reconnection=!1===a.reconnect?null:{wait:0,delay:a.delay||1e3,maxDelay:a.maxDelay||5e3,retries:a.retries||Infinity,settings:{auth:a.auth,timeout:a.timeout}},new Promise(function(c,d){b._connect(a,!0,function(a){return a?d(a):c()})}))},g.prototype._connect=function(a,b,h){var i=this,j=this._isBrowser?new g.WebSocket(this._url):new g.WebSocket(this._url,this._settings.ws);this._ws=j,clearTimeout(this._reconnectionTimer),this._reconnectionTimer=null;var k=function(a){j.onopen&&l(new e('Connection terminated while waiting to connect',d.WS));var b=i._disconnectRequested;i._cleanup();var c={code:a.code,explanation:f[a.code]||'Unknown',reason:a.reason,wasClean:a.wasClean,willReconnect:i._willReconnect(),wasRequested:b};i.onDisconnect(c.willReconnect,c),i._reconnect()},l=function(a){if(h){var b=h;return h=null,b(a)}return i.onError(a)},m=a.timeout?setTimeout(function timeoutHandler(){if(i._cleanup(),l(new e('Connection timed out',d.TIMEOUT)),b)return i._reconnect()},a.timeout):null;j.onopen=function(){clearTimeout(m),j.onopen=null,i._hello(a.auth).then(function(){i.onConnect(),l()}).catch(function(a){a.path&&delete i._subscriptions[a.path],i._disconnect(function(){return c(l)(a)},!0)})},j.onerror=function(a){if(clearTimeout(m),i._willReconnect())return k(a);i._cleanup();var b=new e('Socket error',d.WS);return l(b)},j.onclose=k,j.onmessage=function(a){return i._onMessage(a)}},g.prototype.overrideReconnectionAuth=function(a){return!!this._reconnection&&(this._reconnection.settings.auth=a,!0)},g.prototype.reauthenticate=function(a){this.overrideReconnectionAuth(a);return this._send({type:'reauth',auth:a},!0)},g.prototype.disconnect=function(){var a=this;return new Promise(function(b){return a._disconnect(b,!1)})},g.prototype._disconnect=function(a,b){this._reconnection=null,clearTimeout(this._reconnectionTimer),this._reconnectionTimer=null;var c=this._disconnectRequested||!b;return this._disconnectListeners?(this._disconnectRequested=c,void this._disconnectListeners.push(a)):this._ws&&(this._ws.readyState===g.WebSocket.OPEN||this._ws.readyState===g.WebSocket.CONNECTING)?void(this._disconnectRequested=c,this._disconnectListeners=[a],this._ws.close()):a()},g.prototype._cleanup=function(){if(this._ws){var k=this._ws;this._ws=null,k.readyState!==g.WebSocket.CLOSED&&k.readyState!==g.WebSocket.CLOSING&&k.close(),k.onopen=null,k.onclose=null,k.onerror=a,k.onmessage=null}this._packets=[],this.id=null,clearTimeout(this._heartbeat),this._heartbeat=null;var b=new e('Request failed - server disconnected',d.DISCONNECT),c=this._requests;this._requests={};for(var f=Object.keys(c),h=0;h<f.length;++h){var i=f[h],j=c[i];clearTimeout(j.timeout),j.reject(b)}if(this._disconnectListeners){var l=this._disconnectListeners;this._disconnectListeners=null,this._disconnectRequested=!1,l.forEach(function(a){return a()})}},g.prototype._reconnect=function(){var b=this,c=this._reconnection;if(c){if(1>c.retries)return this._disconnect(a,!0);--c.retries,c.wait+=c.delay;var d=Math.min(c.wait,c.maxDelay);this._reconnectionTimer=setTimeout(function(){b._connect(c.settings,!1,function(a){if(a)return b.onError(a),b._reconnect()})},d)}},g.prototype.request=function(a){'string'==typeof a&&(a={method:'GET',path:a});var b={type:'request',method:a.method||'GET',path:a.path,headers:a.headers,payload:a.payload};return this._send(b,!0)},g.prototype.message=function(a){return this._send({type:'message',message:a},!0)},g.prototype._isReady=function(){return this._ws&&this._ws.readyState===g.WebSocket.OPEN},g.prototype._send=function(a,c){if(!this._isReady())return Promise.reject(new e('Failed to send message - server disconnected',d.DISCONNECT));a.id=++this._ids;try{var f=b(a)}catch(a){return Promise.reject(a)}if(!c)try{return this._ws.send(f),Promise.resolve()}catch(a){return Promise.reject(new e(a,d.WS))}var g={resolve:null,reject:null,timeout:null},h=new Promise(function(a,b){g.resolve=a,g.reject=b});this._settings.timeout&&(g.timeout=setTimeout(function(){return g.timeout=null,g.reject(new e('Request timed out',d.TIMEOUT))},this._settings.timeout)),this._requests[a.id]=g;try{this._ws.send(f)}catch(b){return clearTimeout(this._requests[a.id].timeout),delete this._requests[a.id],Promise.reject(new e(b,d.WS))}return h},g.prototype._hello=function(a){var b={type:'hello',version:'2'};a&&(b.auth=a);var c=this.subscriptions();return c.length&&(b.subs=c),this._send(b,!0)},g.prototype.subscriptions=function(){return Object.keys(this._subscriptions)},g.prototype.subscribe=function(a,b){var c=this;if(!a||'/'!==a[0])return Promise.reject(new e('Invalid path',d.USER));var f=this._subscriptions[a];if(f)return-1===f.indexOf(b)&&f.push(b),Promise.resolve();if(this._subscriptions[a]=[b],!this._isReady())return Promise.resolve();var g=this._send({type:'sub',path:a},!0);return g.catch(function(){delete c._subscriptions[a]}),g},g.prototype.unsubscribe=function(b,c){if(!b||'/'!==b[0])return Promise.reject(new e('Invalid path',d.USER));var f=this._subscriptions[b];if(!f)return Promise.resolve();var g=!1;if(!c)delete this._subscriptions[b],g=!0;else{var i=f.indexOf(c);if(-1===i)return Promise.resolve();f.splice(i,1),f.length||(delete this._subscriptions[b],g=!0)}if(!g||!this._isReady())return Promise.resolve();var h=this._send({type:'unsub',path:b},!0);return h.catch(a),h},g.prototype._onMessage=function(b){this._beat();var c=b.data,f=c[0];if('{'!==f){if(this._packets.push(c.slice(1)),'!'!==f)return;c=this._packets.join(''),this._packets=[]}this._packets.length&&(this._packets=[],this.onError(new e('Received an incomplete message',d.PROTOCOL)));try{var g=JSON.parse(c)}catch(a){return this.onError(new e(a,d.PROTOCOL))}var h=null;if(g.statusCode&&400<=g.statusCode&&(h=new e(g.payload.message||g.payload.error||'Error',d.SERVER),h.statusCode=g.statusCode,h.data=g.payload,h.headers=g.headers,h.path=g.path),'ping'===g.type)return this._send({type:'ping'},!1).catch(a);if('update'===g.type)return this.onUpdate(g.message);if('pub'===g.type||'revoke'===g.type){var l=this._subscriptions[g.path];if('revoke'===g.type&&delete this._subscriptions[g.path],l&&void 0!==g.message){var m={};'revoke'===g.type&&(m.revoked=!0);for(var n=0;n<l.length;++n)l[n](g.message,m)}return}var j=this._requests[g.id];if(!j)return this.onError(new e('Received response for unknown request',d.PROTOCOL));clearTimeout(j.timeout),delete this._requests[g.id];var k=function(a,b){return a?j.reject(a):j.resolve(b)};return'request'===g.type?k(h,{payload:g.payload,statusCode:g.statusCode,headers:g.headers}):'message'===g.type?k(h,{payload:g.message}):'hello'===g.type?(this.id=g.socket,g.heartbeat&&(this._heartbeatTimeout=g.heartbeat.interval+g.heartbeat.timeout,this._beat()),k(h)):'reauth'===g.type?k(h,!0):'sub'===g.type||'unsub'===g.type?k(h):(k(new e('Received invalid response',d.PROTOCOL)),this.onError(new e('Received unknown response type: '+g.type,d.PROTOCOL)))},g.prototype._beat=function(){var a=this;this._heartbeatTimeout&&(clearTimeout(this._heartbeat),this._heartbeat=setTimeout(function(){a.onError(new e('Disconnecting due to heartbeat timeout',d.TIMEOUT)),a.onHeartbeatTimeout(a._willReconnect()),a._ws.close()},this._heartbeatTimeout))},g.prototype._willReconnect=function(){return!!(this._reconnection&&1<=this._reconnection.retries)},{Client:g}});
+'use strict';
+
+/*
+    (hapi)nes WebSocket Client (https://github.com/hapijs/nes)
+    Copyright (c) 2015-2016, Eran Hammer <eran@hammer.io> and other contributors
+    BSD Licensed
+*/
+
+/* eslint no-undef: 0 */
+
+(function (root, factory) {
+
+    // $lab:coverage:off$
+
+    if (typeof exports === 'object' && typeof module === 'object') {
+        module.exports = factory();                 // Export if used as a module
+    }
+    else if (typeof define === 'function' && define.amd) {
+        define(factory);
+    }
+    else if (typeof exports === 'object') {
+        exports.nes = factory();
+    }
+    else {
+        root.nes = factory();
+    }
+
+    // $lab:coverage:on$
+
+})(/* $lab:coverage:off$ */ typeof window !== 'undefined' ? window : global /* $lab:coverage:on$ */, () => {
+
+    // Utilities
+
+    const version = '2';
+    const ignore = function () { };
+
+    const stringify = function (message) {
+
+        try {
+            return JSON.stringify(message);
+        }
+        catch (err) {
+            throw new NesError(err, errorTypes.USER);
+        }
+    };
+
+    const nextTick = function (callback) {
+
+        return (err) => {
+
+            setTimeout(() => callback(err), 0);
+        };
+    };
+
+    // NesError types
+
+    const errorTypes = {
+        TIMEOUT: 'timeout',
+        DISCONNECT: 'disconnect',
+        SERVER: 'server',
+        PROTOCOL: 'protocol',
+        WS: 'ws',
+        USER: 'user'
+    };
+
+    const NesError = function (err, type) {
+
+        if (typeof err === 'string') {
+            err = new Error(err);
+        }
+
+        err.type = type;
+        err.isNes = true;
+
+        try {
+            throw err; // ensure stack trace for IE11
+        }
+        catch (withStack) {
+            return withStack;
+        }
+    };
+
+    // Error codes
+
+    const errorCodes = {
+        1000: 'Normal closure',
+        1001: 'Going away',
+        1002: 'Protocol error',
+        1003: 'Unsupported data',
+        1004: 'Reserved',
+        1005: 'No status received',
+        1006: 'Abnormal closure',
+        1007: 'Invalid frame payload data',
+        1008: 'Policy violation',
+        1009: 'Message too big',
+        1010: 'Mandatory extension',
+        1011: 'Internal server error',
+        1015: 'TLS handshake'
+    };
+
+    // Client
+
+    const Client = function (url, options) {
+
+        options = options || {};
+
+        this._isBrowser = typeof WebSocket !== 'undefined';
+
+        if (!this._isBrowser) {
+            options.ws = options.ws || {};
+
+            if (options.ws.maxPayload === undefined) {
+                options.ws.maxPayload = 0;              // Override default 100Mb limit in ws module to avoid breaking change
+            }
+        }
+
+        // Configuration
+
+        this._url = url;
+        this._settings = options;
+        this._heartbeatTimeout = false;             // Server heartbeat configuration
+
+        // State
+
+        this._ws = null;
+        this._reconnection = null;
+        this._reconnectionTimer = null;
+        this._ids = 0;                              // Id counter
+        this._requests = {};                        // id -> { resolve, reject, timeout }
+        this._subscriptions = {};                   // path -> [callbacks]
+        this._heartbeat = null;
+        this._packets = [];
+        this._disconnectListeners = null;
+        this._disconnectRequested = false;
+
+        // Events
+
+        this.onError = (err) => console.error(err); // General error handler (only when an error cannot be associated with a request)
+        this.onConnect = ignore;                    // Called whenever a connection is established
+        this.onDisconnect = ignore;                 // Called whenever a connection is lost: function(willReconnect)
+        this.onHeartbeatTimeout = ignore;           // Called when a heartbeat timeout will cause a disconnection
+        this.onUpdate = ignore;
+
+        // Public properties
+
+        this.id = null;                             // Assigned when hello response is received
+    };
+
+    Client.WebSocket = /* $lab:coverage:off$ */ (typeof WebSocket === 'undefined' ? null : WebSocket); /* $lab:coverage:on$ */
+
+    Client.prototype.connect = function (options) {
+
+        options = options || {};
+
+        if (this._reconnection) {
+            return Promise.reject(new NesError('Cannot connect while client attempts to reconnect', errorTypes.USER));
+        }
+
+        if (this._ws) {
+            return Promise.reject(new NesError('Already connected', errorTypes.USER));
+        }
+
+        if (options.reconnect !== false) {                  // Defaults to true
+            this._reconnection = {                          // Options: reconnect, delay, maxDelay
+                wait: 0,
+                delay: options.delay || 1000,               // 1 second
+                maxDelay: options.maxDelay || 5000,         // 5 seconds
+                retries: options.retries || Infinity,       // Unlimited
+                settings: {
+                    auth: options.auth,
+                    timeout: options.timeout
+                }
+            };
+        }
+        else {
+            this._reconnection = null;
+        }
+
+        return new Promise((resolve, reject) => {
+
+            this._connect(options, true, (err) => {
+
+                if (err) {
+                    return reject(err);
+                }
+
+                return resolve();
+            });
+        });
+    };
+
+    Client.prototype._connect = function (options, initial, next) {
+
+        const ws = this._isBrowser ? new Client.WebSocket(this._url) : new Client.WebSocket(this._url, this._settings.ws);
+        this._ws = ws;
+
+        clearTimeout(this._reconnectionTimer);
+        this._reconnectionTimer = null;
+
+        const reconnect = (event) => {
+
+            if (ws.onopen) {
+                finalize(new NesError('Connection terminated while waiting to connect', errorTypes.WS));
+            }
+
+            const wasRequested = this._disconnectRequested;         // Get value before _cleanup()
+
+            this._cleanup();
+
+            const log = {
+                code: event.code,
+                explanation: errorCodes[event.code] || 'Unknown',
+                reason: event.reason,
+                wasClean: event.wasClean,
+                willReconnect: this._willReconnect(),
+                wasRequested
+            };
+
+            this.onDisconnect(log.willReconnect, log);
+            this._reconnect();
+        };
+
+        const finalize = (err) => {
+
+            if (next) {                     // Call only once when connect() is called
+                const nextHolder = next;
+                next = null;
+                return nextHolder(err);
+            }
+
+            return this.onError(err);
+        };
+
+        const timeoutHandler = () => {
+
+            this._cleanup();
+
+            finalize(new NesError('Connection timed out', errorTypes.TIMEOUT));
+
+            if (initial) {
+                return this._reconnect();
+            }
+        };
+
+        const timeout = (options.timeout ? setTimeout(timeoutHandler, options.timeout) : null);
+
+        ws.onopen = () => {
+
+            clearTimeout(timeout);
+            ws.onopen = null;
+
+            this._hello(options.auth)
+                .then(() => {
+
+                    this.onConnect();
+                    finalize();
+                })
+                .catch((err) => {
+
+                    if (err.path) {
+                        delete this._subscriptions[err.path];
+                    }
+
+                    this._disconnect(() => nextTick(finalize)(err), true);         // Stop reconnection when the hello message returns error
+                });
+        };
+
+        ws.onerror = (event) => {
+
+            clearTimeout(timeout);
+
+            if (this._willReconnect()) {
+                return reconnect(event);
+            }
+
+            this._cleanup();
+            const error = new NesError('Socket error', errorTypes.WS);
+            return finalize(error);
+        };
+
+        ws.onclose = reconnect;
+
+        ws.onmessage = (message) => {
+
+            return this._onMessage(message);
+        };
+    };
+
+    Client.prototype.overrideReconnectionAuth = function (auth) {
+
+        if (!this._reconnection) {
+            return false;
+        }
+
+        this._reconnection.settings.auth = auth;
+        return true;
+    };
+
+    Client.prototype.reauthenticate = function (auth) {
+
+        this.overrideReconnectionAuth(auth);
+
+        const request = {
+            type: 'reauth',
+            auth
+        };
+
+        return this._send(request, true);
+    };
+
+    Client.prototype.disconnect = function () {
+
+        return new Promise((resolve) => this._disconnect(resolve, false));
+    };
+
+    Client.prototype._disconnect = function (next, isInternal) {
+
+        this._reconnection = null;
+        clearTimeout(this._reconnectionTimer);
+        this._reconnectionTimer = null;
+        const requested = this._disconnectRequested || !isInternal;       // Retain true
+
+        if (this._disconnectListeners) {
+            this._disconnectRequested = requested;
+            this._disconnectListeners.push(next);
+            return;
+        }
+
+        if (!this._ws ||
+            (this._ws.readyState !== Client.WebSocket.OPEN && this._ws.readyState !== Client.WebSocket.CONNECTING)) {
+
+            return next();
+        }
+
+        this._disconnectRequested = requested;
+        this._disconnectListeners = [next];
+        this._ws.close();
+    };
+
+    Client.prototype._cleanup = function () {
+
+        if (this._ws) {
+            const ws = this._ws;
+            this._ws = null;
+
+            if (ws.readyState !== Client.WebSocket.CLOSED &&
+                ws.readyState !== Client.WebSocket.CLOSING) {
+
+                ws.close();
+            }
+
+            ws.onopen = null;
+            ws.onclose = null;
+            ws.onerror = ignore;
+            ws.onmessage = null;
+        }
+
+        this._packets = [];
+        this.id = null;
+
+        clearTimeout(this._heartbeat);
+        this._heartbeat = null;
+
+        // Flush pending requests
+
+        const error = new NesError('Request failed - server disconnected', errorTypes.DISCONNECT);
+
+        const requests = this._requests;
+        this._requests = {};
+        const ids = Object.keys(requests);
+        for (let i = 0; i < ids.length; ++i) {
+            const id = ids[i];
+            const request = requests[id];
+            clearTimeout(request.timeout);
+            request.reject(error);
+        }
+
+        if (this._disconnectListeners) {
+            const listeners = this._disconnectListeners;
+            this._disconnectListeners = null;
+            this._disconnectRequested = false;
+            listeners.forEach((listener) => listener());
+        }
+    };
+
+    Client.prototype._reconnect = function () {
+
+        // Reconnect
+
+        const reconnection = this._reconnection;
+        if (!reconnection) {
+            return;
+        }
+
+        if (reconnection.retries < 1) {
+            return this._disconnect(ignore, true);      // Clear _reconnection state
+        }
+
+        --reconnection.retries;
+        reconnection.wait = reconnection.wait + reconnection.delay;
+
+        const timeout = Math.min(reconnection.wait, reconnection.maxDelay);
+
+        this._reconnectionTimer = setTimeout(() => {
+
+            this._connect(reconnection.settings, false, (err) => {
+
+                if (err) {
+                    this.onError(err);
+                    return this._reconnect();
+                }
+            });
+        }, timeout);
+    };
+
+    Client.prototype.request = function (options) {
+
+        if (typeof options === 'string') {
+            options = {
+                method: 'GET',
+                path: options
+            };
+        }
+
+        const request = {
+            type: 'request',
+            method: options.method || 'GET',
+            path: options.path,
+            headers: options.headers,
+            payload: options.payload
+        };
+
+        return this._send(request, true);
+    };
+
+    Client.prototype.message = function (message) {
+
+        const request = {
+            type: 'message',
+            message
+        };
+
+        return this._send(request, true);
+    };
+
+    Client.prototype._isReady = function () {
+
+        return this._ws && this._ws.readyState === Client.WebSocket.OPEN;
+    };
+
+    Client.prototype._send = function (request, track) {
+
+        if (!this._isReady()) {
+            return Promise.reject(new NesError('Failed to send message - server disconnected', errorTypes.DISCONNECT));
+        }
+
+        request.id = ++this._ids;
+
+        try {
+            var encoded = stringify(request);
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
+
+        // Ignore errors
+
+        if (!track) {
+            try {
+                this._ws.send(encoded);
+                return Promise.resolve();
+            }
+            catch (err) {
+                return Promise.reject(new NesError(err, errorTypes.WS));
+            }
+        }
+
+        // Track errors
+
+        const record = {
+            resolve: null,
+            reject: null,
+            timeout: null
+        };
+
+        const promise = new Promise((resolve, reject) => {
+
+            record.resolve = resolve;
+            record.reject = reject;
+        });
+
+        if (this._settings.timeout) {
+            record.timeout = setTimeout(() => {
+
+                record.timeout = null;
+                return record.reject(new NesError('Request timed out', errorTypes.TIMEOUT));
+            }, this._settings.timeout);
+        }
+
+        this._requests[request.id] = record;
+
+        try {
+            this._ws.send(encoded);
+        }
+        catch (err) {
+            clearTimeout(this._requests[request.id].timeout);
+            delete this._requests[request.id];
+            return Promise.reject(new NesError(err, errorTypes.WS));
+        }
+
+        return promise;
+    };
+
+    Client.prototype._hello = function (auth) {
+
+        const request = {
+            type: 'hello',
+            version
+        };
+
+        if (auth) {
+            request.auth = auth;
+        }
+
+        const subs = this.subscriptions();
+        if (subs.length) {
+            request.subs = subs;
+        }
+
+        return this._send(request, true);
+    };
+
+    Client.prototype.subscriptions = function () {
+
+        return Object.keys(this._subscriptions);
+    };
+
+    Client.prototype.subscribe = function (path, handler) {
+
+        if (!path ||
+            path[0] !== '/') {
+
+            return Promise.reject(new NesError('Invalid path', errorTypes.USER));
+        }
+
+        const subs = this._subscriptions[path];
+        if (subs) {
+
+            // Already subscribed
+
+            if (subs.indexOf(handler) === -1) {
+                subs.push(handler);
+            }
+
+            return Promise.resolve();
+        }
+
+        this._subscriptions[path] = [handler];
+
+        if (!this._isReady()) {
+
+            // Queued subscription
+
+            return Promise.resolve();
+        }
+
+        const request = {
+            type: 'sub',
+            path
+        };
+
+        const promise = this._send(request, true);
+        promise.catch((ignoreErr) => {
+
+            delete this._subscriptions[path];
+        });
+
+        return promise;
+    };
+
+    Client.prototype.unsubscribe = function (path, handler) {
+
+        if (!path ||
+            path[0] !== '/') {
+
+            return Promise.reject(new NesError('Invalid path', errorTypes.USER));
+        }
+
+        const subs = this._subscriptions[path];
+        if (!subs) {
+            return Promise.resolve();
+        }
+
+        let sync = false;
+        if (!handler) {
+            delete this._subscriptions[path];
+            sync = true;
+        }
+        else {
+            const pos = subs.indexOf(handler);
+            if (pos === -1) {
+                return Promise.resolve();
+            }
+
+            subs.splice(pos, 1);
+            if (!subs.length) {
+                delete this._subscriptions[path];
+                sync = true;
+            }
+        }
+
+        if (!sync ||
+            !this._isReady()) {
+
+            return Promise.resolve();
+        }
+
+        const request = {
+            type: 'unsub',
+            path
+        };
+
+        const promise = this._send(request, true);
+        promise.catch(ignore);                          // Ignoring errors as the subscription handlers are already removed
+        return promise;
+    };
+
+    Client.prototype._onMessage = function (message) {
+
+        this._beat();
+
+        let data = message.data;
+        const prefix = data[0];
+        if (prefix !== '{') {
+            this._packets.push(data.slice(1));
+            if (prefix !== '!') {
+                return;
+            }
+
+            data = this._packets.join('');
+            this._packets = [];
+        }
+
+        if (this._packets.length) {
+            this._packets = [];
+            this.onError(new NesError('Received an incomplete message', errorTypes.PROTOCOL));
+        }
+
+        try {
+            var update = JSON.parse(data);
+        }
+        catch (err) {
+            return this.onError(new NesError(err, errorTypes.PROTOCOL));
+        }
+
+        // Recreate error
+
+        let error = null;
+        if (update.statusCode &&
+            update.statusCode >= 400) {
+
+            error = new NesError(update.payload.message || update.payload.error || 'Error', errorTypes.SERVER);
+            error.statusCode = update.statusCode;
+            error.data = update.payload;
+            error.headers = update.headers;
+            error.path = update.path;
+        }
+
+        // Ping
+
+        if (update.type === 'ping') {
+            return this._send({ type: 'ping' }, false).catch(ignore);         // Ignore errors
+        }
+
+        // Broadcast and update
+
+        if (update.type === 'update') {
+            return this.onUpdate(update.message);
+        }
+
+        // Publish or Revoke
+
+        if (update.type === 'pub' ||
+            update.type === 'revoke') {
+
+            const handlers = this._subscriptions[update.path];
+            if (update.type === 'revoke') {
+                delete this._subscriptions[update.path];
+            }
+
+            if (handlers &&
+                update.message !== undefined) {
+
+                const flags = {};
+                if (update.type === 'revoke') {
+                    flags.revoked = true;
+                }
+
+                for (let i = 0; i < handlers.length; ++i) {
+                    handlers[i](update.message, flags);
+                }
+            }
+
+            return;
+        }
+
+        // Lookup request (message must include an id from this point)
+
+        const request = this._requests[update.id];
+        if (!request) {
+            return this.onError(new NesError('Received response for unknown request', errorTypes.PROTOCOL));
+        }
+
+        clearTimeout(request.timeout);
+        delete this._requests[update.id];
+
+        const next = (err, args) => {
+
+            if (err) {
+                return request.reject(err);
+            }
+
+            return request.resolve(args);
+        };
+
+        // Response
+
+        if (update.type === 'request') {
+            return next(error, { payload: update.payload, statusCode: update.statusCode, headers: update.headers });
+        }
+
+        // Custom message
+
+        if (update.type === 'message') {
+            return next(error, { payload: update.message });
+        }
+
+        // Authentication
+
+        if (update.type === 'hello') {
+            this.id = update.socket;
+            if (update.heartbeat) {
+                this._heartbeatTimeout = update.heartbeat.interval + update.heartbeat.timeout;
+                this._beat();           // Call again once timeout is set
+            }
+
+            return next(error);
+        }
+
+        if (update.type === 'reauth') {
+            return next(error, true);
+        }
+
+        // Subscriptions
+
+        if (update.type === 'sub' ||
+            update.type === 'unsub') {
+
+            return next(error);
+        }
+
+        next(new NesError('Received invalid response', errorTypes.PROTOCOL));
+        return this.onError(new NesError('Received unknown response type: ' + update.type, errorTypes.PROTOCOL));
+    };
+
+    Client.prototype._beat = function () {
+
+        if (!this._heartbeatTimeout) {
+            return;
+        }
+
+        clearTimeout(this._heartbeat);
+
+        this._heartbeat = setTimeout(() => {
+
+            this.onError(new NesError('Disconnecting due to heartbeat timeout', errorTypes.TIMEOUT));
+            this.onHeartbeatTimeout(this._willReconnect());
+            this._ws.close();
+        }, this._heartbeatTimeout);
+    };
+
+    Client.prototype._willReconnect = function () {
+
+        return !!(this._reconnection && this._reconnection.retries >= 1);
+    };
+
+    // Expose interface
+
+    return { Client };
+});
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[2]);

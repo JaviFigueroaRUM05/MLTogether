@@ -1,4 +1,4 @@
-const Nes = require('nes');
+const Nes = require('@hapi/nes/lib/client');
 
 var client = new Nes.Client('ws://localhost:3000');
 
