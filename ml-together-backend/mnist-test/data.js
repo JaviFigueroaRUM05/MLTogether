@@ -154,17 +154,17 @@ class MnistDataset {
         this.testSize = this.dataset[2].length;
     }
 
-    getTrainData() {
+    getTrainData(batchSize, batchIndex) {
 
-        return this.getData_(true);
+        return this.getData_(true, batchSize, batchIndex);
     }
 
     getTestData() {
 
-        return this.getData_(false);
+        return this.getData_(false, this.testSize, 0);
     }
 
-    getData_(isTrainingData) {
+    getData_(isTrainingData, imagesPerBatch, startIndex) {
 
         let imagesIndex;
         let labelsIndex;
@@ -177,12 +177,12 @@ class MnistDataset {
             labelsIndex = 3;
         }
 
-        const size = this.dataset[imagesIndex].length;
-        TF.util.assert(
-            this.dataset[labelsIndex].length === size,
-            `Mismatch in the number of images (${size}) and ` +
-            `the number of labels (${this.dataset[labelsIndex].length})`);
-
+        // const size = this.dataset[imagesIndex].length;
+        const size = imagesPerBatch;
+        // TF.util.assert(
+        //     this.dataset[labelsIndex].length === size,
+        //     `Mismatch in the number of images (${size}) and ` +
+        //     `the number of labels (${this.dataset[labelsIndex].length})`);
         // Only create one big array to hold batch of images.
         const imagesShape = [size, IMAGE_HEIGHT, IMAGE_WIDTH, 1];
         const images = new Float32Array(TF.util.sizeFromShape(imagesShape));
@@ -190,7 +190,7 @@ class MnistDataset {
 
         let imageOffset = 0;
         let labelOffset = 0;
-        for (let i = 0; i < size; ++i) {
+        for (let i = startIndex; i < size; ++i) {
             images.set(this.dataset[imagesIndex][i], imageOffset);
             labels.set(this.dataset[labelsIndex][i], labelOffset);
             imageOffset += IMAGE_FLAT_SIZE;

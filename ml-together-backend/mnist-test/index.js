@@ -58,11 +58,25 @@ const run = async function (epochs, batchSize, modelSavePath) {
 const runMapReduce = async function (modelSavePath) {
 
     await Data.loadData();
+    console.log(Data.trainSize);
+    const batchSize = 100;
+    //const numberOfBatches = Data.trainSize/batchSize;
+    const numberOfBatches = 5;
+    const vectors = [];
+    for (let i = 0; i < numberOfBatches; ++i) {
 
-    const vectorToReduce = MapReduce.mapFn(Data, Model);
-    MapReduce.reduceFn(vectorToReduce,Model);
+        const { images: trainDataX, labels: trainDataY } = Data.getTrainData(batchSize, i);
+        const vectorToReduce = MapReduce.mapFn(trainDataX, trainDataY, Model);
+        trainDataX.dispose();
+        trainDataY.dispose();
+        vectors.push(vectorToReduce);
+    }
 
-    // Test
+    MapReduce.reduceFn(vectors,Model);
+
+    console.log(vectors);
+
+    // // Test
     const { images: testImages, labels: testLabels } = Data.getTestData();
     const evalOutput = Model.evaluate(testImages, testLabels);
 

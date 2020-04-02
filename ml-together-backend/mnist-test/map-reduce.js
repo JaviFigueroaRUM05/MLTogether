@@ -28,7 +28,7 @@ const getGradientsAndSaveActions = function (x, y, model) {
 
 };
 
-const mapFn = function (data, model) {
+const mapFn = function (trainDataX, trainDataY, model) {
     // update model (in this case we don't because we are going to use one model)
 
     // compile model (already compiled in Model)
@@ -36,7 +36,7 @@ const mapFn = function (data, model) {
     // get the necessary data
     // currently the data is expected as the MNIST data from Tensorflow example
     // hence it might not work with other data
-    const { images: trainDataX, labels: trainDataY } = data.getTrainData();
+
 
     // get the gradients
     const { value, grads } = getGradientsAndSaveActions(trainDataX, trainDataY, model);
@@ -72,7 +72,7 @@ const reduceFn = function (vectorToReduce, model) {
     TF.tidy( () => {
 
         const tensors = {};
-        const tensorNames = Object.keys(vectorToReduce[0].result.grads);
+        const tensorNames = Object.keys(vectorToReduce[0].grads);
         tensorNames.forEach( (tensorName) => {
 
             for (let i = 0; i < vectorToReduce.length; ++i) {
@@ -81,7 +81,7 @@ const reduceFn = function (vectorToReduce, model) {
                     tensors[tensorName] = [];
                 }
 
-                tensors[tensorName].push(TF.tensor(vectorToReduce[i].result.grads[tensorName]));
+                tensors[tensorName].push(TF.tensor(vectorToReduce[i].grads[tensorName]));
             }
 
             tensors[tensorName] = TF.addN(tensors[tensorName]);
