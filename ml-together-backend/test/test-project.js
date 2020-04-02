@@ -2,6 +2,54 @@ const Nes = require('nes');
 
 var client = new Nes.Client('ws://localhost:3000');
 
+//TODO: fix params, move function 
+async function initializeTasks(projectData){
+    //sample project data
+      projectData = {
+        url : 'http://example.com/data',
+        chunkSize: 2,
+        dataLength: 5
+      }
+    
+    let chunk = Math.floor(projectData.dataLength/projectData.chunkSize);
+    let lowerBound = 0;
+    let UpperBound = projectData.chunkSize-1;
+  
+      for (let i = 0; i <chunk; i++){
+        let dataLocation = new URL (projectData.url);
+        //adds query parameters
+        dataLocation.searchParams.set('lowerBound',lowerBound);
+        dataLocation.searchParams.set('upperBound',UpperBound);
+        //task to be pushed queue
+        let task = { 
+          function: "map",
+          data: dataLocation
+        }
+      //to fetch actual data from api, not done in this function  
+      //  const { res, payload } = await Wreck.get(projectData.url);
+      //  let result = await payload;
+        console.log(task)
+        lowerBound = UpperBound + 1;
+        UpperBound = UpperBound + projectData.chunkSize;
+      }
+      if ( Number(projectData.dataLength%projectData.chunkSize)>Number(0)){
+        //uneven chunk
+        let dataLocation = new URL (projectData.url);
+        //task to be pushed to queue
+        //task to be pushed queue
+        dataLocation.searchParams.set('lowerBound',lowerBound);
+        dataLocation.searchParams.set('upperBound',projectData.dataLength-1);
+          let task = { 
+            function: "map",
+            data: dataLocation
+          }
+          console.log(task)
+        
+      }
+    
+  }
+  
+
 // Map-Reduce Functions
 const map = (n) => { // Map = factorial(n)
     var result = 1;
