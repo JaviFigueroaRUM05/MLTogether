@@ -19,6 +19,8 @@
     "@hapi/joi": "17.x.x",
     "amqplib": "^0.5.5",
     "haute-couture": "3.x.x",
+    "joi": "^14.3.1",
+    "mongoose": "^5.9.7",
     "nes": "^10.0.2",
     "nodemon": "^2.0.2"
   },
