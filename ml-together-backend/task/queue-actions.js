@@ -15,15 +15,14 @@ const fetchFromQueue = function (channel, queue) {
     });
 };
 
-const pushResultsToQueue = function () {
+const pushResultsToQueue = function (results,channel,queue) {
 
-    // TODO: Place results to the queue
     return new Promise((resolve) => {
 
-        setTimeout(() => {
-
-            resolve();
-        }, 1000);
+        channel.sendToQueue(queue, Buffer.from(JSON.stringify(results)), {
+            persistent: true
+        });
+        resolve();
     });
 };
 

@@ -20,6 +20,8 @@ const ArgParse = require('argparse');
 const Data = require('./data');
 const Model = require('./model');
 const MapReduce = require('./map-reduce');
+const Nes = require('nes');
+const QueueManager = require('./tasks-initializer');
 
 const run = async function (epochs, batchSize, modelSavePath) {
 
@@ -89,7 +91,71 @@ const runMapReduce = async function (modelSavePath) {
         await Model.save(`file://${modelSavePath}`);
         console.log(`Saved model to path: ${modelSavePath}`);
     }
-}
+};
+
+const runMLTogether = async function () {
+
+    const batchSize = 100;
+    const client = new Nes.Client('ws://localhost:3000');
+    await client.connect();
+    await Data.loadData();
+    console.log(Data.trainSize);
+    // Initialize Tasks
+    await QueueManager.purgeQueue('task_queue_project_1');
+    await QueueManager.initializeTaskQueue('task_queue_project_1');
+    await QueueManager.purgeQueue('results_queue_project_1');
+
+
+    for (let i = 0; i < 4; ++i) {
+        const mapResultsQueueName = 'map_results_queue_project_' + 1 + '_' + (i + 1);
+        await QueueManager.purgeQueue(mapResultsQueueName);
+    }
+    // Work Loop
+
+    while (true) {
+        let encodedPayload = null;
+        try {
+            encodedPayload = await client.message(JSON.stringify({ event: 'next', projectId: '1' }));
+        }
+        catch (err) {
+            console.error(err);
+            process.exit(1);
+        }
+
+        console.log('Working');
+        console.log(encodedPayload);
+        const payload = JSON.parse(encodedPayload.payload);
+        let result = null;
+        let lastOperation = null;
+        if      (payload.function === 'map')    {
+            const { images: trainDataX, labels: trainDataY } = Data.getTrainData(batchSize, payload.dataStart);
+            result = { result: MapReduce.mapFn(trainDataX, trainDataY, Model) };
+            lastOperation = 'map';
+        }
+        else if (payload.function === 'reduce') {
+            //result = { result: MapReduce.reduceFn(payload.data) };
+            console.log('NEED TO IMPLEMENT REDUCE');
+            result = 'reduce';
+            lastOperation = 'reduce';
+        }
+        else if (payload.function === 'nop')    {
+            break;
+        }
+        else                                   {
+            console.log('Function: ' + payload.function + ' is Invalid.'); process.exit(1);
+        }
+
+        const resultsPayload = JSON
+            .stringify({ event: 'result', projectId: '1', results: result, lastOperation, mapResultsId: payload.mapResultsId });
+
+
+        const resultsSentAnswer = await client
+            .message(resultsPayload);
+        console.log(resultsSentAnswer);
+    }
+
+    console.log('No more work!');
+};
 
 const parser = new ArgParse.ArgumentParser({
     description: 'TensorFlow.js-Node MNIST Example.',
@@ -112,4 +178,5 @@ parser.addArgument('--model_save_path', {
 const args = parser.parseArgs();
 
 //run(args.epochs, args.batch_size, args.model_save_path);
-runMapReduce(args.model_save_path);
+//runMapReduce(args.model_save_path);
+runMLTogether();

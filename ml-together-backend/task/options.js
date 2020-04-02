@@ -10,33 +10,50 @@ const onMessage = (server) =>
 
         const msg = JSON.parse(message);
         const channel = server.methods.amqp.channel();
-        const tasksQueue = 'task_queue';
-        const resultsQueue = 'task_queue';
+        const projectId = msg.projectId;
 
+        // TODO: Check if the projectId exists
+        const tasksQueueName = 'task_queue_project_' + projectId;
+        const mapResultsQueueName = 'map_results_queue_project_' + projectId;
+        const resultsQueueName = 'results_queue_project_' + projectId;
+        // TODO: Split into more result queues
 
+        // TODO: Split in projects somehow
         // bring more tasks
         if (msg.event === 'next') {
 
-            const task = await QueueActions.fetchFromQueue(channel, tasksQueue);
+            const task = await QueueActions.fetchFromQueue(channel, tasksQueueName);
+
+            if (JSON.parse(task).function === 'reduce' ) {
+
+                return task.toString();
+            }
+
             server.log(['debug'],task);
 
-            // TODO: Place logic for mapping fetch results to send out the message
-
-            return JSON.stringify({
-                function: 'reduce',
-                data: 20
-            });
+            return task.toString();
 
         }
         else if (msg.event === 'result') {
-            // TODO: Push Result to Task Broker
-            const results = 'Test';
-            await QueueActions.pushResultsToQueue(results, channel, resultsQueue);
+            console.log(msg);
+            const results = msg.results;
+            if (msg.lastOperation === 'map') {
+                const mapResultsQueueFullName = mapResultsQueueName + '_' + msg.mapResultsId;
+                channel.assertQueue(mapResultsQueueFullName, {
+                    durable: true
+                });
+                await QueueActions.pushResultsToQueue(results, channel, mapResultsQueueFullName);
+            }
+            else {
+                console.log('Done');
+            }
+
+            return { message: 'good' };
 
         }
-        else {
-            // TODO: Return error because event does not exist
-        }
+
+        // TODO: Return error because event does not exist
+
     };
 
 const onConnection = (socket) => {
