@@ -17,6 +17,8 @@
   "dependencies": {
     "@hapi/boom": "9.x.x",
     "@hapi/joi": "17.x.x",
+    "@tensorflow/tfjs": "^1.7.0",
+    "@tensorflow/tfjs-node": "^1.7.0",
     "amqplib": "^0.5.5",
     "haute-couture": "3.x.x",
     "joi": "^14.3.1",
