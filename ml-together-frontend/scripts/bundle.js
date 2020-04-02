@@ -188,7 +188,7 @@ process.umask = function() { return 0; };
 (function (process){
 const Nes = require('@hapi/nes/lib/client');
 
-var client = new Nes.Client('ws://localhost:3000');
+var client = new Nes.Client('ws://mltogether.com:3000');
 
 // Map-Reduce Functions
 const map = (n) => { // Map = factorial(n)

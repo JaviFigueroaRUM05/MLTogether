@@ -13,7 +13,7 @@ exports.plugin = {
         // Adds the amqp channel as a method to the server
         let channel = null;
         try {
-            channel = await AMQPInitializer.initialize('amqp://localhost');
+            channel = await AMQPInitializer.initialize('amqp://0.0.0.0');
         }
         catch (err) {
             server.log(['error'], err.message);
