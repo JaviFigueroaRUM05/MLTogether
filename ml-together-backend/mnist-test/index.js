@@ -1,3 +1,4 @@
+'use strict';
 /**
  * @license
  * Copyright 2018 Google LLC. All Rights Reserved.
@@ -15,63 +16,86 @@
  * =============================================================================
  */
 
-const tf = require('@tensorflow/tfjs-node');
-const argparse = require('argparse');
+const ArgParse = require('argparse');
+const Data = require('./data');
+const Model = require('./model');
+const MapReduce = require('./map-reduce');
 
-const data = require('./data');
-const model = require('./model');
+const run = async function (epochs, batchSize, modelSavePath) {
 
-async function run(epochs, batchSize, modelSavePath) {
-  await data.loadData();
+    await Data.loadData();
 
-  const {images: trainImages, labels: trainLabels} = data.getTrainData();
-  model.summary();
+    const { images: trainImages, labels: trainLabels } = Data.getTrainData();
+    Model.summary();
 
-  let epochBeginTime;
-  let millisPerStep;
-  const validationSplit = 0.15;
-  const numTrainExamplesPerEpoch =
+    let epochBeginTime;
+    let millisPerStep;
+    const validationSplit = 0.15;
+    const numTrainExamplesPerEpoch =
       trainImages.shape[0] * (1 - validationSplit);
-  const numTrainBatchesPerEpoch =
+    const numTrainBatchesPerEpoch =
       Math.ceil(numTrainExamplesPerEpoch / batchSize);
-  await model.fit(trainImages, trainLabels, {
-    epochs,
-    batchSize,
-    validationSplit
-  });
+    await Model.fit(trainImages, trainLabels, {
+        epochs,
+        batchSize,
+        validationSplit
+    });
 
-  const {images: testImages, labels: testLabels} = data.getTestData();
-  const evalOutput = model.evaluate(testImages, testLabels);
+    const { images: testImages, labels: testLabels } = Data.getTestData();
+    const evalOutput = Model.evaluate(testImages, testLabels);
 
-  console.log(
-      `\nEvaluation result:\n` +
-      `  Loss = ${evalOutput[0].dataSync()[0].toFixed(3)}; `+
+    console.log(
+        `\nEvaluation result:\n` +
+      `  Loss = ${evalOutput[0].dataSync()[0].toFixed(3)}; ` +
       `Accuracy = ${evalOutput[1].dataSync()[0].toFixed(3)}`);
 
-  if (modelSavePath != null) {
-    await model.save(`file://${modelSavePath}`);
-    console.log(`Saved model to path: ${modelSavePath}`);
-  }
+    if (modelSavePath !== null) {
+        await Model.save(`file://${modelSavePath}`);
+        console.log(`Saved model to path: ${modelSavePath}`);
+    }
+};
+
+const runMapReduce = async function (modelSavePath) {
+
+    await Data.loadData();
+
+    const vectorToReduce = MapReduce.mapFn(Data, Model);
+    MapReduce.reduceFn(vectorToReduce,Model);
+
+    // Test
+    const { images: testImages, labels: testLabels } = Data.getTestData();
+    const evalOutput = Model.evaluate(testImages, testLabels);
+
+    console.log(
+        `\nEvaluation result:\n` +
+      `  Loss = ${evalOutput[0].dataSync()[0].toFixed(3)}; ` +
+      `Accuracy = ${evalOutput[1].dataSync()[0].toFixed(3)}`);
+
+    if (modelSavePath !== null) {
+        await Model.save(`file://${modelSavePath}`);
+        console.log(`Saved model to path: ${modelSavePath}`);
+    }
 }
 
-const parser = new argparse.ArgumentParser({
-  description: 'TensorFlow.js-Node MNIST Example.',
-  addHelp: true
+const parser = new ArgParse.ArgumentParser({
+    description: 'TensorFlow.js-Node MNIST Example.',
+    addHelp: true
 });
 parser.addArgument('--epochs', {
-  type: 'int',
-  defaultValue: 20,
-  help: 'Number of epochs to train the model for.'
+    type: 'int',
+    defaultValue: 20,
+    help: 'Number of epochs to train the model for.'
 });
 parser.addArgument('--batch_size', {
-  type: 'int',
-  defaultValue: 128,
-  help: 'Batch size to be used during model training.'
-})
+    type: 'int',
+    defaultValue: 128,
+    help: 'Batch size to be used during model training.'
+});
 parser.addArgument('--model_save_path', {
-  type: 'string',
-  help: 'Path to which the model will be saved after training.'
+    type: 'string',
+    help: 'Path to which the model will be saved after training.'
 });
 const args = parser.parseArgs();
 
-run(args.epochs, args.batch_size, args.model_save_path);
+//run(args.epochs, args.batch_size, args.model_save_path);
+runMapReduce(args.model_save_path);

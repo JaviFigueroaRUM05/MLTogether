@@ -1,3 +1,4 @@
+'use strict';
 /**
  * @license
  * Copyright 2018 Google LLC. All Rights Reserved.
@@ -15,43 +16,43 @@
  * =============================================================================
  */
 
-const tf = require('@tensorflow/tfjs');
+const TF = require('@tensorflow/tfjs');
 
-const model = tf.sequential();
-model.add(tf.layers.conv2d({
-  inputShape: [28, 28, 1],
-  filters: 32,
-  kernelSize: 3,
-  activation: 'relu',
+const model = TF.sequential();
+model.add(TF.layers.conv2d({
+    inputShape: [28, 28, 1],
+    filters: 32,
+    kernelSize: 3,
+    activation: 'relu'
 }));
-model.add(tf.layers.conv2d({
-  filters: 32,
-  kernelSize: 3,
-  activation: 'relu',
+model.add(TF.layers.conv2d({
+    filters: 32,
+    kernelSize: 3,
+    activation: 'relu'
 }));
-model.add(tf.layers.maxPooling2d({poolSize: [2, 2]}));
-model.add(tf.layers.conv2d({
-  filters: 64,
-  kernelSize: 3,
-  activation: 'relu',
+model.add(TF.layers.maxPooling2d({ poolSize: [2, 2] }));
+model.add(TF.layers.conv2d({
+    filters: 64,
+    kernelSize: 3,
+    activation: 'relu'
 }));
-model.add(tf.layers.conv2d({
-  filters: 64,
-  kernelSize: 3,
-  activation: 'relu',
+model.add(TF.layers.conv2d({
+    filters: 64,
+    kernelSize: 3,
+    activation: 'relu'
 }));
-model.add(tf.layers.maxPooling2d({poolSize: [2, 2]}));
-model.add(tf.layers.flatten());
-model.add(tf.layers.dropout({rate: 0.25}));
-model.add(tf.layers.dense({units: 512, activation: 'relu'}));
-model.add(tf.layers.dropout({rate: 0.5}));
-model.add(tf.layers.dense({units: 10, activation: 'softmax'}));
+model.add(TF.layers.maxPooling2d({ poolSize: [2, 2] }));
+model.add(TF.layers.flatten());
+model.add(TF.layers.dropout({ rate: 0.25 }));
+model.add(TF.layers.dense({ units: 512, activation: 'relu' }));
+model.add(TF.layers.dropout({ rate: 0.5 }));
+model.add(TF.layers.dense({ units: 10, activation: 'softmax' }));
 
 const optimizer = 'rmsprop';
 model.compile({
-  optimizer: optimizer,
-  loss: 'categoricalCrossentropy',
-  metrics: ['accuracy'],
+    optimizer,
+    loss: 'categoricalCrossentropy',
+    metrics: ['accuracy']
 });
 
 module.exports = model;
