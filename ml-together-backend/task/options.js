@@ -13,16 +13,19 @@ const onMessage = (server) =>
         const projectId = msg.projectId;
 
         // TODO: Check if the projectId exists
-        const tasksQueueName = 'task_queue_project_' + projectId;
-        const mapResultsQueueName = 'map_results_queue_project_' + projectId;
-        const resultsQueueName = 'results_queue_project_' + projectId;
+        const tasksQueueName = 'task_queue_' + projectId;
+        const mapResultsQueueName = 'map_results_queue_' + projectId;
+        const resultsQueueName = 'reduce_results_queue_' + projectId;
         // TODO: Split into more result queues
 
         // TODO: Split in projects somehow
         // bring more tasks
         if (msg.event === 'next') {
 
-            const task = await QueueActions.fetchFromQueue(channel, tasksQueueName);
+            const task = await QueueActions.fetchFromQueue(channel, tasksQueueName, 5000);
+            if (task === null) {
+                return { function: 'nop' };
+            }
 
             if (JSON.parse(task).function === 'reduce' ) {
 

@@ -1,8 +1,13 @@
 'use strict';
 
-const fetchFromQueue = function (channel, queue) {
+const fetchFromQueue = function (channel, queue, maxTimeToWait) {
 
     return new Promise((resolve) => {
+
+        setTimeout( () => {
+
+            resolve(null);
+        }, maxTimeToWait);
 
         channel.consume(queue, (msg) => {
 
