@@ -21,101 +21,31 @@ const Data = require('./data');
 const Model = require('./model');
 const MapReduce = require('./map-reduce');
 const Nes = require('nes');
-const QueueManager = require('./tasks-initializer');
+const ProjectQueueManager = require('./queue-management');
+const GoalTaskInfo = require('../../task/goal-task-info');
 
-const run = async function (epochs, batchSize, modelSavePath) {
-
-    await Data.loadData();
-
-    const { images: trainImages, labels: trainLabels } = Data.getTrainData();
-    Model.summary();
-
-    let epochBeginTime;
-    let millisPerStep;
-    const validationSplit = 0.15;
-    const numTrainExamplesPerEpoch =
-      trainImages.shape[0] * (1 - validationSplit);
-    const numTrainBatchesPerEpoch =
-      Math.ceil(numTrainExamplesPerEpoch / batchSize);
-    await Model.fit(trainImages, trainLabels, {
-        epochs,
-        batchSize,
-        validationSplit
-    });
-
-    const { images: testImages, labels: testLabels } = Data.getTestData();
-    const evalOutput = Model.evaluate(testImages, testLabels);
-
-    console.log(
-        `\nEvaluation result:\n` +
-      `  Loss = ${evalOutput[0].dataSync()[0].toFixed(3)}; ` +
-      `Accuracy = ${evalOutput[1].dataSync()[0].toFixed(3)}`);
-
-    if (modelSavePath !== null) {
-        await Model.save(`file://${modelSavePath}`);
-        console.log(`Saved model to path: ${modelSavePath}`);
-    }
-};
-
-const runMapReduce = async function (modelSavePath) {
-
-    await Data.loadData();
-    console.log(Data.trainSize);
-    const batchSize = 100;
-    //const numberOfBatches = Data.trainSize/batchSize;
-    const numberOfBatches = 5;
-    const vectors = [];
-    for (let i = 0; i < numberOfBatches; ++i) {
-
-        const { images: trainDataX, labels: trainDataY } = Data.getTrainData(batchSize, i);
-        const vectorToReduce = MapReduce.mapFn(trainDataX, trainDataY, Model);
-        trainDataX.dispose();
-        trainDataY.dispose();
-        vectors.push(vectorToReduce);
-    }
-
-    MapReduce.reduceFn(vectors,Model);
-
-    console.log(vectors);
-
-    // // Test
-    const { images: testImages, labels: testLabels } = Data.getTestData();
-    const evalOutput = Model.evaluate(testImages, testLabels);
-
-    console.log(
-        `\nEvaluation result:\n` +
-      `  Loss = ${evalOutput[0].dataSync()[0].toFixed(3)}; ` +
-      `Accuracy = ${evalOutput[1].dataSync()[0].toFixed(3)}`);
-
-    if (modelSavePath !== null) {
-        await Model.save(`file://${modelSavePath}`);
-        console.log(`Saved model to path: ${modelSavePath}`);
-    }
-};
-
+const TASK_QUEUE_NAME = 'task_queue';
+const MAP_RESULTS_QUEUE_NAME = 'map_results';
+const REDUCE_RESULTS_QUEUE_NAME = 'queue_results';
+const BATCH_SIZE = 100;
+const BATCHES_PER_REDUCE = 100;
+const PROJECT_ID = 'mnist121';
 const runMLTogether = async function () {
 
-    const batchSize = 100;
-    const client = new Nes.Client('ws://localhost:3000');
-    await client.connect();
+    const nesClient = new Nes.Client('ws://localhost:3000');
+    await nesClient.connect();
     await Data.loadData();
-    console.log(Data.trainSize);
+
     // Initialize Tasks
-    await QueueManager.purgeQueue('task_queue_project_1');
-    await QueueManager.initializeTaskQueue('task_queue_project_1');
-    await QueueManager.purgeQueue('results_queue_project_1');
+    const goalTaskInfo = new GoalTaskInfo(Data.trainSize, BATCH_SIZE, BATCHES_PER_REDUCE);
+    await ProjectQueueManager.purgeAllProjectQueues(PROJECT_ID, TASK_QUEUE_NAME, MAP_RESULTS_QUEUE_NAME, REDUCE_RESULTS_QUEUE_NAME);
+    await ProjectQueueManager.intializeGoalTasks(goalTaskInfo, TASK_QUEUE_NAME);
 
-
-    for (let i = 0; i < 4; ++i) {
-        const mapResultsQueueName = 'map_results_queue_project_' + 1 + '_' + (i + 1);
-        await QueueManager.purgeQueue(mapResultsQueueName);
-    }
     // Work Loop
-
     while (true) {
         let encodedPayload = null;
         try {
-            encodedPayload = await client.message(JSON.stringify({ event: 'next', projectId: '1' }));
+            encodedPayload = await nesClient.message(JSON.stringify({ event: 'next', projectId: '1' }));
         }
         catch (err) {
             console.error(err);
@@ -128,7 +58,7 @@ const runMLTogether = async function () {
         let result = null;
         let lastOperation = null;
         if      (payload.function === 'map')    {
-            const { images: trainDataX, labels: trainDataY } = Data.getTrainData(batchSize, payload.dataStart);
+            const { images: trainDataX, labels: trainDataY } = Data.getTrainData(BATCH_SIZE, payload.dataStart);
             result = { result: MapReduce.mapFn(trainDataX, trainDataY, Model) };
             lastOperation = 'map';
         }
@@ -149,7 +79,7 @@ const runMLTogether = async function () {
             .stringify({ event: 'result', projectId: '1', results: result, lastOperation, mapResultsId: payload.mapResultsId });
 
 
-        const resultsSentAnswer = await client
+        const resultsSentAnswer = await nesClient
             .message(resultsPayload);
         console.log(resultsSentAnswer);
     }
