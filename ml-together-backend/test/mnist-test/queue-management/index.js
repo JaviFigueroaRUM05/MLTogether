@@ -4,14 +4,14 @@
 const TasksInitializer = require('./tasks-initializer');
 const QueuePurger = require('./queue-purger');
 
-const purgeAllProjectQueues = async function (projectID, taskQueueName, mapResultsQueueName, reduceResultQueueName) {
+const purgeAllProjectQueues = async function (projectID, taskQueueName, mapResultsQueueName, reduceResultQueueName, numberOfMapQueues) {
 
     const fullTaskQueueName = taskQueueName + '_' + projectID;
     const fullMapResultsQueueName = mapResultsQueueName + '_' + projectID;
     const fullReduceResultsQueueName = reduceResultQueueName + '_' + projectID;
 
     await QueuePurger.purgeQueue(fullTaskQueueName);
-    await QueuePurger.purgeMapResultsQueues(fullMapResultsQueueName);
+    await QueuePurger.purgeMapResultsQueues(fullMapResultsQueueName, numberOfMapQueues);
     await QueuePurger.purgeQueue(fullReduceResultsQueueName);
 };
 

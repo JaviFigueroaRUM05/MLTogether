@@ -27,7 +27,7 @@ const TASK_QUEUE_NAME = 'task_queue';
 const MAP_RESULTS_QUEUE_NAME = 'map_results_queue';
 const REDUCE_RESULTS_QUEUE_NAME = 'reduce_results_queue';
 const BATCH_SIZE = 100;
-const BATCHES_PER_REDUCE = 100;
+const BATCHES_PER_REDUCE = 5;
 const PROJECT_ID = 'mnist121';
 
 const getTask = async function (nesClient) {
@@ -60,9 +60,8 @@ const completeTask = function (task) {
         lastOperation = 'map';
     }
     else if (task.function === 'reduce') {
-        //result = { result: MapReduce.reduceFn(payload.data) };
-        console.log('NEED TO IMPLEMENT REDUCE');
-        result = 'reduce';
+        const vectorToReduce = task.reduceData.map(x => JSON.parse(x).result);
+        result = { result: MapReduce.reduceFn(vectorToReduce, Model) };
         lastOperation = 'reduce';
     }
     else if (task.function === 'nop')    {
@@ -93,16 +92,22 @@ const runMLTogether = async function () {
     await nesClient.connect();
     await Data.loadData();
 
-    // Initialize Tasks
-    const goalTaskInfo = new GoalTaskInfo(Data.trainSize, BATCH_SIZE, BATCHES_PER_REDUCE);
+    const trainingDataLength = 1000;
 
-    await ProjectQueueManager.purgeAllProjectQueues(PROJECT_ID, TASK_QUEUE_NAME, MAP_RESULTS_QUEUE_NAME, REDUCE_RESULTS_QUEUE_NAME);
+    // Initialize Tasks
+    const goalTaskInfo = new GoalTaskInfo(trainingDataLength, BATCH_SIZE, BATCHES_PER_REDUCE);
+
+    await ProjectQueueManager.purgeAllProjectQueues(PROJECT_ID,
+        TASK_QUEUE_NAME,
+        MAP_RESULTS_QUEUE_NAME,
+        REDUCE_RESULTS_QUEUE_NAME,
+        trainingDataLength / BATCH_SIZE / BATCHES_PER_REDUCE);
+
     await ProjectQueueManager.intializeGoalTasks(goalTaskInfo, TASK_QUEUE_NAME + '_' + PROJECT_ID);
 
     // Work Loop
     while (true) {
         const task = await getTask(nesClient);
-        console.log(task);
         const taskResults = completeTask(task);
 
         if (taskResults === null) {

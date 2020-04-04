@@ -4,6 +4,7 @@ const AMQPInitializer = require('../../../task/amqp-initializer');
 
 const purgeQueue = async function (queueName) {
 
+    console.log('Purging: ' + queueName);
     let channel = null;
     try {
         channel = await AMQPInitializer.initialize('amqp://localhost');
@@ -28,9 +29,8 @@ const purgeMapResultsQueues = async function (mapResultsQueueName, numberOfQueue
 
     for (let i = 0; i < numberOfQueues; ++i) {
         const fullMapResultsQueueName = (mapResultsQueueName + '_' + (i + 1));
-
         await purgeQueue(fullMapResultsQueueName);
     }
 };
 
-module.exports = {purgeQueue, purgeMapResultsQueues}
+module.exports = { purgeQueue, purgeMapResultsQueues };

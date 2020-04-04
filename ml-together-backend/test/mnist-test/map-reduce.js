@@ -64,7 +64,6 @@ const mapFn = function (trainDataX, trainDataY, model) {
 const reduceFn = function (vectorToReduce, model) {
 
     // TODO: check if vectorToReduce is valid
-
     // update model
 
     // compile model

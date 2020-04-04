@@ -19,9 +19,9 @@ const addMapTasks = function (trainingSetSize, batchSize, taskQueueName, channel
 };
 
 
-const addReduceTasks = function (trainingSetSize, batchesPerReduce, channel, taskQueueName) {
+const addReduceTasks = function (trainingSetSize, batchSize, batchesPerReduce, channel, taskQueueName) {
 
-    for (let i = 0; i < (trainingSetSize / batchesPerReduce); ++i) {
+    for (let i = 0; i < (trainingSetSize / batchSize / batchesPerReduce); ++i) {
         const reduceTask = JSON.stringify({ function: 'reduce', mapResultsId: i + 1 });
         channel.sendToQueue(taskQueueName, Buffer.from(reduceTask));
     }
@@ -65,7 +65,7 @@ const initializeTaskQueue = async function (trainingSetSize, batchSize, batchesP
 
     addMapTasks(trainingSetSize, batchSize, taskQueueName, channel, batchesPerReduce);
 
-    addReduceTasks(trainingSetSize, batchesPerReduce, channel, taskQueueName);
+    addReduceTasks(trainingSetSize, batchSize, batchesPerReduce, channel, taskQueueName);
 
 };
 

@@ -22,19 +22,42 @@ const onMessage = (server) =>
         // bring more tasks
         if (msg.event === 'next') {
 
-            const task = await QueueActions.fetchFromQueue(channel, tasksQueueName, 5000);
-            if (task === null) {
-                return { function: 'nop' };
+            const encodedTask = await QueueActions.fetchFromQueue(channel, tasksQueueName, 5000);
+            if (encodedTask === null) {
+                console.log('here');
+                return JSON.stringify({ function: 'nop' });
             }
 
-            if (JSON.parse(task).function === 'reduce' ) {
+            const task = JSON.parse(encodedTask);
 
-                return task.toString();
+            if (task.function === 'reduce' ) {
+                const mapResultsId = task.mapResultsId;
+
+                // TODO: Check first if all of the map results are in the queue
+                const reduceData = [];
+                let gotAllMapResults = false;
+                while (!gotAllMapResults) {
+                    console.log('here');
+                    const reduceDataInstance =  await QueueActions.fetchFromQueue(channel,
+                        mapResultsQueueName + '_' + mapResultsId, 3000);
+
+                    if (reduceDataInstance === null) {
+                        gotAllMapResults = true;
+                    }
+                    else {
+                        reduceData.push(reduceDataInstance.toString());
+                    }
+
+                }
+
+                task.reduceData = reduceData;
+                console.log('Returning reduces');
+                return JSON.stringify(task);
             }
 
-            server.log(['debug'],task);
+            server.log(['debug'],encodedTask);
 
-            return task.toString();
+            return encodedTask.toString();
 
         }
         else if (msg.event === 'result') {

@@ -11,7 +11,6 @@ const fetchFromQueue = function (channel, queue, maxTimeToWait) {
 
         channel.consume(queue, (msg) => {
 
-            console.log(' [x] Received %s', msg.content.toString());
             resolve(msg.content);
         }, {
             noAck: false
