@@ -23,10 +23,23 @@ exports.deployment = async (start) => {
 
 if (!module.parent) {
 
-    exports.deployment(true);
+    let server = null;
+    exports.deployment(true).then( (ser) => {
+
+        server = ser;
+    });
 
     process.on('unhandledRejection', (err) => {
 
         throw err;
+    });
+    process.on('SIGINT', () => {
+
+        console.log('stopping hapi server');
+        server.stop({ timeout: 10000 }).then((err) => {
+
+            console.log('hapi server stopped');
+            process.exit((err) ? 1 : 0);
+        });
     });
 }

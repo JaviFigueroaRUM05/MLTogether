@@ -16,12 +16,13 @@
  * =============================================================================
  */
 
-const Data = require('./data');
+const Axios = require('axios');
 const Model = require('./model');
 const MapReduce = require('./map-reduce');
 const Nes = require('nes');
 const ProjectQueueManager = require('./queue-management');
 const GoalTaskInfo = require('../../task/goal-task-info');
+const TF = require('@tensorflow/tfjs-node');
 
 const TASK_QUEUE_NAME = 'task_queue';
 const MAP_RESULTS_QUEUE_NAME = 'map_results_queue';
@@ -50,17 +51,22 @@ const getTask = async function (nesClient) {
 };
 
 
-const completeTask = function (task) {
+const completeTask = async function (task) {
 
     let result = null;
     let lastOperation = null;
     if      (task.function === 'map')    {
-        const { images: trainDataX, labels: trainDataY } = Data.getTrainData(BATCH_SIZE, task.dataStart);
+        const response = await Axios
+            .get(`http://localhost:3000/mnist/data?start=${task.dataStart}&end=${task.dataStart + BATCH_SIZE}`);
+
+        const trainDataX = TF.tensor(response.data.images);
+        console.log(trainDataX.shape);
+        const trainDataY = TF.tensor(response.data.labels);
         result = { result: MapReduce.mapFn(trainDataX, trainDataY, Model) };
         lastOperation = 'map';
     }
     else if (task.function === 'reduce') {
-        const vectorToReduce = task.reduceData.map(x => JSON.parse(x).result);
+        const vectorToReduce = task.reduceData.map( (x) => JSON.parse(x).result);
         result = { result: MapReduce.reduceFn(vectorToReduce, Model) };
         lastOperation = 'reduce';
     }
@@ -90,7 +96,6 @@ const runMLTogether = async function () {
 
     const nesClient = new Nes.Client('ws://localhost:3000');
     await nesClient.connect();
-    await Data.loadData();
 
     const trainingDataLength = 1000;
 
@@ -106,9 +111,10 @@ const runMLTogether = async function () {
     await ProjectQueueManager.intializeGoalTasks(goalTaskInfo, TASK_QUEUE_NAME + '_' + PROJECT_ID);
 
     // Work Loop
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         const task = await getTask(nesClient);
-        const taskResults = completeTask(task);
+        const taskResults = await completeTask(task);
 
         if (taskResults === null) {
             break;

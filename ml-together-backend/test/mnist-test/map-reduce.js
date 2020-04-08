@@ -76,7 +76,7 @@ const reduceFn = function (vectorToReduce, model) {
 
             for (let i = 0; i < vectorToReduce.length; ++i) {
 
-                if (i === 0) { 
+                if (i === 0) {
                     tensors[tensorName] = [];
                 }
 
