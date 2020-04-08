@@ -1,12 +1,16 @@
 'use strict';
 
-const fetchFromQueue = function (channel, queue) {
+const fetchFromQueue = function (channel, queue, maxTimeToWait) {
 
     return new Promise((resolve) => {
 
+        setTimeout( () => {
+
+            resolve(null);
+        }, maxTimeToWait);
+
         channel.consume(queue, (msg) => {
 
-            console.log(' [x] Received %s', msg.content.toString());
             resolve(msg.content);
         }, {
             noAck: false
@@ -15,15 +19,14 @@ const fetchFromQueue = function (channel, queue) {
     });
 };
 
-const pushResultsToQueue = function () {
+const pushResultsToQueue = function (results,channel,queue) {
 
-    // TODO: Place results to the queue
     return new Promise((resolve) => {
 
-        setTimeout(() => {
-
-            resolve();
-        }, 1000);
+        channel.sendToQueue(queue, Buffer.from(JSON.stringify(results)), {
+            persistent: true
+        });
+        resolve();
     });
 };
 

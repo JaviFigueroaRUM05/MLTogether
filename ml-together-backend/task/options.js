@@ -10,33 +10,76 @@ const onMessage = (server) =>
 
         const msg = JSON.parse(message);
         const channel = server.methods.amqp.channel();
-        const tasksQueue = 'task_queue';
-        const resultsQueue = 'task_queue';
+        const projectId = msg.projectId;
 
+        // TODO: Check if the projectId exists
+        const tasksQueueName = 'task_queue_' + projectId;
+        const mapResultsQueueName = 'map_results_queue_' + projectId;
+        const resultsQueueName = 'reduce_results_queue_' + projectId;
+        // TODO: Split into more result queues
 
+        // TODO: Split in projects somehow
         // bring more tasks
         if (msg.event === 'next') {
 
-            const task = await QueueActions.fetchFromQueue(channel, tasksQueue);
-            server.log(['debug'],task);
+            const encodedTask = await QueueActions.fetchFromQueue(channel, tasksQueueName, 5000);
+            if (encodedTask === null) {
+                console.log('here');
+                return JSON.stringify({ function: 'nop' });
+            }
 
-            // TODO: Place logic for mapping fetch results to send out the message
+            const task = JSON.parse(encodedTask);
 
-            return JSON.stringify({
-                function: 'reduce',
-                data: 20
-            });
+            if (task.function === 'reduce' ) {
+                const mapResultsId = task.mapResultsId;
+
+                // TODO: Check first if all of the map results are in the queue
+                const reduceData = [];
+                let gotAllMapResults = false;
+                while (!gotAllMapResults) {
+                    console.log('here');
+                    const reduceDataInstance =  await QueueActions.fetchFromQueue(channel,
+                        mapResultsQueueName + '_' + mapResultsId, 3000);
+
+                    if (reduceDataInstance === null) {
+                        gotAllMapResults = true;
+                    }
+                    else {
+                        reduceData.push(reduceDataInstance.toString());
+                    }
+
+                }
+
+                task.reduceData = reduceData;
+                console.log('Returning reduces');
+                return JSON.stringify(task);
+            }
+
+            server.log(['debug'],encodedTask);
+
+            return encodedTask.toString();
 
         }
         else if (msg.event === 'result') {
-            // TODO: Push Result to Task Broker
-            const results = 'Test';
-            await QueueActions.pushResultsToQueue(results, channel, resultsQueue);
+            console.log(msg);
+            const results = msg.results;
+            if (msg.lastOperation === 'map') {
+                const mapResultsQueueFullName = mapResultsQueueName + '_' + msg.mapResultsId;
+                channel.assertQueue(mapResultsQueueFullName, {
+                    durable: true
+                });
+                await QueueActions.pushResultsToQueue(results, channel, mapResultsQueueFullName);
+            }
+            else {
+                console.log('Done');
+            }
+
+            return { message: 'good' };
 
         }
-        else {
-            // TODO: Return error because event does not exist
-        }
+
+        // TODO: Return error because event does not exist
+
     };
 
 const onConnection = (socket) => {

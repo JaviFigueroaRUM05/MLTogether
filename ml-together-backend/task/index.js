@@ -25,9 +25,17 @@ exports.plugin = {
         server.method('amqp.channel', function () { return this; }, { bind: channel });
 
         // Register Websockets as plugins
-        await server.register({
-            plugin: Nes,
-            options: CreateOptions(server)
-        });
+        try {
+            await server.register({
+                plugin: Nes,
+                options: CreateOptions(server)
+            });
+        }
+        catch (err) {
+
+            console.error(err);
+            process.exit(1);
+        }
+
     }
 };

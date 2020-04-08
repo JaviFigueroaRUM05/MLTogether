@@ -67,7 +67,6 @@ const initAMQPChannel = async function (url) {
         durable: true
     });
     channel.prefetch(1);
-    console.log(' [*] Waiting for messages in %s. To exit press CTRL+C', queue);
     return channel;
 };
 
