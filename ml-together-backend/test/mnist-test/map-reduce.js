@@ -86,6 +86,8 @@ const reduceFn = function (vectorToReduce, model) {
             tensors[tensorName] = TF.addN(tensors[tensorName]);
         });
         model.optimizer.applyGradients(tensors);
+
+        // TODO: Return Model
     });
 };
 

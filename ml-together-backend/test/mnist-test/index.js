@@ -17,7 +17,8 @@
  */
 
 const Axios = require('axios');
-const Model = require('./model');
+const Model = require('./model/model');
+const ModelManager = require('./model/model-manager');
 const MapReduce = require('./map-reduce');
 const Nes = require('nes');
 const ProjectQueueManager = require('./queue-management');
@@ -30,6 +31,7 @@ const REDUCE_RESULTS_QUEUE_NAME = 'reduce_results_queue';
 const BATCH_SIZE = 100;
 const BATCHES_PER_REDUCE = 5;
 const PROJECT_ID = 'mnist121';
+const MODEL_HOST = '';
 
 const getTask = async function (nesClient) {
 
@@ -51,7 +53,7 @@ const getTask = async function (nesClient) {
 };
 
 
-const completeTask = async function (task) {
+const completeTask = async function (task, modelManager) {
 
     let result = null;
     let lastOperation = null;
@@ -60,14 +62,21 @@ const completeTask = async function (task) {
             .get(`http://localhost:3000/mnist/data?start=${task.dataStart}&end=${task.dataStart + BATCH_SIZE}`);
 
         const trainDataX = TF.tensor(response.data.images);
-        console.log(trainDataX.shape);
         const trainDataY = TF.tensor(response.data.labels);
-        result = { result: MapReduce.mapFn(trainDataX, trainDataY, Model) };
+
+        const modelId = '<>';
+        modelManager.updateAndCompileModel(modelId);
+
+        result = { result: MapReduce.mapFn(trainDataX, trainDataY, modelManager.currentModel) };
         lastOperation = 'map';
     }
     else if (task.function === 'reduce') {
         const vectorToReduce = task.reduceData.map( (x) => JSON.parse(x).result);
-        result = { result: MapReduce.reduceFn(vectorToReduce, Model) };
+
+        const modelId = '<>';
+        modelManager.updateAndCompileModel(modelId);
+
+        result = { result: MapReduce.reduceFn(vectorToReduce, modelManager.currentModel) };
         lastOperation = 'reduce';
     }
     else if (task.function === 'nop')    {
@@ -110,11 +119,13 @@ const runMLTogether = async function () {
 
     await ProjectQueueManager.intializeGoalTasks(goalTaskInfo, TASK_QUEUE_NAME + '_' + PROJECT_ID);
 
+    const modelManager = ModelManager(MODEL_HOST);
+
     // Work Loop
     // eslint-disable-next-line no-constant-condition
     while (true) {
         const task = await getTask(nesClient);
-        const taskResults = await completeTask(task);
+        const taskResults = await completeTask(task, modelManager);
 
         if (taskResults === null) {
             break;
