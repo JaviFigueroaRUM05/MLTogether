@@ -1,32 +1,41 @@
 const Boom = require('boom');
 
-
+//TODO: Error validation Boom
    async function getProjects(request, h) {
-            const db = request.mongo.db;
-            let projects;
-            try{
-            projects = await db.collection('projects').find().toArray();
-            } catch(err){
-                console.error(err)
-                throw Boom.badImplementation('Error');
-            }
-
-            return h.response(projects).code(200);
-          }
+        const db = request.mongo.db;
+        let projects;
+        projects = await db.collection('projects').find().toArray();                  
+            
+        return h.response(projects).code(200);
+        }
   
   async function getProjectByID(request,h){
         const db = request.mongo.db;
         const ObjectID= request.mongo.ObjectID;
         let project;
-        try{
-            project = await db.collection('projects').findOne({  _id: new ObjectID(request.params.projectId) });
-            } catch(err){
-                console.error(err)
-                throw Boom.badImplementation('Error');
-            }
+      
+        project = await db.collection('projects').findOne({  _id: new ObjectID(request.params.projectID) });
+      
+        return h.response(project).code(200);
+    }
 
-            return h.response(project).code(200);
-          }
+    async function postTrainedModelbyProjectID(request,h){
+        const db = request.mongo.db;
+        const payload = request.payload;   
+        let model;    
+      
+        model = await db.collection('trainedModels').insertOne(payload)
+       
+        return h.response(model).code(201);
+    }
+
+    async function getTrainedModelbyProjectID(request,h){
+        const db = request.mongo.db;  
+        let project;
+        project = await db.collection('trainedModels').find({ projectId: request.params.projectID }).toArray();
+      
+        return h.response(project).code(200);
+    }
 
 
     
@@ -34,5 +43,7 @@ const Boom = require('boom');
   
 module.exports= {
     getProjects,
-    getProjectByID  
+    getProjectByID,
+    postTrainedModelbyProjectID,
+    getTrainedModelbyProjectID
 }

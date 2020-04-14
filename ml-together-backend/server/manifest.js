@@ -37,7 +37,10 @@ module.exports = new Confidence.Store({
                 plugin: '../task', // Main plugin
                 options: {}
             },
-
+            {
+                plugin: '../intermediate_results', 
+                options: {}
+            },
             {
                 plugin: {
                     $filter: { $env: 'NODE_ENV' },
