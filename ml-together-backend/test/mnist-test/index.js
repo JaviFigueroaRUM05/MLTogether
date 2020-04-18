@@ -67,7 +67,6 @@ const completeTask = async function (task) {
     }
     else if (task.function === 'reduce') {
         const vectorToReduce = task.reduceData.map( (x) => JSON.parse(x).result);
-        console.log(vectorToReduce);
         result = { result: MapReduce.reduceFn(vectorToReduce, Model) };
         lastOperation = 'reduce';
     }

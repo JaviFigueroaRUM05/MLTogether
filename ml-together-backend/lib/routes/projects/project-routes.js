@@ -29,7 +29,7 @@ options: {
   method: 'POST',
 path: '/projects/{projectID}/trained-model',
 options: {
-  handler: handlers.uploadTrainedModelbyProjectID
+  handler: handlers.postTrainedModelbyProjectID
 }
 }
 ];
