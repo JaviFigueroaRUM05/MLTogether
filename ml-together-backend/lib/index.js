@@ -12,7 +12,8 @@ exports.plugin = {
                 plugin: Mongo,
                 options: {url: 'mongodb://localhost:27017/mldev01',
                 settings: {
-                    poolSize: 10
+                    poolSize: 10,
+                    useUnifiedTopology: true
                 },
                 decorate: true
               }
