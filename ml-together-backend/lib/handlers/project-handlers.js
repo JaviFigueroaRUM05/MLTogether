@@ -22,6 +22,8 @@ const Boom = require('boom');
     async function postTrainedModelbyProjectID(request,h){
         const db = request.mongo.db;
         const payload = request.payload;   
+        //adding the pid         
+        payload.projectId = request.params.projectId;
         let model;    
       
         model = await db.collection('trainedModels').insertOne(payload)
