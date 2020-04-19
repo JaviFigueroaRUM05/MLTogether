@@ -38,6 +38,10 @@ module.exports = new Confidence.Store({
                 options: {}
             },
             {
+                plugin: '../intermediate_results', 
+                options: {}
+            },
+            {
                 plugin: {
                     $filter: { $env: 'NODE_ENV' },
                     $default: 'hpal-debug',

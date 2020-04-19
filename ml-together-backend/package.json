@@ -20,6 +20,7 @@
     "@tensorflow/tfjs": "^1.7.0",
     "@tensorflow/tfjs-node": "^1.7.0",
     "amqplib": "^0.5.5",
+    "hapi-mongodb": "^9.0.0",
     "haute-couture": "3.x.x",
     "joi": "^14.3.1",
     "mongoose": "^5.9.7",
