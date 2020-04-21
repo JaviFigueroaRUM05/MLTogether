@@ -160,3 +160,6 @@ footer a:hover {
 textarea {
   resize: none;
 }
+#canvas{
+  width: 100%;
+}
