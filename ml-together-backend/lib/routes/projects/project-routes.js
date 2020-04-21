@@ -12,7 +12,7 @@ module.exports = [
   },
   {
   method: 'GET',
-  path: '/projects/{projectID}',
+  path: '/projects/{projectId}',
   options: {
     handler: handlers.getProjectByID
 
@@ -20,7 +20,7 @@ module.exports = [
 },
 {
   method: 'GET',
-path: '/projects/{projectID}/trained-model',
+path: '/projects/{projectId}/trained-model',
 options: {
   handler: handlers.getTrainedModelbyProjectID
 }
@@ -30,6 +30,12 @@ options: {
 path: '/projects/{projectId}/trained-model',
 handler: handlers.postTrainedModelbyProjectID,
             options: {
+              payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data',
+                multipart: true
+            },
                 validate: { 
                     failAction: async (request, h, err) => {                      
                        //TODO: change this to appear in debug only
