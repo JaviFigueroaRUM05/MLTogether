@@ -24,14 +24,15 @@ const Nes = require('nes');
 const ProjectQueueManager = require('./queue-management');
 const GoalTaskInfo = require('../../task/goal-task-info');
 const TF = require('@tensorflow/tfjs-node');
+const IRRequest = require('./io/io-handler');
 
 const TASK_QUEUE_NAME = 'task_queue';
 const MAP_RESULTS_QUEUE_NAME = 'map_results_queue';
 const REDUCE_RESULTS_QUEUE_NAME = 'reduce_results_queue';
 const BATCH_SIZE = 100;
-const BATCHES_PER_REDUCE = 5;
+const BATCHES_PER_REDUCE = 10;
 const PROJECT_ID = 'mnist121';
-const MODEL_HOST = '';
+const MODEL_HOST = 'http://localhost:3000/projects/' + PROJECT_ID + '/ir';
 
 const getTask = async function (nesClient) {
 
@@ -64,8 +65,9 @@ const completeTask = async function (task, modelManager) {
         const trainDataX = TF.tensor(response.data.images);
         const trainDataY = TF.tensor(response.data.labels);
 
-        const modelId = '<>';
-        modelManager.updateAndCompileModel(modelId);
+        const modelId = 'NOT_USED';
+        const modelURL = task.modelURL;
+        modelManager.updateAndCompileModel(modelId, modelURL);
 
         result = { result: MapReduce.mapFn(trainDataX, trainDataY, modelManager.currentModel) };
         lastOperation = 'map';
@@ -73,11 +75,16 @@ const completeTask = async function (task, modelManager) {
     else if (task.function === 'reduce') {
         const vectorToReduce = task.reduceData.map( (x) => JSON.parse(x).result);
 
-        const modelId = '<>';
-        modelManager.updateAndCompileModel(modelId);
+        const modelId = 'NOT_USED';
+        const modelURL = task.modelURL;
+        modelManager.updateAndCompileModel(modelId, modelURL);
 
         result = { result: MapReduce.reduceFn(vectorToReduce, modelManager.currentModel) };
         lastOperation = 'reduce';
+
+        // TODO: See where to send results (if through the web socket or http api)
+        const response = await Axios
+            .post(task.modelStoringURL, result.result);
     }
     else if (task.function === 'nop')    {
         return null;
@@ -119,12 +126,18 @@ const runMLTogether = async function () {
 
     await ProjectQueueManager.intializeGoalTasks(goalTaskInfo, TASK_QUEUE_NAME + '_' + PROJECT_ID);
 
-    const modelManager = ModelManager(MODEL_HOST);
+    // Create initial model
+
+    await Model.save(IRRequest(MODEL_HOST));
+
+    const modelManager = new ModelManager(MODEL_HOST);
 
     // Work Loop
     // eslint-disable-next-line no-constant-condition
     while (true) {
         const task = await getTask(nesClient);
+        console.log("Task");
+        console.log(task);
         const taskResults = await completeTask(task, modelManager);
 
         if (taskResults === null) {
@@ -134,6 +147,9 @@ const runMLTogether = async function () {
         const resultsSentAnswer = await sendResults(nesClient, taskResults);
         console.log(resultsSentAnswer);
     }
+
+    const response = await Axios.get(`http://localhost/projects/${PROJECT_ID}/ir/1`);
+    console.log(response.data);
 
     console.log('No more work!');
 };

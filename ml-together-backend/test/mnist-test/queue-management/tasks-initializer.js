@@ -2,7 +2,10 @@
 
 const AMQPInitializer = require('../../../task/amqp-initializer');
 
-const addMapTasks = function (trainingSetSize, batchSize, taskQueueName, channel, batchesPerReduce) {
+const PROJECT_ID = 'mnist121';
+const MODEL_HOST = 'http://localhost:3000/projects/' + PROJECT_ID + '/ir';
+
+const addMapTasks = function (trainingSetSize, batchSize, taskQueueName, channel, batchesPerReduce, modelRootURL) {
 
     // TODO: Make sure this returns the ceil amount
     const numberOfMapTasks = trainingSetSize / batchSize;
@@ -11,7 +14,8 @@ const addMapTasks = function (trainingSetSize, batchSize, taskQueueName, channel
     for (let i = 0; i < numberOfMapTasks; ++i) {
         const dataStart = i * batchSize;
         const dataEnd = (i + 1) * batchSize;
-        addMapTaskToQueue(mapResultsId, taskQueueName, channel, dataStart, dataEnd);
+        const modelURL = modelRootURL + '/' + mapResultsId;
+        addMapTaskToQueue(mapResultsId, taskQueueName, channel, dataStart, dataEnd, modelURL);
         if (isMapResultQueueFull(i, batchesPerReduce)) {
             ++mapResultsId;
         }
@@ -19,23 +23,28 @@ const addMapTasks = function (trainingSetSize, batchSize, taskQueueName, channel
 };
 
 
-const addReduceTasks = function (trainingSetSize, batchSize, batchesPerReduce, channel, taskQueueName) {
+const addReduceTasks = function (trainingSetSize, batchSize, batchesPerReduce, channel, taskQueueName, modelRootURL) {
 
     for (let i = 0; i < (trainingSetSize / batchSize / batchesPerReduce); ++i) {
-        const reduceTask = JSON.stringify({ function: 'reduce', mapResultsId: i + 1 });
+        const mapResultsId = i + 1;
+        const modelURL = modelRootURL + '/' + mapResultsId;
+        const modelStoringURL = modelRootURL + '/' + (mapResultsId + 1);
+        const reduceTask = JSON.stringify({ function: 'reduce', mapResultsId, modelURL, modelStoringURL });
         channel.sendToQueue(taskQueueName, Buffer.from(reduceTask));
     }
 };
 
 // Data Start is inclusive
 // Data end is exclusive
-const addMapTaskToQueue = function (mapResultsId, queueName, amqpChannel, dataStart, dataEnd) {
+const addMapTaskToQueue = function (mapResultsId, queueName, amqpChannel, dataStart, dataEnd, modelURL) {
 
     const mapTask = {
         function: 'map',
         dataStart,
         dataEnd,
-        mapResultsId };
+        mapResultsId,
+        modelURL
+    };
 
     const mapTaskStringified = JSON.stringify(mapTask);
     amqpChannel.sendToQueue(queueName, Buffer.from(mapTaskStringified), {
@@ -63,9 +72,10 @@ const initializeTaskQueue = async function (trainingSetSize, batchSize, batchesP
         durable: true
     });
 
-    addMapTasks(trainingSetSize, batchSize, taskQueueName, channel, batchesPerReduce);
+    const modelURLRoot = MODEL_HOST
+    addMapTasks(trainingSetSize, batchSize, taskQueueName, channel, batchesPerReduce, modelURLRoot);
 
-    addReduceTasks(trainingSetSize, batchSize, batchesPerReduce, channel, taskQueueName);
+    addReduceTasks(trainingSetSize, batchSize, batchesPerReduce, channel, taskQueueName,modelURLRoot);
 
 };
 

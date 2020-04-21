@@ -4,27 +4,27 @@ const Axios = require('axios');
 
 // TODO: Change for WebAPI
 const TF = require('@tensorflow/tfjs-node');
+const IRRequest = require('../io/io-handler');
 
 class ModelManager {
     constructor(host) {
 
-        this.host = host;
         this.currentModelId = -1;
         this.currentModel = null;
     }
 
-    async updateAndCompileModel(modelId) {
+    // TODO: Check modelId before updating
+    async updateAndCompileModel(modelId, modelURL) {
 
-        if (modelId !== this.currentModelId) {
-            const url = this.host + '' + modelId;
-            const serverResponse = await Axios.get(url);
-            this.currentModel = await TF.loadLayersModel(serverResponse.data);
-            this.currentModel.compile({
-                optimizer: this.optimizer,
-                loss: 'categoricalCrossentropy'
-            });
+        const url = modelURL;
+        this.currentModel = await TF.loadLayersModel(
+            IRRequest(modelURL)
+        );
+        this.currentModel.compile({
+            optimizer: this.optimizer,
+            loss: 'categoricalCrossentropy'
+        });
 
-        }
     }
 
 }
