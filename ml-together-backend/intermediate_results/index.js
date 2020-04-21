@@ -20,13 +20,13 @@ exports.plugin = {
             },
             {
                 method: 'GET',
-                path: '/projects/{projectId}/ir/{mapResultsId}',
+                path: '/projects/{projectId}/ir/{resultId}',
 
                 handler: Handler.GetIRByProjectID,
                 options: {
                     validate: {
                         params: Joi.object({
-                            mapResultsId: Joi.number(),
+                            resultId: Joi.number(),
                             projectId: Joi.string()
                         })
                     }
@@ -37,6 +37,12 @@ exports.plugin = {
                 path: '/projects/{projectId}/ir',
                 handler: Handler.createIR,
                 options: {
+                    payload: {
+                        output: 'stream',
+                        parse: true,
+                        allow: 'multipart/form-data',
+                        multipart: true
+                    },
                     validate: {
                         failAction: (request, h, err) => {
                             //TODO: change this to appear in debug only
@@ -49,11 +55,13 @@ exports.plugin = {
                             })
                         ,
                         payload: Joi.object({
-                            mapResultsId: Joi.number(),
-                            results: Joi.any()
+                            resultId: Joi.number(),
+                            result: Joi.any()
                         })
                     }
                 }
+
+
             },
 
             {

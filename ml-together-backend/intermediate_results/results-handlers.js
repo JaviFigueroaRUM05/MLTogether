@@ -16,7 +16,7 @@ const GetIRByProjectID = async function (request, h) {
     const db = request.mongo.db;
     const results = await db.collection('intermediateResults').find({ projectId: request.params.projectId, mapResultsId: request.params.mapResultsId }).toArray();
 
-    return h.response(results).code(200);
+    return h.response(results[0]).code(200);
 };
 
 const createIR = async function (request, h) {

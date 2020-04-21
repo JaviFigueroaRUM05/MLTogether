@@ -14,7 +14,7 @@ const Boom = require('boom');
         const ObjectID= request.mongo.ObjectID;
         let project;
       
-        project = await db.collection('projects').findOne({  _id: new ObjectID(request.params.projectID) });
+        project = await db.collection('projects').findOne({  _id: new ObjectID(request.params.projectId) });
       
         return h.response(project).code(200);
     }
@@ -34,7 +34,7 @@ const Boom = require('boom');
     async function getTrainedModelbyProjectID(request,h){
         const db = request.mongo.db;  
         let project;
-        project = await db.collection('trainedModels').find({ projectId: request.params.projectID }).toArray();
+        project = await db.collection('trainedModels').find({ projectId: request.params.projectId }).toArray();
       
         return h.response(project).code(200);
     }
