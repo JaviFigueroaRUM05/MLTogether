@@ -21,15 +21,14 @@ const GetIRByProjectID = async function (request, h) {
 
 const createIR = async function (request, h) {
 
+    console.log("Here");
     const db = request.mongo.db;
     const payload = request.payload;
     //adding the pid
     payload.projectId = request.params.projectId;
     //TODO: additional payload json validation
 
-    console.log(request.payload);
     const results = await db.collection('intermediateResults').insertOne(payload);
-
 
     return h.response(results).code(201);
 };

@@ -2,12 +2,33 @@
 
 const Joi = require('@hapi/joi');
 const Handler = require('../intermediate_results/results-handlers');
+const Mongo = require('hapi-mongodb');
 
 exports.plugin = {
 
     name: 'IntermediateResults',
     version: '1.0.0',
     register: async (server, options) => {
+
+        try {
+            await server.register(  {
+                plugin: Mongo,
+                options: { url: 'mongodb://localhost:27017/mldev01',
+                    settings: {
+                        poolSize: 10,
+                        useUnifiedTopology: true
+                    },
+                    decorate: true
+                }
+
+            });
+        }
+        catch (err) {
+
+            console.error(err);
+            process.exit(1);
+        }
+
         //TODO: better-format this plugin (separate elements)
         //TODO: review route definitions
         //TODO: Error handling
@@ -41,7 +62,8 @@ exports.plugin = {
                         output: 'stream',
                         parse: true,
                         allow: 'multipart/form-data',
-                        multipart: true
+                        multipart: true,
+                        maxBytes: 100 * 1024 * 1024 //100 mb
                     },
                     validate: {
                         failAction: (request, h, err) => {
