@@ -8,12 +8,22 @@ const IntermediateResultsPlugin = require('../../intermediate_results').plugin;
 const Package = require('../../package.json');
 const Hapi = require('@hapi/hapi');
 const MongoClient = require('mongodb').MongoClient;
-const Model = require('../mnist-test/model/model');
-const ServerInjectRequest = require('../io-handler');
+const MLModel = require('../mnist-test/model/model');
+
+const IOHandlers = require('./utils/io-handlers');
 // Test shortcuts
 
 const { experiment, it, beforeEach } = exports.lab = Lab.script();
 const { expect } = Code;
+
+const TF = require('@tensorflow/tfjs-node');
+
+
+const FormData = require('form-data');
+const StreamToPromise = require('stream-to-promise');
+
+const projectId = '0';
+
 
 // MongoDB Utility
 const url = 'mongodb://localhost:27017';
@@ -21,7 +31,7 @@ const url = 'mongodb://localhost:27017';
 const getIntermediateResults = async function (projectId) {
 
     const client = await MongoClient.connect(url, { useNewUrlParser: true })
-        .catch( (err) =>  console.log(err) );
+        .catch( (err) =>  console.error(err) );
     let res = null;
     if (!client) {
         return;
@@ -37,7 +47,7 @@ const getIntermediateResults = async function (projectId) {
     }
     catch (err) {
 
-        console.log(err);
+        console.error(err);
     }
     finally {
 
@@ -50,7 +60,7 @@ const getIntermediateResults = async function (projectId) {
 const storeIntermediateResults = async function (results) {
 
     const client = await MongoClient.connect(url, { useNewUrlParser: true })
-        .catch( (err) =>  console.log(err) );
+        .catch( (err) =>  console.error(err) );
     let res = null;
     if (!client) {
         return;
@@ -66,7 +76,7 @@ const storeIntermediateResults = async function (results) {
     }
     catch (err) {
 
-        console.log(err);
+        console.error(err);
     }
     finally {
 
@@ -79,7 +89,7 @@ const storeIntermediateResults = async function (results) {
 const cleanIntermediateResultsDB = async function () {
 
     const client = await MongoClient.connect(url, { useNewUrlParser: true })
-        .catch( (err) =>  console.log(err) );
+        .catch( (err) =>  console.error(err) );
 
     if (!client) {
         return;
@@ -91,16 +101,12 @@ const cleanIntermediateResultsDB = async function () {
 
         const collection = db.collection('intermediateResults');
 
-        collection.remove();
+        await collection.deleteMany();
 
     }
     catch (err) {
 
-        console.log(err);
-    }
-    finally {
-
-        client.close();
+        console.error(res);
     }
 
 };
@@ -126,10 +132,9 @@ experiment('Deployment', () => {
 
 });
 
-experiment('create Intermediate Results route', { timeout: 20000 }, () => {
+experiment('POST intermediate results route', { timeout: 20000 }, () => {
 
     let server;
-    const projectId = '0';
     beforeEach( async () => {
 
         server = Hapi.server();
@@ -140,13 +145,53 @@ experiment('create Intermediate Results route', { timeout: 20000 }, () => {
         await cleanIntermediateResultsDB();
     });
 
-    it('adds the intermediate result into MongoDB', async () => {
+    it('saves data into MongoDB', async () => {
+
+        const route = '/projects/0/ir';
+
+        const form = new FormData();
+        const fakeResult = 'fhaiufhiucguydgvjwhvfsfyusa';
+        const modelId = '0';
+        form.append('modelId', modelId);
+        form.append('model', fakeResult);
+
+        const headers = form.getHeaders();
+        const payload = await StreamToPromise(form);
+        try {
+            await server.inject({
+                method: 'POST',
+                url: route,
+                headers,
+                payload
+            });
+        }
+        catch (err) {
+            console.error(err);
+            return false;
+        }
+
+        const results = await getIntermediateResults(projectId);
+
+        expect(results).to.be.an.array();
+        expect(results.length).to.equal(1);
+
+        const result = results[0];
+
+        expect(result).to.be.an.object();
+        expect(result).to.include(['projectId', 'modelId', 'model']);
+
+        expect(result.projectId).to.equal(projectId);
+        expect(result.modelId).to.equal(modelId);
+        expect(result.model).to.equal(fakeResult);
+
+    });
+
+    it('TensorFlow.js save using route saves model into MongoDB', async () => {
 
         const route = '/projects/0/ir';
 
         // POST call
-        console.log('before post');
-        await Model.save(ServerInjectRequest(server, route));
+        await MLModel.save(IOHandlers.serverInjectRequest(server, route));
 
         // Check
         const results = await getIntermediateResults(projectId);
@@ -157,16 +202,31 @@ experiment('create Intermediate Results route', { timeout: 20000 }, () => {
         const result = results[0];
 
         expect(result).to.be.an.object();
-        expect(result).to.include(['projectId', 'resultId', 'result']);
+        expect(result).to.include(['projectId', 'modelId', 'model']);
+    });
+
+});
+
+experiment('GET specific intermediate result route', { timeout: 20000 }, () => {
+
+    let server;
+    beforeEach( async () => {
+
+        server = Hapi.server();
+        await server.register({
+            plugin: IntermediateResultsPlugin
+        });
+
+        await cleanIntermediateResultsDB();
     });
 
     it('gets the intermediate result from MongoDB', async () => {
 
         const route = '/projects/0/ir/0';
-        const resultId = '0';
+        const modelId = '0';
         const fakeResult = 'fhaiufhiucguydgvjwhvfsfyusa';
 
-        const storedObject  = { projectId, resultId, result: fakeResult  };
+        const storedObject  = { projectId, modelId, model: fakeResult  };
         await storeIntermediateResults(storedObject);
 
         const result = await server.inject({
@@ -179,11 +239,26 @@ experiment('create Intermediate Results route', { timeout: 20000 }, () => {
         const parsedPayload = JSON.parse(result.payload);
 
         expect(parsedPayload).to.be.an.object();
-        expect(parsedPayload).to.include(['projectId', 'resultId', 'result']);
+        expect(parsedPayload).to.include(['projectId', 'modelId', 'model']);
 
         expect(parsedPayload.projectId).to.equal(projectId);
-        expect(parsedPayload.resultId).to.equal(resultId);
-        expect(parsedPayload.result).to.equal(fakeResult);
+        expect(parsedPayload.modelId).to.equal(modelId);
+        expect(parsedPayload.model).to.equal(fakeResult);
+
+
+
+    });
+
+    it('TensorFlow.js load using route get model', async () => {
+
+        const route = '/projects/0/ir/0';
+
+        await MLModel.save(IOHandlers.mongoDBRequest('mongodb://localhost:27017'));
+        const responseModel = await TF.loadLayersModel(
+            IOHandlers.serverInjectRequest(server,route)
+        );
+
+        expect(responseModel).to.be.an.object();
 
 
 

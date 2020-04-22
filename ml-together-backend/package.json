@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "nodemon server",
-    "test": "lab -a @hapi/code -v ./test/intermediate_results/*",
+    "test": "lab -a @hapi/code --verbose ./test/intermediate_results/*.test.js",
     "lint": "eslint ."
   },
   "dependencies": {

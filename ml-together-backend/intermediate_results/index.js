@@ -41,13 +41,13 @@ exports.plugin = {
             },
             {
                 method: 'GET',
-                path: '/projects/{projectId}/ir/{resultId}',
+                path: '/projects/{projectId}/ir/{modelId}',
 
                 handler: Handler.GetIRByProjectID,
                 options: {
                     validate: {
                         params: Joi.object({
-                            resultId: Joi.number(),
+                            modelId: Joi.string(),
                             projectId: Joi.string()
                         })
                     }
@@ -77,8 +77,8 @@ exports.plugin = {
                             })
                         ,
                         payload: Joi.object({
-                            resultId: Joi.number(),
-                            result: Joi.any()
+                            modelId: Joi.string(),
+                            model: Joi.any()
                         })
                     }
                 }
