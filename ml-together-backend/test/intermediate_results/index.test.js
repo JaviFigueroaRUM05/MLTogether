@@ -18,7 +18,7 @@ const { expect } = Code;
 // MongoDB Utility
 const url = 'mongodb://localhost:27017';
 
-const getIntermediateResult = async function (projectId) {
+const getIntermediateResults = async function (projectId) {
 
     const client = await MongoClient.connect(url, { useNewUrlParser: true })
         .catch( (err) =>  console.log(err) );
@@ -32,10 +32,7 @@ const getIntermediateResult = async function (projectId) {
         const db = client.db('mldev01');
 
         const collection = db.collection('intermediateResults');
-
-        const query = { projectId };
-
-        res = await collection.findOne(query);
+        res = await collection.find().toArray();
 
     }
     catch (err) {
@@ -46,7 +43,37 @@ const getIntermediateResult = async function (projectId) {
 
         client.close();
     }
+
     return res;
+};
+
+const cleanIntermediateResultsDB = async function () {
+
+    const client = await MongoClient.connect(url, { useNewUrlParser: true })
+        .catch( (err) =>  console.log(err) );
+
+    if (!client) {
+        return;
+    }
+
+    try {
+
+        const db = client.db('mldev01');
+
+        const collection = db.collection('intermediateResults');
+
+        collection.remove();
+
+    }
+    catch (err) {
+
+        console.log(err);
+    }
+    finally {
+
+        client.close();
+    }
+
 };
 
 experiment('Deployment', () => {
@@ -81,6 +108,8 @@ experiment('create Intermediate Results route', { timeout: 20000 }, () => {
         await server.register({
             plugin: IntermediateResultsPlugin
         });
+
+        await cleanIntermediateResultsDB();
     });
 
     it('adds the intermediate result into the MongoDB', async () => {
@@ -90,7 +119,13 @@ experiment('create Intermediate Results route', { timeout: 20000 }, () => {
         await Model.save(ServerInjectRequest(server, route));
 
         // Check
-        const result = await getIntermediateResult(projectId);
+        const results = await getIntermediateResults(projectId);
+
+        expect(results).to.be.an.array();
+        expect(results.length).to.equal(1);
+
+        const result = results[0];
+
         expect(result).to.be.an.object();
         expect(result).to.include(['projectId', 'resultId', 'result']);
     });
