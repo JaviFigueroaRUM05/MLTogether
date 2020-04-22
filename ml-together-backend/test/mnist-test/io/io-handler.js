@@ -1,20 +1,23 @@
 'use strict';
 
 const Axios = require('axios');
+const FormData = require('form-data');
+const StreamToPromise = require('stream-to-promise');
 
 const ab2str = function (buffer) {
 
     var bufView = new Uint16Array(buffer);
     var length = bufView.length;
     var result = '';
-    var addition = Math.pow(2,16)-1;
+    var addition = Math.pow(2,16) - 1;
 
-    for(var i = 0;i<length;i+=addition){
+    for (var i = 0; i < length; i += addition) {
 
-        if(i + addition > length){
+        if (i + addition > length) {
             addition = length - i;
         }
-        result += String.fromCharCode.apply(null, bufView.subarray(i,i+addition));
+
+        result += String.fromCharCode.apply(null, bufView.subarray(i,i + addition));
     }
 
     return result;
@@ -43,29 +46,47 @@ class IRRequest {
 
     async retrySave(url, form) {
 
+        const headers = form.getHeaders();
+        const payload = await StreamToPromise(form);
+        const httpRequestOptions = {
+            method: 'POST',
+            url,
+            data: payload,
+            headers
+        };
+
         try {
-            await Axios.post(url, { results: form, mapResultsId: this.mapResultsId });
+            await Axios(httpRequestOptions);
+            console.log('Model has been saved!');
         }
         catch (err) {
             console.error(err);
             return false;
         }
-        console.log("HEREE")
+
+        console.log('HEREE');
         return true;
 
     }
 
     async save(modelArtifacts) {
 
+        let result;
         let form;
         let weightDataAb2;
         let formCreated = false;
         while (!formCreated) {
             try {
-
                 weightDataAb2 = ab2str(modelArtifacts.weightData);
-                form = JSON.stringify([modelArtifacts.modelTopology, weightDataAb2, modelArtifacts.weightSpecs]);
+                result = JSON.stringify([modelArtifacts.modelTopology, weightDataAb2, modelArtifacts.weightSpecs]);
+                form = new FormData();
+                form.append('result', result);
+                form.append('resultId', 1);
                 formCreated = true;
+                console.log('finished creating form');
+
+
+
             }
             catch (e) {
                 console.error('Error creating form (saving model): ' + e);
