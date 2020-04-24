@@ -125,6 +125,6 @@ const runMLTogether = async function () {
     }
 
     console.log('No more work!');
-};
+}; 
 
 runMLTogether();

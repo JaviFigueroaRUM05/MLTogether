@@ -90,10 +90,11 @@ const onMessage = (server) =>
 const onConnection = (socket) => {
     activeSessions[socket.id] = new Worker.Worker(socket.id);
     console.log('Socket Connected: ' + activeSessions[socket.id].id);
-    console.log('Active Sessions: ', activeSessions);
+    console.log('Worker: ', activeSessions[socket.id]);
 };
 
 const onDisconnection = (socket) => {
+    console.log('Worker: ', activeSessions[socket.id]);
     delete activeSessions[socket.id];
     console.log('Socket Disconnected: ' + socket.id);
 };
