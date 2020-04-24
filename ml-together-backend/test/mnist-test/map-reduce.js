@@ -7,7 +7,6 @@ const TENSOR_NAME_PATTERN = /_[0-9]*$/i;
 const getPredictedLabels = function (x, model) {
 
     return TF.tidy(() => {
-
         return model.predictOnBatch(x);
     });
 };
@@ -19,12 +18,12 @@ const getGradientsAndSaveActions = function (x, y, model) {
         return TF.tidy(() => {
 
             const labels = getPredictedLabels(x, model);
-            // labels.dataSync();
             return TF.losses.softmaxCrossEntropy(y, labels).asScalar();
         });
     };
 
-    return TF.variableGrads(f);
+    const results = TF.variableGrads(f);
+    return results;
 
 };
 

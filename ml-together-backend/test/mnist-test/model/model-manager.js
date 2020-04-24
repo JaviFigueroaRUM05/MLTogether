@@ -17,13 +17,19 @@ class ModelManager {
     async updateAndCompileModel(modelId, modelURL) {
 
         const url = modelURL;
-        this.currentModel = await TF.loadLayersModel(
-            IRRequest(modelURL)
-        );
-        this.currentModel.compile({
-            optimizer: this.optimizer,
-            loss: 'categoricalCrossentropy'
-        });
+        try {
+            this.currentModel = await TF.loadLayersModel(
+                IRRequest(url)
+            );
+            await this.currentModel.compile({
+                optimizer: 'rmsprop',
+                loss: 'categoricalCrossentropy',
+                metrics: ['accuracy']
+            });
+        }
+        catch (err) {
+            console.error(err);
+        }
 
     }
 

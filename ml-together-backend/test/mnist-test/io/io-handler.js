@@ -3,35 +3,26 @@
 const Axios = require('axios');
 const FormData = require('form-data');
 const StreamToPromise = require('stream-to-promise');
-
-const ab2str = function (buffer) {
-
-    var bufView = new Uint16Array(buffer);
-    var length = bufView.length;
-    var result = '';
-    var addition = Math.pow(2,16) - 1;
-
-    for (var i = 0; i < length; i += addition) {
-
-        if (i + addition > length) {
-            addition = length - i;
-        }
-
-        result += String.fromCharCode.apply(null, bufView.subarray(i,i + addition));
-    }
-
-    return result;
-
+const Base64ArrayBuffer = require('base64-arraybuffer');
+const ab2str = function (buf) {
+    // var bufView = new Uint32Array(buf);
+    const str = Base64ArrayBuffer.encode(buf)
+    // const str = bufView.reduce((acc, i) => acc += String.fromCharCode.apply(null, [i]), '');
+    return str;
 };
 
 const str2ab = function (str) {
+    //var buf = Uint16Array.from([...str].map(ch => ch.charCodeAt())).buffer; // 2 bytes for each char
+    // console.log(str.charCodeAt(0))
+    // var buf = new ArrayBuffer(str.length*4); // 2 bytes for each char
+    // var bufView = new Uint32Array(buf);
+    // for (var i = 0, strLen = str.length; i < strLen; i++) {
+    //     bufView[i] = str.charCodeAt(i);
+    // }
 
-    const buf = new ArrayBuffer(str.length * 4); // 2 bytes for each char
-    const bufView = new Uint32Array(buf);
-    const strLen = str.length;
-    for (let i = 0; i < strLen; ++i) {
-        bufView[i] = str.charCodeAt(i);
-    }
+    let buf = Base64ArrayBuffer.decode(str);
+
+    return buf;
 
     return buf;
 };
@@ -64,7 +55,6 @@ class IRRequest {
             return false;
         }
 
-        console.log('HEREE');
         return true;
 
     }
@@ -80,8 +70,8 @@ class IRRequest {
                 weightDataAb2 = ab2str(modelArtifacts.weightData);
                 result = JSON.stringify([modelArtifacts.modelTopology, weightDataAb2, modelArtifacts.weightSpecs]);
                 form = new FormData();
-                form.append('result', result);
-                form.append('resultId', 1);
+                form.append('model', result);
+                form.append('modelId', 1);
                 formCreated = true;
                 console.log('finished creating form');
 
@@ -94,7 +84,7 @@ class IRRequest {
             }
         }
 
-        let saved = await this.retrySave(this.path, { results: form });
+        let saved = await this.retrySave(this.path, form);
         while (!saved) {
             saved = await this.retrySave(this.path, form);
         }
@@ -106,21 +96,21 @@ class IRRequest {
         try {
 
             response = await Axios.get(this.path);
-            const jsonBody = JSON.parse(response.data);
+            const jsonBody = JSON.parse(response.data.model);
             const modelTopology = jsonBody[0];
             const weightData = str2ab(jsonBody[1]);
             const weightSpecs = jsonBody[2];
+
             return { modelTopology, weightSpecs, weightData };
         }
         catch (err) {
-
+            console.error(err);
             return null;
         }
     }
 
 
     async load() {
-
         let model = await this.tryToLoad();
         while (!model) {
             model = await this.tryToLoad();

@@ -25,7 +25,8 @@ const ProjectQueueManager = require('./queue-management');
 const GoalTaskInfo = require('../../task/goal-task-info');
 const TF = require('@tensorflow/tfjs-node');
 const IRRequest = require('./io/io-handler');
-
+const {cleanIntermediateResultsDB} = require('./mongodb');
+const _ = require('lodash');
 const TASK_QUEUE_NAME = 'task_queue';
 const MAP_RESULTS_QUEUE_NAME = 'map_results_queue';
 const REDUCE_RESULTS_QUEUE_NAME = 'reduce_results_queue';
@@ -67,9 +68,9 @@ const completeTask = async function (task, modelManager) {
 
         const modelId = 'NOT_USED';
         const modelURL = task.modelURL;
-        modelManager.updateAndCompileModel(modelId, modelURL);
-
+        await modelManager.updateAndCompileModel(modelId, modelURL);
         result = { result: MapReduce.mapFn(trainDataX, trainDataY, modelManager.currentModel) };
+        console.log(result.result.grads['conv2d_Conv2D1/kernel'][0][2][0]);
         lastOperation = 'map';
     }
     else if (task.function === 'reduce') {
@@ -77,20 +78,19 @@ const completeTask = async function (task, modelManager) {
 
         const modelId = 'NOT_USED';
         const modelURL = task.modelURL;
-        modelManager.updateAndCompileModel(modelId, modelURL);
+        await modelManager.updateAndCompileModel(modelId, modelURL);
 
         result = { result: MapReduce.reduceFn(vectorToReduce, modelManager.currentModel) };
         lastOperation = 'reduce';
 
         // TODO: See where to send results (if through the web socket or http api)
-        const response = await Axios
-            .post(task.modelStoringURL, result.result);
+        await modelManager.currentModel.save( IRRequest(MODEL_HOST));
     }
     else if (task.function === 'nop')    {
         return null;
     }
     else                                   {
-        console.log('Function: ' + task.function + ' is Invalid.'); process.exit(1);
+        console.error('Function: ' + task.function + ' is Invalid.'); process.exit(1);
     }
 
     return { event: 'result',
@@ -118,6 +118,8 @@ const runMLTogether = async function () {
     // Initialize Tasks
     const goalTaskInfo = new GoalTaskInfo(trainingDataLength, BATCH_SIZE, BATCHES_PER_REDUCE);
 
+    await cleanIntermediateResultsDB();
+
     await ProjectQueueManager.purgeAllProjectQueues(PROJECT_ID,
         TASK_QUEUE_NAME,
         MAP_RESULTS_QUEUE_NAME,
@@ -136,8 +138,6 @@ const runMLTogether = async function () {
     // eslint-disable-next-line no-constant-condition
     while (true) {
         const task = await getTask(nesClient);
-        console.log("Task");
-        console.log(task);
         const taskResults = await completeTask(task, modelManager);
 
         if (taskResults === null) {
@@ -145,10 +145,9 @@ const runMLTogether = async function () {
         }
 
         const resultsSentAnswer = await sendResults(nesClient, taskResults);
-        console.log(resultsSentAnswer);
     }
 
-    const response = await Axios.get(`http://localhost/projects/${PROJECT_ID}/ir/1`);
+    const response = await Axios.get(`http://localhost:3000/projects/${PROJECT_ID}/ir/1`);
     console.log(response.data);
 
     console.log('No more work!');
