@@ -1,6 +1,9 @@
 'use strict';
 
 const QueueActions = require('./queue-actions');
+const Worker = require('./worker');
+
+var activeSessions = {};
 
 const onMessage = (server) =>
 
@@ -29,6 +32,7 @@ const onMessage = (server) =>
             }
 
             const task = JSON.parse(encodedTask);
+            activeSessions[socket.id].currentJob = { task: task, status: 'working' };
 
             if (task.function === 'reduce' ) {
                 const mapResultsId = task.mapResultsId;
@@ -73,7 +77,8 @@ const onMessage = (server) =>
             else {
                 console.log('Done');
             }
-
+            activeSessions[socket.id].currentJob.status = 'done';
+            activeSessions[socket.id].completedJobs += 1;
             return { message: 'good' };
 
         }
@@ -83,18 +88,27 @@ const onMessage = (server) =>
     };
 
 const onConnection = (socket) => {
-
-    console.log('Socket Connected: ' + socket.id);
+    activeSessions[socket.id] = new Worker.Worker(socket.id);
+    console.log('Socket Connected: ' + activeSessions[socket.id].id);
+    console.log('Active Sessions: ', activeSessions);
 };
 
 const onDisconnection = (socket) => {
-
+    delete activeSessions[socket.id];
     console.log('Socket Disconnected: ' + socket.id);
 };
 
 
 
 module.exports = function createOptions(server) {
+
+    server.route({
+        method: 'GET',
+        path: '/sessions',
+        handler: (request, h) => {
+            return activeSessions;
+        }
+    });
 
     return {
         onMessage: onMessage(server),
