@@ -13,7 +13,7 @@ const MLModel = require('../mnist-test/model/model');
 const IOHandlers = require('./utils/io-handlers');
 // Test shortcuts
 
-const { experiment, it, beforeEach } = exports.lab = Lab.script();
+const { experiment, it, beforeEach, after } = exports.lab = Lab.script();
 const { expect } = Code;
 
 const TF = require('@tensorflow/tfjs-node');
@@ -205,6 +205,11 @@ experiment('POST intermediate results route', { timeout: 20000 }, () => {
         expect(result).to.include(['projectId', 'modelId', 'model']);
     });
 
+    after( async () => {
+
+        await cleanIntermediateResultsDB();
+    });
+
 });
 
 experiment('GET specific intermediate result route', { timeout: 20000 }, () => {
@@ -258,10 +263,25 @@ experiment('GET specific intermediate result route', { timeout: 20000 }, () => {
             IOHandlers.serverInjectRequest(server,route)
         );
 
+        const optimizer = 'rmsprop';
+        responseModel.compile({
+            optimizer,
+            loss: 'categoricalCrossentropy',
+            metrics: ['accuracy']
+        });
+
         expect(responseModel).to.be.an.object();
+        expect(responseModel).to.have.length(Object.keys(MLModel).length);
+        console.log(Object.keys(MLModel));
+        console.log(Object.keys(responseModel));
 
 
 
+    });
+
+    after( async () => {
+
+        await cleanIntermediateResultsDB();
     });
 });
 

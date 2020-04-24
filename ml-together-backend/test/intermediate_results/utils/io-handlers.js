@@ -151,7 +151,6 @@ class ServerInjectRequest {
         while (!formCreated) {
             try {
                 weightDataAb2 = ab2str(modelArtifacts.weightData);
-                console.log(modelArtifacts.modelTopology);
                 result = JSON.stringify([modelArtifacts.modelTopology, weightDataAb2, modelArtifacts.weightSpecs]);
                 form = new FormData();
                 form.append('model', result);

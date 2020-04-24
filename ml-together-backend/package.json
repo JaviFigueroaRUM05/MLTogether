@@ -20,6 +20,7 @@
     "@tensorflow/tfjs": "^1.7.0",
     "@tensorflow/tfjs-node": "^1.7.0",
     "amqplib": "^0.5.5",
+    "base64-arraybuffer": "^0.2.0",
     "form-data": "^3.0.0",
     "hapi-mongodb": "^9.0.0",
     "haute-couture": "3.x.x",

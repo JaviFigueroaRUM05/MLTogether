@@ -24,7 +24,6 @@ const onMessage = (server) =>
 
             const encodedTask = await QueueActions.fetchFromQueue(channel, tasksQueueName, 5000);
             if (encodedTask === null) {
-                console.log('here');
                 return JSON.stringify({ function: 'nop' });
             }
 
@@ -37,10 +36,9 @@ const onMessage = (server) =>
                 const reduceData = [];
                 let gotAllMapResults = false;
                 while (!gotAllMapResults) {
-                    console.log('here');
                     const reduceDataInstance =  await QueueActions.fetchFromQueue(channel,
                         mapResultsQueueName + '_' + mapResultsId, 3000);
-
+                    //console.log(reduceDataInstance);
                     if (reduceDataInstance === null) {
                         gotAllMapResults = true;
                     }
@@ -61,8 +59,9 @@ const onMessage = (server) =>
 
         }
         else if (msg.event === 'result') {
-            console.log(msg);
+            //console.log(msg);
             const results = msg.results;
+            console.log(results.result.grads['conv2d_Conv2D1/kernel'][0][0][0]);
             if (msg.lastOperation === 'map') {
                 const mapResultsQueueFullName = mapResultsQueueName + '_' + msg.mapResultsId;
                 channel.assertQueue(mapResultsQueueFullName, {
