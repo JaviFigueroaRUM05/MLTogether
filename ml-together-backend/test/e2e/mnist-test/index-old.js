@@ -17,19 +17,21 @@
  */
 
 const Axios = require('axios');
-const Model = require('./model');
+const Model = require('./model/model');
+const ModelManager = require('./model/model-manager');
 const MapReduce = require('./map-reduce');
 const Nes = require('nes');
 const ProjectQueueManager = require('./queue-management');
 const GoalTaskInfo = require('../../task/goal-task-info');
 const TF = require('@tensorflow/tfjs-node');
-
+const IRRequest = require('./io/io-handler');
 const TASK_QUEUE_NAME = 'task_queue';
 const MAP_RESULTS_QUEUE_NAME = 'map_results_queue';
 const REDUCE_RESULTS_QUEUE_NAME = 'reduce_results_queue';
 const BATCH_SIZE = 100;
-const BATCHES_PER_REDUCE = 5;
+const BATCHES_PER_REDUCE = 10;
 const PROJECT_ID = 'mnist121';
+const MODEL_HOST = 'http://localhost:3000/projects/' + PROJECT_ID + '/ir';
 
 const getTask = async function (nesClient) {
 
@@ -51,7 +53,7 @@ const getTask = async function (nesClient) {
 };
 
 
-const completeTask = async function (task) {
+const completeTask = async function (task, modelManager) {
 
     let result = null;
     let lastOperation = null;
@@ -60,21 +62,33 @@ const completeTask = async function (task) {
             .get(`http://localhost:3000/mnist/data?start=${task.dataStart}&end=${task.dataStart + BATCH_SIZE}`);
 
         const trainDataX = TF.tensor(response.data.images);
-        console.log(trainDataX.shape);
         const trainDataY = TF.tensor(response.data.labels);
-        result = { result: MapReduce.mapFn(trainDataX, trainDataY, Model) };
+
+        const modelId = 'NOT_USED';
+        const modelURL = task.modelURL;
+        await modelManager.updateAndCompileModel(modelId, modelURL);
+        result = { result: MapReduce.mapFn(trainDataX, trainDataY, modelManager.currentModel) };
+        console.log(result.result.grads['conv2d_Conv2D1/kernel'][0][2][0]);
         lastOperation = 'map';
     }
     else if (task.function === 'reduce') {
         const vectorToReduce = task.reduceData.map( (x) => JSON.parse(x).result);
-        result = { result: MapReduce.reduceFn(vectorToReduce, Model) };
+
+        const modelId = 'NOT_USED';
+        const modelURL = task.modelURL;
+        await modelManager.updateAndCompileModel(modelId, modelURL);
+
+        result = { result: MapReduce.reduceFn(vectorToReduce, modelManager.currentModel) };
         lastOperation = 'reduce';
+
+        // TODO: See where to send results (if through the web socket or http api)
+        await modelManager.currentModel.save( IRRequest(MODEL_HOST));
     }
     else if (task.function === 'nop')    {
         return null;
     }
     else                                   {
-        console.log('Function: ' + task.function + ' is Invalid.'); process.exit(1);
+        console.error('Function: ' + task.function + ' is Invalid.'); process.exit(1);
     }
 
     return { event: 'result',
@@ -102,6 +116,8 @@ const runMLTogether = async function () {
     // Initialize Tasks
     const goalTaskInfo = new GoalTaskInfo(trainingDataLength, BATCH_SIZE, BATCHES_PER_REDUCE);
 
+    await cleanIntermediateResultsDB();
+
     await ProjectQueueManager.purgeAllProjectQueues(PROJECT_ID,
         TASK_QUEUE_NAME,
         MAP_RESULTS_QUEUE_NAME,
@@ -110,21 +126,28 @@ const runMLTogether = async function () {
 
     await ProjectQueueManager.intializeGoalTasks(goalTaskInfo, TASK_QUEUE_NAME + '_' + PROJECT_ID);
 
+    // Create initial model
+
+    await Model.save(IRRequest(MODEL_HOST));
+
+    const modelManager = new ModelManager(MODEL_HOST);
+
     // Work Loop
     // eslint-disable-next-line no-constant-condition
     while (true) {
         const task = await getTask(nesClient);
-        const taskResults = await completeTask(task);
+        const taskResults = await completeTask(task, modelManager);
 
         if (taskResults === null) {
             break;
         }
 
         const resultsSentAnswer = await sendResults(nesClient, taskResults);
-        console.log(resultsSentAnswer);
     }
 
+    const response = await Axios.get(`http://localhost:3000/projects/${PROJECT_ID}/ir/1`);
+
     console.log('No more work!');
-}; 
+};
 
 runMLTogether();

@@ -3,7 +3,7 @@
 const QueueActions = require('./queue-actions');
 const Worker = require('./worker');
 
-var activeSessions = {};
+const activeSessions = {};
 
 const onMessage = (server) =>
 
@@ -27,12 +27,11 @@ const onMessage = (server) =>
 
             const encodedTask = await QueueActions.fetchFromQueue(channel, tasksQueueName, 5000);
             if (encodedTask === null) {
-                console.log('here');
                 return JSON.stringify({ function: 'nop' });
             }
 
             const task = JSON.parse(encodedTask);
-            activeSessions[socket.id].currentJob = { task: task, status: 'working' };
+            activeSessions[socket.id].currentJob = { task, status: 'working' };
 
             if (task.function === 'reduce' ) {
                 const mapResultsId = task.mapResultsId;
@@ -41,10 +40,8 @@ const onMessage = (server) =>
                 const reduceData = [];
                 let gotAllMapResults = false;
                 while (!gotAllMapResults) {
-                    console.log('here');
                     const reduceDataInstance =  await QueueActions.fetchFromQueue(channel,
                         mapResultsQueueName + '_' + mapResultsId, 3000);
-
                     if (reduceDataInstance === null) {
                         gotAllMapResults = true;
                     }
@@ -65,7 +62,7 @@ const onMessage = (server) =>
 
         }
         else if (msg.event === 'result') {
-            console.log(msg);
+            //console.log(msg);
             const results = msg.results;
             if (msg.lastOperation === 'map') {
                 const mapResultsQueueFullName = mapResultsQueueName + '_' + msg.mapResultsId;
@@ -77,6 +74,7 @@ const onMessage = (server) =>
             else {
                 console.log('Done');
             }
+
             activeSessions[socket.id].currentJob.status = 'done';
             activeSessions[socket.id].completedJobs += 1;
             return { message: 'good' };
@@ -88,12 +86,14 @@ const onMessage = (server) =>
     };
 
 const onConnection = (socket) => {
+
     activeSessions[socket.id] = new Worker.Worker(socket.id);
     console.log('Socket Connected: ' + activeSessions[socket.id].id);
     console.log('Worker: ', activeSessions[socket.id]);
 };
 
 const onDisconnection = (socket) => {
+
     console.log('Worker: ', activeSessions[socket.id]);
     delete activeSessions[socket.id];
     console.log('Socket Disconnected: ' + socket.id);

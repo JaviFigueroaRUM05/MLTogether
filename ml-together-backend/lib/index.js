@@ -7,8 +7,6 @@ exports.plugin = {
     pkg: Package,
     register: async (server, options) => {
 
-        // Custom plugin code can go here
-
         await HauteCouture.using()(server, options);
     }
 };

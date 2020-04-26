@@ -34,10 +34,6 @@ module.exports = new Confidence.Store({
                 options: {}
             },
             {
-                plugin: '../task', // Main plugin
-                options: {}
-            },
-            {
                 plugin: {
                     $filter: { $env: 'NODE_ENV' },
                     $default: 'hpal-debug',

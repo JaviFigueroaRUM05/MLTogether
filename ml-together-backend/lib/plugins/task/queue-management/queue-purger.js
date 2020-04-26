@@ -1,6 +1,6 @@
 'use strict';
 
-const AMQPInitializer = require('../../../task/amqp-initializer');
+const AMQPInitializer = require('../amqp-initializer');
 
 const purgeQueue = async function (queueName) {
 

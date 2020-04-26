@@ -2,7 +2,7 @@
 
 const Joi = require('@hapi/joi');
 const Data = require('./data');
-const MainServer = require('../../../server');
+const MainServer = require('../../../../server');
 
 const MNISTDataPlugin = {
 
@@ -17,8 +17,7 @@ const MNISTDataPlugin = {
             handler: async function (request, h) {
 
                 const { start, end } = request.query;
-                console.log(start);
-                console.log(end);
+                console.log(`Got data ${start} to ${end}`);
                 const data = Data.getTrainData(start, end);
                 const result = {
                     images: await data.images.array(),

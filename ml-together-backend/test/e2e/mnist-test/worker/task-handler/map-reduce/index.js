@@ -19,12 +19,12 @@ const getGradientsAndSaveActions = function (x, y, model) {
         return TF.tidy(() => {
 
             const labels = getPredictedLabels(x, model);
-            // labels.dataSync();
             return TF.losses.softmaxCrossEntropy(y, labels).asScalar();
         });
     };
 
-    return TF.variableGrads(f);
+    const results = TF.variableGrads(f);
+    return results;
 
 };
 
@@ -86,6 +86,8 @@ const reduceFn = function (vectorToReduce, model) {
             tensors[tensorName] = TF.addN(tensors[tensorName]);
         });
         model.optimizer.applyGradients(tensors);
+
+        // TODO: Return Model
     });
 };
 
