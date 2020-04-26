@@ -35,16 +35,19 @@ const completeTask = async function (task, modelManager, projectId) {
         const trainDataX = TF.tensor(response.data.images);
         const trainDataY = TF.tensor(response.data.labels);
 
-        const modelId = 'NOT_USED';
+        const modelId = '1';
         const modelURL = task.modelURL;
         await modelManager.updateAndCompileModel(modelId, modelURL);
         result = { result: MapReduce.mapFn(trainDataX, trainDataY, modelManager.currentModel) };
         lastOperation = 'map';
+
+        trainDataX.dispose();
+        trainDataY.dispose();
     }
     else if (task.function === 'reduce') {
         const vectorToReduce = task.reduceData.map( (x) => JSON.parse(x).result);
 
-        const modelId = 'NOT_USED';
+        const modelId = '1';
         const modelURL = task.modelURL;
         await modelManager.updateAndCompileModel(modelId, modelURL);
 

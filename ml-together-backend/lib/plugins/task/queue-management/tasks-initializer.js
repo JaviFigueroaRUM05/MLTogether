@@ -28,6 +28,7 @@ const addReduceTasks = function (trainingSetSize, batchSize, batchesPerReduce, c
         const modelStoringURL = modelURLRoot;
         const modelStoringId = mapResultsId + 1;
         const reduceTask = JSON.stringify({ function: 'reduce', mapResultsId, modelURL, modelStoringURL, modelStoringId });
+        console.log(reduceTask);
         channel.sendToQueue(taskQueueName, Buffer.from(reduceTask));
     }
 };

@@ -17,13 +17,13 @@ const str2ab = function (str) {
 
 };
 
+// TODO: The modelID isn't used in the load function because the task has the whole model id url
 class IRRequest {
     constructor(path, modelId) {
 
         this.path = path;
         //TODO: Change to reduce results
         this.modelId = modelId;
-        console.log(modelId);
     }
 
     async retrySave(url, form) {
@@ -82,7 +82,7 @@ class IRRequest {
     }
 
     async tryToLoad() {
-
+        console.log('here');
         let response;
         try {
 

@@ -17,6 +17,10 @@ class ModelManager {
     async updateAndCompileModel(modelId, modelURL) {
 
         const url = modelURL;
+        if (this.currentModelId === modelId) {
+            return;
+        }
+
         try {
             this.currentModel = await TF.loadLayersModel(
                 IRRequest(url, modelId)
@@ -26,6 +30,8 @@ class ModelManager {
                 loss: 'categoricalCrossentropy',
                 metrics: ['accuracy']
             });
+            this.currentModelId = modelId;
+
         }
         catch (err) {
             console.error(err);
