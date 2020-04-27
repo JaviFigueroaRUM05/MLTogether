@@ -26,6 +26,7 @@ html {
   z-index: 10;
   position: absolute;
   padding: 10px;
+  height: 100%;
 }
 
 .image-card{
@@ -50,6 +51,15 @@ html {
     margin-left: 0px !important;
   }
   .accepted_card {
+    margin-left: 0px !important;
+  }
+  .image-card-init {
+    display: none;
+  }
+  .accept_card-init {
+    margin-left: 0px !important;
+  }
+  .accepted_card-init {
     margin-left: 0px !important;
   }
   #terms-title{
@@ -346,4 +356,23 @@ a {
     justify-content: space-around;
     font-size: 35px;
   }
+
+  /* #cons-proj{
+    height: 300px
+  } */
   
+  .image-card-init{
+    width: 345px;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    position:relative;
+    margin-bottom: 15px;
+  }
+
+
+  #description-init{
+    overflow: auto;
+    height: 240px;
+  }
