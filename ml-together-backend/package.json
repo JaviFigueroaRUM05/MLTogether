@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "nodemon server",
-    "test": "lab -a @hapi/code --verbose -I _tfengine,proto ./test/intermediate_results/*.test.js",
+    "test": "lab -a @hapi/code --verbose -I _tfengine,proto ./test/unit/intermediate_results/*.test.js",
     "lint": "eslint ."
   },
   "dependencies": {

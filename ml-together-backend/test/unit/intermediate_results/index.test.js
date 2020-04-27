@@ -4,7 +4,7 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const IntermediateResultsPlugin = require('../../intermediate_results').plugin;
+const IntermediateResultsPlugin = require('../../../lib/plugins/intermediate-results').plugin;
 const Hapi = require('@hapi/hapi');
 const MongoClient = require('mongodb').MongoClient;
 // const MNISTModel = require('./model');
