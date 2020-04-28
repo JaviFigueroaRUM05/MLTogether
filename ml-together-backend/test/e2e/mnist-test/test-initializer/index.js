@@ -6,8 +6,8 @@ const GoalTaskInfo = require('../../../../lib/plugins/task/goal-task-info');
 const MNISTModel = require('./model');
 const IRRequest = require('../../../../lib/plugins/intermediate-results/tfjs-io-handler');
 
-const BATCH_SIZE = 20;
-const BATCHES_PER_REDUCE = 50;
+const BATCH_SIZE = 100;
+const BATCHES_PER_REDUCE = 10;
 const TRAINING_DATA_LENGTH = 60000; //DO NOT REMOVE
 
 

@@ -179,8 +179,8 @@
                         document.getElementById("demo").style.display = "none";
                         document.getElementById("demo2").style.display = "flex";
                         var script = document.createElement("script");
-                        script.type = "text/javascript";
-                        script.src = "../ml-together-backend/test/e2e/mnist-test/worker/bundle.js"; 
+                        script.type = "module";
+                        script.src = "./scripts/mnist/worker/index.js"; 
                         document.getElementsByTagName("head")[0].appendChild(script);
                         return false;
                      }

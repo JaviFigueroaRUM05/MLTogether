@@ -16,6 +16,9 @@ module.exports = new Confidence.Store({
             $coerce: 'number',
             $default: 3000
         },
+        routes: {
+            cors: true
+        },
         debug: {
             $filter: { $env: 'NODE_ENV' },
             $default: {
