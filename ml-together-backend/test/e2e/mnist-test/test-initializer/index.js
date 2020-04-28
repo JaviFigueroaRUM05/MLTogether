@@ -16,7 +16,7 @@ const initialize = async function (projectId, modelHost) {
     const trainingDataLength = 1000;
     const goalTaskInfo = new GoalTaskInfo(trainingDataLength, BATCH_SIZE, BATCHES_PER_REDUCE);
 
-    await cleanIntermediateResultsDB('mongodb://localhost:27017/mldev01', projectId);
+    await cleanIntermediateResultsDB('mongodb://0.0.0.0:27017/mldev01', projectId);
 
     await ProjectQueueManager.purgeAllProjectQueues(projectId,
         trainingDataLength / BATCH_SIZE / BATCHES_PER_REDUCE);
