@@ -15,7 +15,7 @@ const sendResults = async function (nesClient, results) {
 
 const runWorker = async function (projectId, modelHost) {
 
-    const nesClient = new Client('ws://localhost:3000');
+    const nesClient = new Client('ws://mltogether.com:3000');
     await nesClient.connect();
     const modelManager = new ModelManager(modelHost);
 

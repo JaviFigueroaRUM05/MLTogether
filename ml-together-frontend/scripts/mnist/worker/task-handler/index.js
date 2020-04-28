@@ -30,7 +30,7 @@ const completeTask = async function (task, modelManager, projectId) {
     let lastOperation = null;
     if      (task.function === 'map')    {
         const response = await Axios
-            .get(`http://localhost:3000/mnist/data?start=${task.dataStart}&end=${task.dataEnd}`);
+            .get(`http://mltogether:3000/mnist/data?start=${task.dataStart}&end=${task.dataEnd}`);
 
         const trainDataX = TF.tensor(response.data.images);
         const trainDataY = TF.tensor(response.data.labels);
