@@ -29,20 +29,27 @@ const completeTask = async function (task, modelManager, projectId) {
     let result = null;
     let lastOperation = null;
     if      (task.function === 'map')    {
+        console.log("BEFORE HERE");
         const response = await Axios
-            .get(`http://mltogether:3000/mnist/data?start=${task.dataStart}&end=${task.dataEnd}`);
-
+            .get(`http://mltogether.com:3000/mnist/data?start=${task.dataStart}&end=${task.dataEnd}`);
+            console.log("BEFORE HERE +");
         const trainDataX = TF.tensor(response.data.images);
         const trainDataY = TF.tensor(response.data.labels);
+        console.log("BEFORE HERE ++");
 
         const modelId = '1';
         const modelURL = task.modelURL;
         await modelManager.updateAndCompileModel(modelId, modelURL);
+        console.log("BEFORE HERE +++");
+
         result = { result: MapReduce.mapFn(trainDataX, trainDataY, modelManager.currentModel) };
+        console.log("BEFORE HERE ++++");
+
         lastOperation = 'map';
 
         trainDataX.dispose();
         trainDataY.dispose();
+        console.log("HEEERE");
     }
     else if (task.function === 'reduce') {
         const vectorToReduce = task.reduceData.map( (x) => JSON.parse(x).result);

@@ -8,7 +8,9 @@ import * as TaskHandler from './task-handler/index'
 const sendResults = async function (nesClient, results) {
 
     const resultsPayload = JSON.stringify(results);
+    console.log("Before send");
     const resultsSentAnswer = await nesClient.message(resultsPayload);
+    console.log("After send");
     return resultsSentAnswer;
 };
 
@@ -33,10 +35,10 @@ const runWorker = async function (projectId, modelHost) {
         const resultsSentAnswer = await sendResults(nesClient, taskResults);
     }
 
-    const response = await Axios.get(`http://localhost:3000/projects/${projectId}/ir/2`);
+    const response = await Axios.get(`http://mltogether.com:3000/projects/${projectId}/ir/2`);
 
     console.log('No more work!');
 };
 const PROJECT_ID = 'mnist121';
-const MODEL_HOST = 'http://localhost:3000/projects/' + PROJECT_ID + '/ir';
+const MODEL_HOST = 'http://mltogether.com:3000/projects/' + PROJECT_ID + '/ir';
 runWorker(PROJECT_ID,MODEL_HOST);
