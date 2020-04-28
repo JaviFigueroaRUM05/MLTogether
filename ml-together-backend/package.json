@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@hapi/boom": "9.x.x",
+    "@hapi/inert": "^6.0.1",
     "@hapi/joi": "17.x.x",
     "@tensorflow/tfjs": "^1.7.0",
     "@tensorflow/tfjs-node": "^1.7.0",

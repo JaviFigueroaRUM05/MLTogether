@@ -1,8 +1,24 @@
 'use strict';
 const handlers = require('../../handlers/project-handlers')
 const Joi = require('@hapi/joi')
+const Inert = require('@hapi/inert')
+const Path = require('path')
+
 //TODO: schema validation
 module.exports = [
+{
+  method: 'GET',
+  path: '/project/test/{param*}',
+  options: {
+    handler: {
+      directory: {
+        path: './dist/',
+	redirectToSlash: true,
+	index: true
+      }
+    }
+  }
+},
   {
   method: 'GET',
   path: '/projects',
@@ -15,7 +31,6 @@ module.exports = [
   path: '/projects/{projectId}',
   options: {
     handler: handlers.getProjectByID
-
   }
 },
 {

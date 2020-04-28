@@ -1,9 +1,8 @@
 'use strict';
-
+const Inert = require('@hapi/inert')
 const Dotenv = require('dotenv');
 const Confidence = require('confidence');
 const Toys = require('toys');
-
 // Pull .env into process.env
 Dotenv.config({ path: `${__dirname}/.env` });
 
@@ -33,6 +32,10 @@ module.exports = new Confidence.Store({
     register: {
         plugins: [
             {
+		plugin: Inert,
+		options: {}
+	    },
+	    {
                 plugin: '../lib', // Main plugin
                 options: {}
             },
@@ -43,6 +46,7 @@ module.exports = new Confidence.Store({
                     production: Toys.noop
                 }
             }
+	    
         ]
     }
 });

@@ -15,3 +15,4 @@ Then, with that same terminal or other one, go to ml-together-frontend and run n
 Install globaly http-server package by doing npm i -g http-server 
 
 Finally navigate to ml-together-frontend/dist/ and run http-server -c 1 --cors
+
