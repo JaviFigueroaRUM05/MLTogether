@@ -11,7 +11,7 @@ const addMapTasks = function (trainingSetSize, batchSize, taskQueueName, channel
     for (let i = 0; i < numberOfMapTasks; ++i) {
         const dataStart = i * batchSize;
         const dataEnd = (i + 1) * batchSize;
-        const modelURL = modelURLRoot + '/' + mapResultsId;
+        const modelURL = modelURLRoot + '/' + 1;
         addMapTaskToQueue(mapResultsId, taskQueueName, channel, dataStart, dataEnd, modelURL);
         if (isMapResultQueueFull(i, batchesPerReduce)) {
             ++mapResultsId;
