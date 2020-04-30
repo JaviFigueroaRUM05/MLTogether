@@ -91,7 +91,7 @@ class TaskService extends Schmervice.Service {
             // the map results
             if (isMapResultQueueFull(i, batchesPerReduce)) {
                 const nextModelId = currentMapResultsId + 1;
-                const modelStoringURL = `${modelURLRoot}/${nextModelId}`;
+                const modelStoringURL = `${modelURLRoot}`;
                 const reduceTask = this.createReduceTask(currentMapResultsId,
                     modelURL, modelStoringURL, nextModelId, numberOfBatches);
                 tasks.push(reduceTask);

@@ -1,6 +1,5 @@
 'use strict';
 
-const MNISTTestInitializer = require('./test-initializer');
 const MNISTTestWorker = require('./worker');
 const IRRequest = require('../../../lib/plugins/intermediate-results/tfjs-io-handler');
 const TF = require('@tensorflow/tfjs-node');
@@ -17,7 +16,7 @@ const MODEL_HOST = `http://${HOST}:${PORT}/projects/${PROJECT_ID}/ir`;
 
 const runMNISTTest = async function () {
 
-    await MNISTTestInitializer.initialize(PROJECT_ID, MODEL_HOST);
+    // await MNISTTestInitializer.initialize(PROJECT_ID, MODEL_HOST);
     await MNISTTestWorker.runWorker(PROJECT_ID, MODEL_HOST);
     let model = null;
     try {

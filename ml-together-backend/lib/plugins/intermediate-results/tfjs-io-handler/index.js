@@ -75,13 +75,17 @@ class IRRequest {
             }
         }
 
+        let tries = 0;
+        const maxTries = 2;
         let saved = await this.retrySave(this.path, form);
-        while (!saved) {
+        while (!saved && tries < maxTries) {
             saved = await this.retrySave(this.path, form);
+            ++tries;
         }
     }
 
     async tryToLoad() {
+
         console.log('here');
         let response;
         try {
@@ -103,9 +107,12 @@ class IRRequest {
 
     async load() {
 
+        let tries = 0;
+        const maxTries = 2;
         let model = await this.tryToLoad();
-        while (!model) {
+        while (!model && tries < maxTries) {
             model = await this.tryToLoad();
+            ++tries;
         }
 
         return model;

@@ -5,6 +5,7 @@ const CreateOptions = require('./options');
 const AMQPInitializer = require('./amqp-initializer');
 const Schmervice = require('schmervice');
 const QueueService = require('./services/queue');
+const TaskService = require('./services/task');
 
 // TODO: Add Hodgepodge
 exports.plugin = {
@@ -39,6 +40,7 @@ exports.plugin = {
             })
 
             await server.registerService(QueueService);
+            await server.registerService(TaskService);
 
 
 

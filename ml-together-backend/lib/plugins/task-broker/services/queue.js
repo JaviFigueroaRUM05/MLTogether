@@ -79,11 +79,10 @@ class QueueService extends Schmervice.Service {
 
     async addTasksToQueues(projectId, tasks) {
 
-        const taskQueueName = `${this.taskQueueBaseName}_${projectId}`;
         for (let i = 0; i < tasks.length; ++i) {
             const task = tasks[i];
             const stringifiedTask = JSON.stringify(task);
-            await this.sendToQueue(taskQueueName, Buffer.from(stringifiedTask));
+            await this.sendToTaskQueue(projectId, Buffer.from(stringifiedTask));
         }
     }
 
@@ -121,8 +120,8 @@ class QueueService extends Schmervice.Service {
 
         let channel = null;
         try {
-            channel = await initAMQPChannel(this.amqpURL, queueName);
             const fullTaskQueueName = `${this.taskQueueBaseName}_${projectId}`;
+            channel = await initAMQPChannel(this.amqpURL, fullTaskQueueName);
             channel.sendToQueue(fullTaskQueueName, payload);
         }
         catch (err) {
@@ -162,7 +161,7 @@ class QueueService extends Schmervice.Service {
         try {
             const response = await Axios(httpRequestOptions);
             const projectQueues = response.data.filter( (queue) =>  queue.name.includes(projectId));
-            const projectQueueNames = projectQueues.map( queue => queue.name);
+            const projectQueueNames = projectQueues.map( (queue) => queue.name);
             return projectQueueNames;
 
         }

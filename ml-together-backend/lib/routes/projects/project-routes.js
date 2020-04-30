@@ -9,7 +9,7 @@ const Path = require('path');
 module.exports = [
     {
         method: 'GET',
-        path: '/project/test/{param*}',
+        path: '/projects/test/{param*}',
         options: {
             handler: {
                 directory: {
