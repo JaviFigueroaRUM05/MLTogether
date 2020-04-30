@@ -6,14 +6,14 @@ const GoalTaskInfo = require('../../../../lib/plugins/task/goal-task-info');
 const MNISTModel = require('./model');
 const IRRequest = require('../../../../lib/plugins/intermediate-results/tfjs-io-handler');
 
-const BATCH_SIZE = 100;
+const BATCH_SIZE = 10;
 const BATCHES_PER_REDUCE = 10;
 const TRAINING_DATA_LENGTH = 60000; //DO NOT REMOVE
 
 
 const initialize = async function (projectId, modelHost) {
     // Initialize Tasks
-    const trainingDataLength = 1000;
+    const trainingDataLength = 100;
     const goalTaskInfo = new GoalTaskInfo(trainingDataLength, BATCH_SIZE, BATCHES_PER_REDUCE);
 
     await cleanIntermediateResultsDB('mongodb://0.0.0.0:27017/mldev01', projectId);

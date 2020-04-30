@@ -5,6 +5,7 @@ const AMQPInitializer = require('../amqp-initializer');
 const addMapTasks = function (trainingSetSize, batchSize, taskQueueName, channel, batchesPerReduce, modelURLRoot) {
 
     // TODO: Make sure this returns the ceil amount
+    console.log(trainingSetSize / batchSize)
     const numberOfMapTasks = trainingSetSize / batchSize;
     let mapResultsId = 1;
 
@@ -44,6 +45,7 @@ const addMapTaskToQueue = function (mapResultsId, queueName, amqpChannel, dataSt
         mapResultsId,
         modelURL
     };
+    console.log(mapTask);
 
     const mapTaskStringified = JSON.stringify(mapTask);
     amqpChannel.sendToQueue(queueName, Buffer.from(mapTaskStringified), {

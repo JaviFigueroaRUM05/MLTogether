@@ -3,7 +3,10 @@
 const Nes = require('nes');
 const CreateOptions = require('./options');
 const AMQPInitializer = require('./amqp-initializer');
+const Schmervice = require('schmervice');
+const QueueService = require('./services/queue');
 
+// TODO: Add Hodgepodge
 exports.plugin = {
 
     name: 'TaskBroker',
@@ -23,13 +26,22 @@ exports.plugin = {
         // Must not be an arrow function due to scoping
         // eslint-disable-next-line @hapi/hapi/scope-start, brace-style
         server.method('amqp.channel', function () { return this; }, { bind: channel });
-
+        
         // Register Websockets as plugins
         try {
             await server.register({
                 plugin: Nes,
                 options: CreateOptions(server)
             });
+
+            await server.register({
+                plugin: Schmervice
+            })
+
+            await server.registerService(QueueService);
+
+
+
         }
         catch (err) {
 

@@ -40,6 +40,25 @@ const getTrainedModelbyProjectID = async function (request,h) {
     return h.response(project).code(200);
 };
 
+const deleteProjectTaskQueues = async function (request, h) {
+
+    const projectId = request.params.projectId;
+    const { queueService } = request.services();
+
+    // TODO: Check if project exists VERY IMPORTANT!!!!
+
+    if ( request.query.all === true ) {
+
+        const queueNames = await queueService.getProjectQueueNames(projectId);
+        await queueService.deleteQueues(queueNames);
+        return h.response({ deleted: queueNames }).code(200);
+    }
+
+    return h.response({}).code(501);
+
+
+};
+
 
 
 
@@ -48,6 +67,7 @@ module.exports = {
     getProjects,
     getProjectByID,
     postTrainedModelbyProjectID,
-    getTrainedModelbyProjectID
+    getTrainedModelbyProjectID,
+    deleteProjectTaskQueues
 };
 
