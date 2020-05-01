@@ -74,7 +74,7 @@ class QueueService extends Schmervice.Service {
 
         this.amqpURL =  this.options.amqpURL || 'amqp://localhost';
 
-        this.defaultMaxTimeToWait = !this.options.defaultMaxTimeToWait || 5000;
+        this.defaultMaxTimeToWait = this.options.defaultMaxTimeToWait || 5000;
     }
 
     async addTasksToQueues(projectId, tasks) {
@@ -90,9 +90,9 @@ class QueueService extends Schmervice.Service {
 
         maxTimeToWait = maxTimeToWait || this.defaultMaxTimeToWait;
         let channel = null;
+        const fullTaskQueueName = `${this.taskQueueBaseName}_${projectId}`;
         try {
-            channel = await initAMQPChannel(this.amqpURL, queueName);
-            const fullTaskQueueName = `${this.taskQueueBaseName}_${projectId}`;
+            channel = await initAMQPChannel(this.amqpURL, fullTaskQueueName);
             return new Promise((resolve) => {
 
                 setTimeout( () => {
@@ -128,6 +128,58 @@ class QueueService extends Schmervice.Service {
             this.server.log(['test', 'queue', 'error'], err);
             throw err;
         }
+    }
+
+    sendToMapResultsQueue(projectId, mapResultsId, payload) {
+
+        const fullMapResultsQueueName = `${this.mapResultsQueueBaseName}_${projectId}_${mapResultsId}`;
+
+        return new Promise( async (resolve) => {
+
+            try {
+                const channel = await initAMQPChannel(this.amqpURL, fullMapResultsQueueName);
+                channel.sendToQueue(fullMapResultsQueueName, Buffer.from(JSON.stringify(payload)), {
+                    persistent: true
+                });
+                resolve();
+            }
+            catch (err) {
+                this.server.log(['test', 'queue', 'error'], err);
+                throw err;
+            }
+
+        });
+    }
+
+    fetchAllFromMapResultsQueue(projectId, mapResultsId, numberOfBatches) {
+
+        const mapResults = [];
+        const fullMapResultsQueueName =
+            `${this.mapResultsQueueBaseName}_${projectId}_${mapResultsId}`;
+
+
+        return new Promise( async (resolve, reject) => {
+
+            try {
+                const channel = await initAMQPChannel(this.amqpURL,
+                    fullMapResultsQueueName);
+
+                channel.consume(fullMapResultsQueueName, (reduceDataInstance) => {
+
+                    console.log(reduceDataInstance);
+                    mapResults.push(reduceDataInstance.content.toString());
+                    if (mapResults.length === numberOfBatches) {
+                        resolve(mapResults);
+                    }
+                }, {
+                    noAck: true
+                });
+            }
+            catch (err) {
+                this.server.log(['test', 'queue', 'error'], err);
+                reject(err);
+            }
+        });
     }
 
 

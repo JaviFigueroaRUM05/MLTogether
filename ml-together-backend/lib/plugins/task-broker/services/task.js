@@ -65,7 +65,7 @@ class TaskService extends Schmervice.Service {
 
         if ( (trainingSetSize / batchSize) < batchesPerReduce) {
             throw new RangeError(
-                `batchesPerReduce => ${batchesPerReduce} has to be less or equal than trainingSetSize / batchSize => ${trainingSetSize/batchSize}`
+                `batchesPerReduce => ${batchesPerReduce} has to be less or equal than trainingSetSize / batchSize => ${trainingSetSize / batchSize}`
             );
         }
 

@@ -33,7 +33,7 @@ const runWorker = async function (projectId, modelHost) {
         const resultsSentAnswer = await sendResults(nesClient, taskResults);
     }
 
-    const response = await Axios.get(`http://localhost:3000/projects/${projectId}/ir/2`);
+    const response = await Axios.get(`http://localhost:3000/projects/${projectId}/ir/3`);
 
     console.log('No more work!');
 };

@@ -9,7 +9,7 @@ const IRRequest = require('../../../../lib/plugins/intermediate-results/tfjs-io-
 const PROJECT_ID = 'mnist121';
 const MODEL_HOST = 'http://localhost:3000/projects/' + PROJECT_ID + '/ir';
 const BATCH_SIZE = 10;
-const BATCHES_PER_REDUCE = 10;
+const BATCHES_PER_REDUCE = 5;
 const TRAINING_DATA_LENGTH = 60000; //DO NOT REMOVE
 
 const MNISTDataPlugin = {

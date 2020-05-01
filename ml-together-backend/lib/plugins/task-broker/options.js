@@ -1,6 +1,5 @@
 'use strict';
 
-const QueueActions = require('./queue-actions');
 const Worker = require('./worker');
 
 const activeSessions = {};
@@ -10,22 +9,17 @@ const onMessage = (server) =>
     async function (socket, message) {
 
         server.log( ['debug'],socket.id + ' Sends:', message);
-
+        const { queueService } = server.services();
         const msg = JSON.parse(message);
-        const channel = server.methods.amqp.channel();
         const projectId = msg.projectId;
 
         // TODO: Check if the projectId exists
-        const tasksQueueName = 'task_queue_' + projectId;
-        const mapResultsQueueName = 'map_results_queue_' + projectId;
-        const resultsQueueName = 'reduce_results_queue_' + projectId;
-        // TODO: Split into more result queues
-
         // TODO: Split in projects somehow
         // bring more tasks
         if (msg.event === 'next') {
 
-            const encodedTask = await QueueActions.fetchFromQueue(channel, tasksQueueName, 5000);
+            const encodedTask = await queueService.fetchFromQueue(projectId);
+
             if (encodedTask === null) {
                 return JSON.stringify({ function: 'nop' });
             }
@@ -36,23 +30,12 @@ const onMessage = (server) =>
             if (task.function === 'reduce' ) {
                 const mapResultsId = task.mapResultsId;
 
-                // TODO: Check first if all of the map results are in the queue
-                const reduceData = [];
-                let gotAllMapResults = false;
-                while (!gotAllMapResults) {
-                    const reduceDataInstance =  await QueueActions.fetchFromQueue(channel,
-                        mapResultsQueueName + '_' + mapResultsId, 3000);
-                    if (reduceDataInstance === null) {
-                        gotAllMapResults = true;
-                    }
-                    else {
-                        reduceData.push(reduceDataInstance.toString());
-                    }
-
-                }
+                const reduceData = await queueService
+                    .fetchAllFromMapResultsQueue(projectId, mapResultsId,
+                        task.numberOfBatches);
 
                 task.reduceData = reduceData;
-                console.log('Returning reduces');
+                server.log(['debug'],'Returning reduces');
                 return JSON.stringify(task);
             }
 
@@ -62,17 +45,12 @@ const onMessage = (server) =>
 
         }
         else if (msg.event === 'result') {
-            //console.log(msg);
             const results = msg.results;
             if (msg.lastOperation === 'map') {
-                const mapResultsQueueFullName = mapResultsQueueName + '_' + msg.mapResultsId;
-                channel.assertQueue(mapResultsQueueFullName, {
-                    durable: true
-                });
-                await QueueActions.pushResultsToQueue(results, channel, mapResultsQueueFullName);
+                await queueService.sendToMapResultsQueue(projectId, msg.mapResultsId, results);
             }
             else {
-                console.log('Done');
+                server.log(['debug'], 'Done');
             }
 
             activeSessions[socket.id].currentJob.status = 'done';
@@ -85,19 +63,24 @@ const onMessage = (server) =>
 
     };
 
-const onConnection = (socket) => {
+const onConnection = (server) =>
 
-    activeSessions[socket.id] = new Worker.Worker(socket.id);
-    console.log('Socket Connected: ' + activeSessions[socket.id].id);
-    console.log('Worker: ', activeSessions[socket.id]);
-};
+    function (socket) {
 
-const onDisconnection = (socket) => {
+        activeSessions[socket.id] = new Worker.Worker(socket.id);
+        server.log([server],'Socket Connected: ' + activeSessions[socket.id].id);
+        console.log('Worker: ', activeSessions[socket.id]);
+    };
 
-    console.log('Worker: ', activeSessions[socket.id]);
-    delete activeSessions[socket.id];
-    console.log('Socket Disconnected: ' + socket.id);
-};
+
+const onDisconnection = (server) =>
+
+    function (socket) {
+
+        server.log(['debug'],'Worker: ', activeSessions[socket.id]);
+        delete activeSessions[socket.id];
+        server.log(['debug'],'Socket Disconnected: ' + socket.id);
+    };
 
 
 
@@ -113,7 +96,7 @@ module.exports = function createOptions(server) {
 
     return {
         onMessage: onMessage(server),
-        onConnection,
-        onDisconnection
+        onConnection: onConnection(server),
+        onDisconnection: onDisconnection(server)
     };
 };
