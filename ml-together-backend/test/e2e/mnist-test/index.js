@@ -1,17 +1,22 @@
 'use strict';
 
-const MNISTTestInitializer = require('./test-initializer');
 const MNISTTestWorker = require('./worker');
 const IRRequest = require('../../../lib/plugins/intermediate-results/tfjs-io-handler');
 const TF = require('@tensorflow/tfjs-node');
 const Data = require('./server/data');
+const Dotenv = require('dotenv');
+
+Dotenv.config({ path: `${__dirname}/../../../server/.env` });
+
 
 const PROJECT_ID = 'mnist121';
-const MODEL_HOST = 'http://localhost:3000/projects/' + PROJECT_ID + '/ir';
+const HOST = process.env.HOST || 'localhost:3000';
+const PORT = process.env.PORT || 3000;
+const MODEL_HOST = `http://${HOST}:${PORT}/projects/${PROJECT_ID}/ir`;
 
 const runMNISTTest = async function () {
 
-    await MNISTTestInitializer.initialize(PROJECT_ID, MODEL_HOST);
+    // await MNISTTestInitializer.initialize(PROJECT_ID, MODEL_HOST);
     await MNISTTestWorker.runWorker(PROJECT_ID, MODEL_HOST);
     let model = null;
     try {
