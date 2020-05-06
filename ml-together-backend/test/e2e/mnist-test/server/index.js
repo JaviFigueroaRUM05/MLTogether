@@ -9,7 +9,7 @@ const IRRequest = require('../../../../lib/plugins/intermediate-results/tfjs-io-
 const PROJECT_ID = 'mnist121';
 const MODEL_HOST = 'http://localhost:3000/projects/' + PROJECT_ID + '/ir';
 const BATCH_SIZE = 10;
-const BATCHES_PER_REDUCE = 5;
+const BATCHES_PER_REDUCE = 20;
 const TRAINING_DATA_LENGTH = 60000; //DO NOT REMOVE
 
 const MNISTDataPlugin = {
@@ -25,12 +25,16 @@ const MNISTDataPlugin = {
             handler: async function (request, h) {
 
                 const { start, end } = request.query;
-                console.log(`Got data ${start} to ${end}`);
+                //console.log(`Got data ${start} to ${end}`);
                 const data = Data.getTrainData(start, end);
+                const images = data.images;
+                const labels = data.labels;
                 const result = {
-                    images: await data.images.array(),
-                    labels: await data.labels.array()
+                    images: await images.array(),
+                    labels: await labels.array()
                 };
+                images.dispose();
+                labels.dispose();
                 return result;
             },
             options: {
@@ -61,7 +65,7 @@ exports.deployment = async (start) => {
     await queueService.deleteQueues(queueNames);
 
     const tasks = taskService
-        .createTasks(trainingDataLength, BATCH_SIZE, BATCHES_PER_REDUCE,
+        .createTasks(TRAINING_DATA_LENGTH, BATCH_SIZE, BATCHES_PER_REDUCE,
             MODEL_HOST);
 
     await queueService.addTasksToQueues(PROJECT_ID,tasks);
@@ -74,6 +78,7 @@ exports.deployment = async (start) => {
     await server.start();
 
     await MNISTModel.save( IRRequest(MODEL_HOST, 1) );
+    MNISTModel.dispose();
 
 
     console.log(`Server started at ${server.info.uri}`);

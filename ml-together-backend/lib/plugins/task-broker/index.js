@@ -26,6 +26,9 @@ exports.plugin = {
             await server.registerService(QueueService);
             await server.registerService(TaskService);
 
+            const { queueService } = server.services();
+            await queueService.initialize();
+
 
 
         }
