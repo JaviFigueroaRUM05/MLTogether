@@ -14,13 +14,13 @@ const getIRs = async function (request, h) {
 const GetIRByProjectID = async function (request, h) {
 
     const db = request.mongo.db;
+
     const result = await db.collection('intermediateResults').findOne({ projectId: request.params.projectId, modelId: request.params.modelId });
     return h.response(result).code(200);
 };
 
 const createIR = async function (request, h) {
 
-    console.log("Here");
     const db = request.mongo.db;
     const payload = request.payload;
     //adding the pid

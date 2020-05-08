@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "nodemon server",
-    "test": "lab -a @hapi/code --verbose -I _tfengine,proto --pattern '.test' test",
+    "test": "cross-env NODE_ENV=test lab -a @hapi/code --verbose -I _tfengine,proto --pattern '.test' test",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -41,6 +41,7 @@
     "@hapi/lab": "22.x.x",
     "axios": "^0.19.2",
     "confidence": "4.x.x",
+    "cross-env": "^7.0.2",
     "dotenv": "8.x.x",
     "eslint": "6.x.x",
     "faker": "^4.1.0",

@@ -66,7 +66,6 @@ experiment('TaskService', () => {
             const dataEnd = Faker.random.number({ min: 30, max: 60 });
 
             const task = taskService.createMapTask(mapResultsId, modelURL, dataStart, dataEnd);
-            console.log(task);
             expect(task).to.include(['function', 'dataStart', 'dataEnd',
                 'mapResultsId', 'modelURL']);
         });
