@@ -31,7 +31,7 @@ const onMessage = (server) =>
 
                 task.reduceData = reduceData;
                 server.log(['debug'],'Returning reduces');
-                return JSON.stringify(task);
+                return task;
             }
 
             server.log(['memory'],
