@@ -17,10 +17,12 @@
     "@hapi/boom": "9.x.x",
     "@hapi/inert": "^6.0.1",
     "@hapi/joi": "17.x.x",
+    "@hapi/nes": "^12.0.2",
     "@tensorflow/tfjs": "^1.7.0",
     "@tensorflow/tfjs-node": "^1.7.3",
     "amqplib": "^0.5.5",
     "base64-arraybuffer": "^0.2.0",
+    "ejs": "^3.1.2",
     "form-data": "^3.0.0",
     "hapi-mongodb": "^9.0.0",
     "haute-couture": "3.x.x",
@@ -30,7 +32,8 @@
     "nodemon": "^2.0.2",
     "promisify": "0.0.3",
     "schmervice": "^1.5.0",
-    "stream-to-promise": "^2.2.0"
+    "stream-to-promise": "^2.2.0",
+    "webpack": "^4.43.0"
   },
   "devDependencies": {
     "@hapi/code": "8.x.x",
