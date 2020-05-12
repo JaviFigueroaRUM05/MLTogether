@@ -4,7 +4,7 @@ const handlers = require('../../handlers/user-handlers');
 const schema = require('../../schemas/user-schemas');
 const Joi = require('@hapi/joi');
 
-//TODO: schema validation
+
 module.exports = [
     {
         method: 'POST',
@@ -33,11 +33,12 @@ module.exports = [
 
     {
         method: 'POST',
-        path: '/login',        
+        path: '/login',       
         options: {
             pre: [
                 {method: handlers.verifyLogin}
             ],
+           
             handler: handlers.login,
             payload: {
                 output: 'stream',

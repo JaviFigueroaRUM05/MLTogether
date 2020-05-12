@@ -25,6 +25,7 @@
     "bcrypt": "^4.0.1",
     "form-data": "^3.0.0",
     "hapi-auth-basic": "^5.0.0",
+    "hapi-auth-jwt2": "^10.1.0",
     "hapi-mongodb": "^9.0.0",
     "hapi-request-user": "^2.1.0",
     "haute-couture": "3.x.x",

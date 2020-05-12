@@ -20,6 +20,16 @@ const getProjectByID = async function (request,h) {
     return h.response(project).code(200);
 };
 
+const getProjectsByOwner = async function (request,h) {
+
+    const db = request.mongo.db;
+    const ObjectID = request.mongo.ObjectID;
+    const userID = request.auth.credentials.id
+    const project = await db.collection('projects').findOne({  owner:{_id: new ObjectID(userID)} });
+
+    return h.response(project).code(200);
+};
+
 const postTrainedModelbyProjectID = async function (request,h) {
 
     const db = request.mongo.db;
@@ -39,6 +49,26 @@ const getTrainedModelbyProjectID = async function (request,h) {
 
     return h.response(project).code(200);
 };
+
+//TODO: ADD TO ROUTE AS A PRE-METHOD
+async function verifyProject(request, h) {
+    console.log('verifying project existence');
+    const db = request.mongo.db;
+    // Find an entry from the database that
+    // matches either the email or username
+
+    const project = await db.collection('projects').findOne(
+        { _id: request.payload.projectId });
+    
+    //user with that email doesn't exist
+    if (!project) {
+        throw Boom.badRequest("Project not found");
+    }
+
+    return request;
+ 
+  }
+  
 
 const deleteProjectTaskQueues = async function (request, h) {
 
@@ -68,6 +98,7 @@ module.exports = {
     getProjectByID,
     postTrainedModelbyProjectID,
     getTrainedModelbyProjectID,
-    deleteProjectTaskQueues
+    deleteProjectTaskQueues,
+    getProjectsByOwner
 };
 

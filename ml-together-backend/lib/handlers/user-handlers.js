@@ -4,8 +4,6 @@ const Boom = require('boom');
 const bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken')
 
-//TODO: Error validation Boom
-
 
   async function verifyRegistration(request, h) {
     console.log('verifying email');
@@ -42,13 +40,23 @@ const JWT = require('jsonwebtoken')
     return request;
  
   }
+//TODO: keep key secret
+  async function createToken(id) {
+    console.log('Creating token')
+    console.log(id)
+    return await JWT.sign({ id }, '1B0765FACEFF119832996A609EDC113983186AD76DA6835574B892C55EE5AF4F', {
+        algorithm: 'HS256',
+        expiresIn: '1h'
+    });
+}
   
 const register = async function (request,h) {
     
     const db = request.mongo.db;
-    const {email,confirmpassword} = request.payload;
-    //TODO: better password hashing
-    bcrypt.hash(request.payload.password, 10, async function(err, hash) {
+    const {email, password,confirmPassword} = request.payload;
+    //TODO: better password hashing   
+    if(password == confirmPassword){
+    bcrypt.hash(password, 10, async function(err, hash) {
         // Store hash in database
         if (err) {
             throw Boom.badRequest(err);
@@ -56,9 +64,12 @@ const register = async function (request,h) {
        
         await db.collection('Users').insertOne({email:email,password:hash});
       });
- 
+        
+    }else {
+        throw Boom.badRequest("Passwords don't match");
+    }
         return h.response().code(201);
-    //return h.response(user).code(201);
+   
 };
 
 
@@ -68,17 +79,19 @@ const login = async function (request,h) {
     const db = request.mongo.db;
     const {email,password}= request.payload;
     const user = await db.collection('Users').findOne(
-        { email: request.payload.email });
+        { email: email });
 
-    
+        
     if(bcrypt.compareSync(password, user.password)) {
         console.log('passwords match!');
         //authentication token
+       const jwt =  await createToken(user._id)
+       return h.response({token_id: jwt}).code(201);
        } else {
         console.log('passwords dont match');
        }
        //dont return user info...
-    return h.response(user).code(201);
+    return h.response({token_id: 'here'}).code(201);
 };
 
 

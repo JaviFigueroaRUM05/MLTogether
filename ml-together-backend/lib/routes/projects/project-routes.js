@@ -23,7 +23,7 @@ module.exports = [
     {
         method: 'GET',
         path: '/projects',
-        options: {
+        options: {            
             handler: handlers.getProjects
         }
     },
@@ -32,6 +32,14 @@ module.exports = [
         path: '/projects/{projectId}',
         options: {
             handler: handlers.getProjectByID
+        }
+    },
+    {
+        method: 'GET',
+        path: '/projects/owner',
+        options: {
+            auth: 'jwt',
+            handler: handlers.getProjectsByOwner
         }
     },
     {
