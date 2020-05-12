@@ -5,7 +5,7 @@ const Lab = require('@hapi/lab');
 const Hapi = require('@hapi/hapi');
 const Schmervice = require('schmervice');
 const Faker = require('faker');
-const ScriptGeneratorService = require('../../../../lib/plugins/worker-script-generator/services/script-generator');
+const ScriptGeneratorService = require('../../../../../lib/plugins/worker-script-generator/services/script-generator');
 const FS = require('fs');
 const Path = require('path');
 
@@ -45,7 +45,7 @@ experiment('ScriptGeneratorService', () => {
 
 
         FS.rmdirSync(publicPath, { recursive: true });
-        FS.rmdirSync(templatesPath, { recursive: true });
+        FS.rmdirSync(temporaryPath, { recursive: true });
 
     });
     experiment('Deployment', () => {
@@ -74,10 +74,35 @@ experiment('ScriptGeneratorService', () => {
             expect(FS.existsSync(temporaryPath)).to.be.true();
         });
 
-        it('will not initialize more than once');
-
-
     });
+
+    experiment('generateScript', () => {
+
+        it('generates a script', { timeout: 5000 } , async () => {
+
+            const { scriptGeneratorService } = server.services();
+            const projectId = 'test';
+            const mapFnString = 'return;';
+            const reduceFnString = 'return;';
+            const dataUrl = 'http://localhost:3000';
+            await scriptGeneratorService.initialize();
+
+            const file = await scriptGeneratorService
+                .generateWorkerScript(projectId, mapFnString, reduceFnString, dataUrl);
+
+            console.log(file);
+
+            expect(FS.existsSync(file)).to.be.true();
+
+        });
+    });
+
+    after( () => {
+
+        FS.rmdirSync(publicPath, { recursive: true });
+        FS.rmdirSync(temporaryPath, { recursive: true });
+    });
+
 
 
 // End of ScriptGeneratorService experiment

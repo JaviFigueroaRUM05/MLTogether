@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "nodemon server",
-    "test": "cross-env NODE_ENV=test lab -a @hapi/code --verbose -I _tfengine,proto --pattern '.test' test",
+    "test": "cross-env NODE_ENV=test lab -a @hapi/code --verbose -I _tfengine,proto,__core-js_shared__ --pattern '.test' test",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -30,6 +30,7 @@
     "mongoose": "^5.9.7",
     "nes": "^10.0.2",
     "nodemon": "^2.0.2",
+    "parcel-bundler": "^1.12.4",
     "promisify": "0.0.3",
     "schmervice": "^1.5.0",
     "stream-to-promise": "^2.2.0",

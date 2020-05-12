@@ -6,6 +6,8 @@ const Util = require('util');
 const FS = require('fs');
 const Path = require('path');
 const EJS = require('ejs');
+const Bundler = require('parcel-bundler');
+
 
 //promisify
 const mkdir = Util.promisify(FS.mkdir);
@@ -23,6 +25,8 @@ class ScriptGeneratorService extends Schmervice.Service {
         this.publicPath = this.options.publicPath || 'public';
         this.temporaryPath = this.options.temporaryPath ||
             'lib/plugins/worker-script-generator/temporary';
+        this.ejsPrefix = this.options.ejsPrefix || 'worker';
+        this.webpackPrefix = this.options.webpackPrefix || 'main';
     }
 
     async initialize() {
@@ -39,7 +43,8 @@ class ScriptGeneratorService extends Schmervice.Service {
 
     }
 
-    async generateScript(projectId, mapFnString, reduceFnString, dataUrl) {
+
+    async generateWorkerScript(projectId, mapFnString, reduceFnString, dataUrl) {
 
         const host = this.server.info.uri;
         // copy template file into the public/projectId folder
@@ -62,43 +67,76 @@ class ScriptGeneratorService extends Schmervice.Service {
             mlTogetherHost: host
         };
         // TODO: Fix template so the script does not go crazy not completing tasks
+        // TODO: Check if the Webpack runner explodes when two things are happening
+        const ejsOutputDir = `${this.temporaryPath}/${this.ejsPrefix}-${projectId}.js`;
+        const webpackOutputFilename = `${this.webpackPrefix}-${projectId}.js`;
 
         try {
             //render ejs template to html string
+            console.log(Path.resolve(__dirname, `${this.publicPath}/scripts`));
             const worker = await EJS
                 .renderFile(`${this.templatesPath}/worker.ejs`, model)
                 .then((output) => output);
 
+
             //create file and write html
-            await writeFile(`/worker-${projectId}.js`, worker, 'utf8');
+            await writeFile(ejsOutputDir, worker, 'utf8');
+            // Bundler options
+            const options = {
+                outDir: Path.resolve(__dirname, `${this.publicPath}/scripts`), // The out directory to put the build files in, defaults to dist
+                outFile: webpackOutputFilename, // The name of the outputFile
+                watch: false, // Whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
+                cache: false, // Enabled or disables caching, defaults to true
+                cacheDir: '.cache', // The directory cache gets put in, defaults to .cache
+                contentHash: false, // Disable content hash from being included on the filename
+                minify: true, // Minify files, enabled if process.env.NODE_ENV === 'production'
+                //bundleNodeModules: false, // By default, package.json dependencies are not included when using 'node' or 'electron' with 'target' option above. Set to true to adds them to the bundle, false by default
+                logLevel: 3, // 5 = save everything to a file, 4 = like 3, but with timestamps and additionally log http requests to dev server, 3 = log info, warnings & errors, 2 = log warnings & errors, 1 = log errors, 0 = log nothing
+                hmr: false, // Enable or disable HMR while watching
+                sourceMaps: false // Enable or disable sourcemaps, defaults to enabled (minified builds currently always create sourcemaps)
+            };
 
+            const bundler = new Bundler(ejsOutputDir, options);
+            const bundle = await bundler.bundle();
 
-            Webpack({
-                entry: `${this.publicPath}/scripts/worker-${projectId}.js`,
-                output: {
-                    filename: `main-${projectId}.js`,
-                    path: Path.resolve(__dirname, 'dist')
-                }
-            }, (err, stats) => {
-                // Stats Object
-                if (err || stats.hasErrors()) {
-                    // Handlep errors here
-                    const info = stats.toJson();
+            return Path.resolve(__dirname, `${this.publicPath}/scripts`, webpackOutputFilename);
+            // return new Promise( (resolve, reject) => {
 
-                    if (stats.hasErrors()) {
-                        console.error(info.errors);
-                    }
+            //     Webpack({
+            //         entry: ejsOutputDir,
+            //         output: {
+            //             filename: webpackOutputFilename,
+            //             path: Path.resolve(__dirname, `${this.publicPath}/scripts`)
+            //         }
+            //     }, (err, stats) => {
 
-                    if (stats.hasWarnings()) {
-                        console.warn(info.warnings);
-                    }
-                }
-                // Done processing
-            });
+            //         console.log('here');
+
+            //         // Stats Object
+            //         if (err || stats.hasErrors()) {
+            //             // Handlep errors here
+            //             const info = stats.toJson();
+
+            //             if (stats.hasErrors()) {
+            //                 console.error(info.errors);
+            //                 reject(info.errors);
+            //             }
+
+            //             if (stats.hasWarnings()) {
+            //                 console.warn(info.warnings);
+            //             }
+
+            //             resolve(Path.resolve(__dirname, `${this.publicPath}/scripts`, webpackOutputFilename));
+            //         }
+            //         // Done processing
+            //     });
+            // });
+
         }
         catch (error) {
             console.log(error);
         }
+
     }
 
 }
