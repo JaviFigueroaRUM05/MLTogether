@@ -90,7 +90,6 @@ experiment('ScriptGeneratorService', () => {
             const file = await scriptGeneratorService
                 .generateWorkerScript(projectId, mapFnString, reduceFnString, dataUrl);
 
-            console.log(file);
 
             expect(FS.existsSync(file)).to.be.true();
 

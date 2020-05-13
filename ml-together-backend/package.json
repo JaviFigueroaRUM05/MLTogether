@@ -5,6 +5,9 @@
   "author": "Javier Figueroa, Manuel Baez, Alejandra Ortiz, Kelvin Garcia",
   "license": "ISC",
   "main": "lib/index.js",
+  "browserslist": [
+    "last 1 Chrome versions"
+  ],
   "directories": {
     "lib": "lib"
   },
@@ -44,6 +47,8 @@
     "@hapi/hapi": "19.x.x",
     "@hapi/lab": "22.x.x",
     "axios": "^0.19.2",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "confidence": "4.x.x",
     "cross-env": "^7.0.2",
     "dotenv": "8.x.x",

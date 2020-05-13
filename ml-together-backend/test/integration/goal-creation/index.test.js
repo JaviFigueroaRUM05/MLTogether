@@ -7,6 +7,9 @@ const Faker = require('faker');
 const TF = require('@tensorflow/tfjs-node');
 const IOHandlers = require('../../utils/io-handlers');
 const ModelFn = require('./utils/test-model');
+const MapFn = require('./utils/test-map');
+const ReduceFn = require('./utils/test-reduce');
+
 const {
     experiment,
     it,
@@ -38,8 +41,8 @@ experiment('create Goal route', () => {
     const trainingSetSize = 100;
     const batchSize = 10;
     const batchesPerReduce = 10;
-    const mapFn = Faker.lorem.words(5);
-    const reduceFn = Faker.lorem.words(5);
+    const mapFn = MapFn;
+    const reduceFn = ReduceFn;
     const trainDataUrl = Faker.internet.url();
 
     const payload = {

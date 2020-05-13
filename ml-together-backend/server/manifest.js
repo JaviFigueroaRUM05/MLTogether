@@ -6,7 +6,6 @@ const Confidence = require('confidence');
 const Toys = require('toys');
 const Mongo = require('hapi-mongodb');
 
-
 // Pull .env into process.env
 Dotenv.config({
     path: `${__dirname}/.env`
@@ -70,7 +69,6 @@ module.exports = new Confidence.Store({
                 plugin: '../lib', // Main plugin
                 options: {}
             },
-
             {
                 plugin: {
                     $filter: {

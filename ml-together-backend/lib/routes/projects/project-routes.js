@@ -10,11 +10,26 @@ const TF = require('@tensorflow/tfjs-node');
 module.exports = [
     {
         method: 'GET',
-        path: '/projects/test/{param*}',
+        path: '/projects/{projectId}/workerfiles/{param*}',
         options: {
             handler: {
                 directory: {
-                    path: './dist/',
+                    path: function (request) {
+
+                        const projectId = request.params.projectId;
+                        if (!request.params.param) {
+                            return Path.join(__dirname,'../../../public/projects', projectId);
+                        }
+
+                        const paramParts = request.params.param.split('/');
+                        if (paramParts[0] === 'images' || paramParts[0] === 'css') {
+                            return Path.join(__dirname,'../../../public');
+
+                        }
+
+                        return Path.join(__dirname,'../../../public/projects', projectId);
+
+                    },
                     redirectToSlash: true,
                     index: true
                 }
@@ -130,9 +145,9 @@ module.exports = [
         handler: async (request, h) => {
 
             const { taskService, queueService,
-                intermediateResultsService } = request.services();
-            const host = request.server.host;
-            const port = request.server.port;
+                intermediateResultsService, scriptGeneratorService } = request.services();
+            const host = request.server.info.host;
+            const port = request.server.info.port;
             const projectId = request.params.projectId;
 
 
@@ -157,6 +172,13 @@ module.exports = [
             const modelFunction = new Function('TF',modelFn);
             const model = modelFunction(TF);
             await intermediateResultsService.addToResults(projectId, '0', model);
+
+            // Generate Script
+            const { mapFn, reduceFn, trainDataUrl } = taskInfo;
+            await scriptGeneratorService.initializeProject(projectId);
+            //await scriptGeneratorService.generateIndexHTML(projectId);
+            await scriptGeneratorService
+                .generateWorkerScript(projectId, mapFn,reduceFn, trainDataUrl);
 
 
             return h.response({ status: 'ok' }).code(200);
