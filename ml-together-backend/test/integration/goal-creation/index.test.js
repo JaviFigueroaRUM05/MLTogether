@@ -66,8 +66,6 @@ experiment('create Goal route', () => {
         }
     };
 
-    let response;
-
     beforeEach( async () => {
 
         server = await MLTogetherServer.deployment(false);
@@ -76,7 +74,7 @@ experiment('create Goal route', () => {
         // Auth
         // Create a project
         try {
-            response = await server.inject({
+            await server.inject({
                 method: 'POST',
                 url: goalCreationRoute,
                 payload
@@ -124,23 +122,10 @@ experiment('create Goal route', () => {
         expect(FS.existsSync(filePath)).to.be.true();
     });
 
+
     after( () => {
 
         FS.rmdirSync(Path.join(__dirname, '../../tmp'), { recursive: true });
 
     });
-});
-
-experiment('create Goal route does not keep old information from previous Goal', () => {
-
-    it('deletes tasks from previous Goal');
-    it('replaces the old Worker script via websocket');
-
-
-});
-
-experiment('create Goal route error handling', () => {
-
-    it('returns 400 if missing information');
-
 });

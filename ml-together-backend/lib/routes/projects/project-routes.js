@@ -15,7 +15,7 @@ module.exports = [
             validate: {
                 params: Joi.object({
                     projectId: Joi.string().description('project id which the worker is from'),
-                    param: Joi.string().description('the file or directory you are looking for')
+                    param: Joi.any().description('the file or directory you are looking for').optional()
                 })
             },
             description: 'Get a worker file',
@@ -24,21 +24,21 @@ module.exports = [
             handler: {
                 directory: {
                     path: function (request) {
-
+                        // TODO: Check if project exists
                         const projectId = request.params.projectId;
-                        if (!request.params.param) {
-                            return Path.join(__dirname,'../../../public/projects', projectId);
-                        }
-
-                        // TODO: make it look for the scripts given the html
                         const paramParts = request.params.param.split('/');
-                        if (paramParts[0] === 'images' || paramParts[0] === 'css') {
-                            return Path.join(__dirname,'../../../public');
-
+                        let path;
+                        switch (paramParts[0]) {
+                            case 'images':
+                            case 'css':
+                            case '':
+                                path = Path.join(__dirname,'../../../public');
+                                break;
+                            default:
+                                path = Path.join(__dirname,'../../../public', projectId);
                         }
 
-                        return Path.join(__dirname,'../../../public/projects', projectId);
-
+                        return path;
                     },
                     redirectToSlash: true,
                     index: true
