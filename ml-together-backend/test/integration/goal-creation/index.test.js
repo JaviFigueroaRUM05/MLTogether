@@ -9,6 +9,8 @@ const IOHandlers = require('../../utils/io-handlers');
 const ModelFn = require('./utils/test-model');
 const MapFn = require('./utils/test-map');
 const ReduceFn = require('./utils/test-reduce');
+const FS = require('fs');
+const Path = require('path');
 
 const {
     experiment,
@@ -116,8 +118,17 @@ experiment('create Goal route', () => {
     });
 
 
-    it('creates the Worker script via websocket');
+    it('creates the Worker script', () => {
 
+        const filePath = Path.join(__dirname, `../../tmp/public/projects/${projectId}/main.js`);
+        expect(FS.existsSync(filePath)).to.be.true();
+    });
+
+    after( () => {
+
+        FS.rmdirSync(Path.join(__dirname, '../../tmp'), { recursive: true });
+
+    });
 });
 
 experiment('create Goal route does not keep old information from previous Goal', () => {
@@ -132,4 +143,4 @@ experiment('create Goal route error handling', () => {
 
     it('returns 400 if missing information');
 
-})
+});

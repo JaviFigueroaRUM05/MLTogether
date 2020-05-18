@@ -4,6 +4,7 @@ const Schmervice = require('schmervice');
 const Webpack = require('webpack');
 const Util = require('util');
 const FS = require('fs');
+const FSPromise = require('fs').promises;
 const Path = require('path');
 const EJS = require('ejs');
 const Bundler = require('parcel-bundler');
@@ -16,8 +17,6 @@ const writeFile = Util.promisify(FS.writeFile);
 class ScriptGeneratorService extends Schmervice.Service {
 
     constructor(server, options) {
-
-        console.log(options);
 
         super(server, options);
 
@@ -86,7 +85,7 @@ class ScriptGeneratorService extends Schmervice.Service {
 
         }
         catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
@@ -149,7 +148,7 @@ class ScriptGeneratorService extends Schmervice.Service {
 
         }
         catch (error) {
-            console.log(error);
+            console.error(error);
         }
 
     }

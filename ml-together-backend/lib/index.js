@@ -8,5 +8,6 @@ exports.plugin = {
     register: async (server, options) => {
 
         await HauteCouture.using()(server, options);
+        server.dependency('WorkerScriptGenerator');
     }
 };

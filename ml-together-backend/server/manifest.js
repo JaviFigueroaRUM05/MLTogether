@@ -1,10 +1,16 @@
 'use strict';
 
 const Inert = require('@hapi/inert');
+const Vision = require('@hapi/vision');
 const Dotenv = require('dotenv');
 const Confidence = require('confidence');
 const Toys = require('toys');
 const Mongo = require('hapi-mongodb');
+const HapiSwagger = require('hapi-swagger');
+const Pack = require('../package');
+const Path = require('path');
+
+const WorkerScriptGeneratorPlugin = require('../lib/plugins/worker-script-generator');
 
 // Pull .env into process.env
 Dotenv.config({
@@ -43,6 +49,10 @@ module.exports = new Confidence.Store({
                 options: {}
             },
             {
+                plugin: Vision,
+                options: {}
+            },
+            {
                 plugin: Mongo,
                 options: {
                     $filter: {
@@ -65,6 +75,22 @@ module.exports = new Confidence.Store({
 
                 }
             },
+            { plugin: WorkerScriptGeneratorPlugin,
+                options: {
+                    $filter: {
+                        $env: 'NODE_ENV'
+                    },
+                    test: {
+                        publicPath: Path.join(__dirname, '../test/tmp/public/projects'),
+                        temporaryPath: Path.join(__dirname, '../test/tmp/tmp'),
+                        templatesPath: Path.join(__dirname, '../test/utils')
+                    },
+                    $default: {
+                        publicPath: Path.join(__dirname, '../public/projects'),
+                        temporaryPath: Path.join(__dirname, '../tmp')
+                    }
+                }
+            },
             {
                 plugin: '../lib', // Main plugin
                 options: {}
@@ -77,7 +103,17 @@ module.exports = new Confidence.Store({
                     $default: 'hpal-debug',
                     production: Toys.noop
                 }
+            },
+            {
+                plugin: HapiSwagger,
+                options: {
+                    info: {
+                        title: 'MLTogether API Documentation',
+                        version: Pack.version
+                    }
+                }
             }
+
 
         ]
     }

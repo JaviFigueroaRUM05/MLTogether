@@ -7,9 +7,11 @@ const Path = require('path');
 
 module.exports.plugins = [
     TaskBrokerPlugin,
-    IRPlugin,
-    { plugin: WorkerScriptGeneratorPlugin,
-        options: {
-            publicPath: Path.join(__dirname, '../../public/projects'),
-            temporaryPath: Path.join(__dirname, '../../tmp')
-        } }];
+    IRPlugin
+    // { plugin: WorkerScriptGeneratorPlugin,
+    //     options: {
+    //         publicPath: Path.join(__dirname, '../../public/projects'),
+    //         temporaryPath: Path.join(__dirname, '../../tmp')
+    //     }
+    // }
+];

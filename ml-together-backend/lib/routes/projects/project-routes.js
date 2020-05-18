@@ -12,6 +12,15 @@ module.exports = [
         method: 'GET',
         path: '/projects/{projectId}/workerfiles/{param*}',
         options: {
+            validate: {
+                params: Joi.object({
+                    projectId: Joi.string().description('project id which the worker is from'),
+                    param: Joi.string().description('the file or directory you are looking for')
+                })
+            },
+            description: 'Get a worker file',
+            notes: 'Returns a file for the current goal given the project id and the file.',
+            tags: ['api'],
             handler: {
                 directory: {
                     path: function (request) {
@@ -21,6 +30,7 @@ module.exports = [
                             return Path.join(__dirname,'../../../public/projects', projectId);
                         }
 
+                        // TODO: make it look for the scripts given the html
                         const paramParts = request.params.param.split('/');
                         if (paramParts[0] === 'images' || paramParts[0] === 'css') {
                             return Path.join(__dirname,'../../../public');
@@ -40,7 +50,11 @@ module.exports = [
         method: 'GET',
         path: '/projects',
         options: {
+            description: 'Get all projects',
+            notes: 'Returns a file for the current goal given the project id and the file.',
+            tags: ['api'],
             handler: handlers.getProjects
+
         }
     },
     {
@@ -145,7 +159,8 @@ module.exports = [
         handler: async (request, h) => {
 
             const { taskService, queueService,
-                intermediateResultsService, scriptGeneratorService } = request.services();
+                intermediateResultsService } = request.services();
+            const { scriptGeneratorService } = request.services(true);
             const host = request.server.info.host;
             const port = request.server.info.port;
             const projectId = request.params.projectId;
