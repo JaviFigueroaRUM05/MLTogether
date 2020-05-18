@@ -19,13 +19,7 @@ const onMessage = (server) =>
         // bring more tasks
         if (msg.event === 'next') {
 
-            const encodedTask = await queueService.fetchFromQueue(projectId);
-
-            if (encodedTask === null) {
-                return JSON.stringify({ function: 'nop' });
-            }
-
-            const task = JSON.parse(encodedTask);
+            const task = await queueService.fetchTaskFromQueue(projectId);
             activeSessions[socket.id].currentJob = { task, status: 'working' };
 
             if (task.function === 'reduce' ) {
@@ -37,14 +31,14 @@ const onMessage = (server) =>
 
                 task.reduceData = reduceData;
                 server.log(['debug'],'Returning reduces');
-                return JSON.stringify(task);
+                return task;
             }
 
             server.log(['memory'],
                 `The script uses approximately 
                     ${process.memoryUsage().heapUsed / 1024 / 1024} MB`);
 
-            return encodedTask.toString();
+            return task;
 
         }
         else if (msg.event === 'result') {

@@ -39,7 +39,6 @@ class IRRequest {
 
         try {
             await Axios(httpRequestOptions);
-            console.log('Model has been saved!');
         }
         catch (err) {
             console.error(err);
@@ -64,7 +63,6 @@ class IRRequest {
                 form.append('model', result);
                 form.append('modelId', this.modelId);
                 formCreated = true;
-                console.log('finished creating form');
 
 
 
@@ -86,7 +84,6 @@ class IRRequest {
 
     async tryToLoad() {
 
-        console.log('here');
         let response;
         try {
 

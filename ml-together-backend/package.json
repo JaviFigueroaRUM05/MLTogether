@@ -5,32 +5,41 @@
   "author": "Javier Figueroa, Manuel Baez, Alejandra Ortiz, Kelvin Garcia",
   "license": "ISC",
   "main": "lib/index.js",
+  "browserslist": [
+    "last 1 Chrome versions"
+  ],
   "directories": {
     "lib": "lib"
   },
   "scripts": {
     "start": "nodemon server",
-    "test": "lab -a @hapi/code --verbose -I _tfengine,proto --pattern '.test' test",
+    "test": "cross-env NODE_ENV=test lab -a @hapi/code --verbose -I _tfengine,proto,__core-js_shared__ --pattern '.test' test",
     "lint": "eslint ."
   },
   "dependencies": {
     "@hapi/boom": "9.x.x",
     "@hapi/inert": "^6.0.1",
     "@hapi/joi": "17.x.x",
+    "@hapi/nes": "^12.0.2",
+    "@hapi/vision": "^6.0.0",
     "@tensorflow/tfjs": "^1.7.0",
     "@tensorflow/tfjs-node": "^1.7.3",
     "amqplib": "^0.5.5",
     "base64-arraybuffer": "^0.2.0",
+    "ejs": "^3.1.2",
     "form-data": "^3.0.0",
     "hapi-mongodb": "^9.0.0",
+    "hapi-swagger": "^13.0.0",
     "haute-couture": "3.x.x",
     "joi": "^14.3.1",
     "mongoose": "^5.9.7",
     "nes": "^10.0.2",
     "nodemon": "^2.0.2",
+    "parcel-bundler": "^1.12.4",
     "promisify": "0.0.3",
     "schmervice": "^1.5.0",
-    "stream-to-promise": "^2.2.0"
+    "stream-to-promise": "^2.2.0",
+    "webpack": "^4.43.0"
   },
   "devDependencies": {
     "@hapi/code": "8.x.x",
@@ -40,7 +49,10 @@
     "@hapi/hapi": "19.x.x",
     "@hapi/lab": "22.x.x",
     "axios": "^0.19.2",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "confidence": "4.x.x",
+    "cross-env": "^7.0.2",
     "dotenv": "8.x.x",
     "eslint": "6.x.x",
     "faker": "^4.1.0",

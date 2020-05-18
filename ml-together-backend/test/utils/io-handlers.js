@@ -78,9 +78,12 @@ class MongoDBRequest {
             }
         }
 
+        let tries = 0;
+        const maxTries = 2;
         let saved = await this.retrySave(form);
-        while (!saved) {
+        while (!saved && tries < maxTries) {
             saved = await this.retrySave(form);
+            ++tries;
         }
     }
 
@@ -164,6 +167,7 @@ class ServerInjectRequest {
                 url: this.path
             });
 
+
             const jsonBody = JSON.parse(response.payload).model;
             const modelInfoParsed = JSON.parse(jsonBody);
             const modelTopology = modelInfoParsed[0];
@@ -189,7 +193,6 @@ class ServerInjectRequest {
         }
 
         return model;
-
     }
 }
 

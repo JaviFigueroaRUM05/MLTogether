@@ -89,7 +89,7 @@ class QueueService extends Schmervice.Service {
         await channel.close();
     }
 
-    async fetchFromQueue(projectId, maxTimeToWait) {
+    async fetchTaskFromQueue(projectId, maxTimeToWait) {
 
         maxTimeToWait = maxTimeToWait || this.defaultMaxTimeToWait;
         let channel = null;
@@ -105,8 +105,14 @@ class QueueService extends Schmervice.Service {
                 await channel.prefetch(1);
                 await channel.consume(fullTaskQueueName, async (msg) => {
 
+
+                    if (msg.content === null) {
+                        return { function: 'nop' };
+                    }
+
+                    const task = JSON.parse(msg.content.toString());
                     //await channel.close();
-                    resolve(msg.content);
+                    resolve(task);
                     await channel.ack(msg);
                     await channel.close();
                 }, {
