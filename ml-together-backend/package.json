@@ -27,20 +27,14 @@
     "@tensorflow/tfjs-node": "^1.7.3",
     "amqplib": "^0.5.5",
     "base64-arraybuffer": "^0.2.0",
-<<<<<<< HEAD
     "bcrypt": "^4.0.1",
-=======
     "ejs": "^3.1.2",
->>>>>>> develop
     "form-data": "^3.0.0",
     "hapi-auth-basic": "^5.0.0",
     "hapi-auth-jwt2": "^10.1.0",
     "hapi-mongodb": "^9.0.0",
-<<<<<<< HEAD
     "hapi-request-user": "^2.1.0",
-=======
     "hapi-swagger": "^13.0.0",
->>>>>>> develop
     "haute-couture": "3.x.x",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",
@@ -64,12 +58,9 @@
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "confidence": "4.x.x",
-<<<<<<< HEAD
     "dotenv": "^8.2.0",
-=======
     "cross-env": "^7.0.2",
     "dotenv": "8.x.x",
->>>>>>> develop
     "eslint": "6.x.x",
     "faker": "^4.1.0",
     "hpal": "2.x.x",
