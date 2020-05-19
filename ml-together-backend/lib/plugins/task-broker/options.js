@@ -1,5 +1,6 @@
 'use strict';
 
+const TF = require('@tensorflow/tfjs-node');
 const Worker = require('./worker');
 
 const activeSessions = {};
@@ -8,7 +9,7 @@ const onMessage = (server) =>
 
     async function (socket, message) {
 
-        server.log( ['debug'],socket.id + ' Sends:', message);
+        //server.log( ['debug'],socket.id + ' Sends:' + message);
         const { queueService } = server.services();
         const msg = JSON.parse(message);
         const projectId = msg.projectId;
@@ -18,13 +19,7 @@ const onMessage = (server) =>
         // bring more tasks
         if (msg.event === 'next') {
 
-            const encodedTask = await queueService.fetchFromQueue(projectId);
-
-            if (encodedTask === null) {
-                return JSON.stringify({ function: 'nop' });
-            }
-
-            const task = JSON.parse(encodedTask);
+            const task = await queueService.fetchTaskFromQueue(projectId);
             activeSessions[socket.id].currentJob = { task, status: 'working' };
 
             if (task.function === 'reduce' ) {
@@ -36,12 +31,14 @@ const onMessage = (server) =>
 
                 task.reduceData = reduceData;
                 server.log(['debug'],'Returning reduces');
-                return JSON.stringify(task);
+                return task;
             }
 
-            server.log(['debug'],encodedTask);
+            server.log(['memory'],
+                `The script uses approximately 
+                    ${process.memoryUsage().heapUsed / 1024 / 1024} MB`);
 
-            return encodedTask.toString();
+            return task;
 
         }
         else if (msg.event === 'result') {
@@ -68,8 +65,8 @@ const onConnection = (server) =>
     function (socket) {
 
         activeSessions[socket.id] = new Worker.Worker(socket.id);
-        server.log([server],'Socket Connected: ' + activeSessions[socket.id].id);
-        console.log('Worker: ', activeSessions[socket.id]);
+        // server.log([debug],'Socket Connected: ' + activeSessions[socket.id].id);
+        // server.log('Worker: ', activeSessions[socket.id]);
     };
 
 
@@ -77,9 +74,9 @@ const onDisconnection = (server) =>
 
     function (socket) {
 
-        server.log(['debug'],'Worker: ', activeSessions[socket.id]);
+        // server.log(['debug'],'Worker: ' + activeSessions[socket.id]);
         delete activeSessions[socket.id];
-        server.log(['debug'],'Socket Disconnected: ' + socket.id);
+        // server.log(['debug'],'Socket Disconnected: ' + socket.id);
     };
 
 

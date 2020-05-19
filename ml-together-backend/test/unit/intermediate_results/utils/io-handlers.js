@@ -36,7 +36,7 @@ class MongoDBRequest {
 
         try {
 
-            const db = client.db('mldev01');
+            const db = client.db('mltest');
 
             const collection = db.collection('intermediateResults');
             await collection.insertOne(form);
@@ -180,12 +180,16 @@ class ServerInjectRequest {
 
     async load() {
 
+        let tries = 0;
+        const maxTries = 2;
         let model = await this.tryToLoad();
-        while (!model) {
+        while (!model && tries < maxTries) {
             model = await this.tryToLoad();
+            ++tries;
         }
 
         return model;
+
     }
 }
 

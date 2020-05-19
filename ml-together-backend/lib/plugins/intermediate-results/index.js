@@ -3,6 +3,8 @@
 const Joi = require('@hapi/joi');
 const Handler = require('./results-handlers');
 const Mongo = require('hapi-mongodb');
+const Schmervice = require('schmervice');
+const IntermediateResultsService = require('./services/intermediate-results');
 
 exports.plugin = {
 
@@ -11,17 +13,24 @@ exports.plugin = {
     register: async (server, options) => {
 
         try {
-            await server.register(  {
-                plugin: Mongo,
-                options: { url: 'mongodb://localhost:27017/mldev01',
-                    settings: {
-                        poolSize: 10,
-                        useUnifiedTopology: true
-                    },
-                    decorate: true
-                }
-
+            await server.register({
+                plugin: Schmervice
             });
+
+            await server.registerService(IntermediateResultsService);
+            // await server.register(  {
+            //     plugin: Mongo,
+            //     options: { url: 'mongodb://localhost:27017/mldev01',
+            //         settings: {
+            //             poolSize: 10,
+            //             useUnifiedTopology: true
+            //         },
+            //         decorate: true
+            //     }
+
+            // });
+            server.dependency('hapi-mongodb');
+
         }
         catch (err) {
 

@@ -4,37 +4,28 @@ const Schmervice = require('schmervice');
 const Axios = require('axios');
 const AMQP = require('amqplib');
 
+
 /**
- * connectToMessageBroker() returns a Promise of a connection to
- * an amqp Message Broker based on the url given
+ * initAMQPChannel() returns a channel to a given amqp
+ * Message Broker determined by the url. This also
+ * checks if a the queue exists
  * @param {String} url
  */
-const connectToMessageBroker = async function (url) {
+const initConnection = async function (url) {
 
     try {
         const connection = await AMQP.connect(url);
+        // channel.assertQueue(queue, {
+        //     durable: true
+        // });
+        //channel.prefetch(1);
         return connection;
+
     }
     catch (err) {
         throw err;
     }
 
-};
-
-/**
- * createChannelToMessageBroker() creates and returns a amqp
- * channel based on the connection parameter given
- * @param {Connection} connection
- */
-const createChannelToMessageBroker = async function (connection) {
-
-    try {
-        const channel = await connection.createChannel();
-        return channel;
-    }
-    catch (err) {
-        throw err;
-    }
 };
 
 /**
@@ -43,22 +34,21 @@ const createChannelToMessageBroker = async function (connection) {
  * checks if a the queue exists
  * @param {String} url
  */
-const initAMQPChannel = async function (url, queue) {
+const initAMQPChannel = async function (connection) {
 
-    let channel = null;
     try {
-        const connection = await connectToMessageBroker(url);
-        channel = await createChannelToMessageBroker(connection);
+        const channel = await connection.createChannel();
+        // channel.assertQueue(queue, {
+        //     durable: true
+        // });
+        //channel.prefetch(1);
+        return channel;
+
     }
     catch (err) {
         throw err;
     }
 
-    channel.assertQueue(queue, {
-        durable: true
-    });
-    channel.prefetch(1);
-    return channel;
 };
 
 class QueueService extends Schmervice.Service {
@@ -77,32 +67,54 @@ class QueueService extends Schmervice.Service {
         this.defaultMaxTimeToWait = this.options.defaultMaxTimeToWait || 5000;
     }
 
+    async initialize() {
+
+        this.connection = await initConnection(this.amqpURL);
+    }
     async addTasksToQueues(projectId, tasks) {
+
+        const fullTaskQueueName = `${this.taskQueueBaseName}_${projectId}`;
+        const channel = await initAMQPChannel(this.connection);
+
+        await channel.assertQueue(fullTaskQueueName, {
+            durable: true
+        });
 
         for (let i = 0; i < tasks.length; ++i) {
             const task = tasks[i];
             const stringifiedTask = JSON.stringify(task);
-            await this.sendToTaskQueue(projectId, Buffer.from(stringifiedTask));
+            await this.sendToTaskQueue(projectId, Buffer.from(stringifiedTask), channel);
         }
+
+        await channel.close();
     }
 
-    async fetchFromQueue(projectId, maxTimeToWait) {
+    async fetchTaskFromQueue(projectId, maxTimeToWait) {
 
         maxTimeToWait = maxTimeToWait || this.defaultMaxTimeToWait;
         let channel = null;
         const fullTaskQueueName = `${this.taskQueueBaseName}_${projectId}`;
         try {
-            channel = await initAMQPChannel(this.amqpURL, fullTaskQueueName);
-            return new Promise((resolve) => {
+            channel = await initAMQPChannel(this.connection);
+            return new Promise(async (resolve) => {
 
                 setTimeout( () => {
 
                     resolve(null);
                 }, maxTimeToWait);
+                await channel.prefetch(1);
+                await channel.consume(fullTaskQueueName, async (msg) => {
 
-                channel.consume(fullTaskQueueName, (msg) => {
 
-                    resolve(msg.content);
+                    if (msg.content === null) {
+                        return { function: 'nop' };
+                    }
+
+                    const task = JSON.parse(msg.content.toString());
+                    //await channel.close();
+                    resolve(task);
+                    await channel.ack(msg);
+                    await channel.close();
                 }, {
                     noAck: false
                 });
@@ -116,13 +128,11 @@ class QueueService extends Schmervice.Service {
 
     }
 
-    async sendToTaskQueue(projectId, payload) {
+    async sendToTaskQueue(projectId, payload, channel) {
 
-        let channel = null;
         try {
             const fullTaskQueueName = `${this.taskQueueBaseName}_${projectId}`;
-            channel = await initAMQPChannel(this.amqpURL, fullTaskQueueName);
-            channel.sendToQueue(fullTaskQueueName, payload);
+            await channel.sendToQueue(fullTaskQueueName, payload);
         }
         catch (err) {
             this.server.log(['test', 'queue', 'error'], err);
@@ -137,10 +147,14 @@ class QueueService extends Schmervice.Service {
         return new Promise( async (resolve) => {
 
             try {
-                const channel = await initAMQPChannel(this.amqpURL, fullMapResultsQueueName);
-                channel.sendToQueue(fullMapResultsQueueName, Buffer.from(JSON.stringify(payload)), {
+                const channel = await initAMQPChannel(this.connection);
+                await channel.assertQueue(fullMapResultsQueueName, {
+                    durable: true
+                });
+                await channel.sendToQueue(fullMapResultsQueueName, Buffer.from(JSON.stringify(payload)), {
                     persistent: true
                 });
+                await channel.close();
                 resolve();
             }
             catch (err) {
@@ -161,14 +175,13 @@ class QueueService extends Schmervice.Service {
         return new Promise( async (resolve, reject) => {
 
             try {
-                const channel = await initAMQPChannel(this.amqpURL,
-                    fullMapResultsQueueName);
+                const channel = await initAMQPChannel(this.connection);
 
-                channel.consume(fullMapResultsQueueName, (reduceDataInstance) => {
+                await channel.consume(fullMapResultsQueueName, async (reduceDataInstance) => {
 
-                    console.log(reduceDataInstance);
                     mapResults.push(reduceDataInstance.content.toString());
                     if (mapResults.length === numberOfBatches) {
+                        await channel.close();
                         resolve(mapResults);
                     }
                 }, {
@@ -186,11 +199,14 @@ class QueueService extends Schmervice.Service {
     async deleteQueues(queueNames) {
         // TODO: also accept a single queue
         try {
-            const channel = await initAMQPChannel(this.amqpURL, queueNames[0]);
+            const channel = await initAMQPChannel(this.connection);
             for (let i = 0; i < queueNames.length; ++i) {
                 const queueName = queueNames[i];
                 await channel.deleteQueue(queueName);
             }
+
+            await channel.close();
+
         }
         catch (err) {
             this.server.log(['test', 'queue', 'error'], err);

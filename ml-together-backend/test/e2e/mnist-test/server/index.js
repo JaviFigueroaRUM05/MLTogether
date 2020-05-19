@@ -3,14 +3,16 @@
 const Joi = require('@hapi/joi');
 const Data = require('./data');
 const MainServer = require('../../../../server');
-const MNISTModel = require('./model');
-const IRRequest = require('../../../../lib/plugins/intermediate-results/tfjs-io-handler');
 
 const PROJECT_ID = 'mnist121';
-const MODEL_HOST = 'http://localhost:3000/projects/' + PROJECT_ID + '/ir';
+const GOAL_TITLE = 'MNIST';
+const TRAIN_DATA_URL = 'http://localhost:3000/mnist/data';
 const BATCH_SIZE = 10;
-const BATCHES_PER_REDUCE = 5;
+const BATCHES_PER_REDUCE = 20;
 const TRAINING_DATA_LENGTH = 60000; //DO NOT REMOVE
+const MODEL_FN = require('./functions/model');
+const MAP_FN = require('./functions/map');
+const REDUCE_FN = require('./functions/reduce');
 
 const MNISTDataPlugin = {
 
@@ -25,12 +27,16 @@ const MNISTDataPlugin = {
             handler: async function (request, h) {
 
                 const { start, end } = request.query;
-                console.log(`Got data ${start} to ${end}`);
+                //console.log(`Got data ${start} to ${end}`);
                 const data = Data.getTrainData(start, end);
+                const images = data.images;
+                const labels = data.labels;
                 const result = {
-                    images: await data.images.array(),
-                    labels: await data.labels.array()
+                    images: await images.array(),
+                    labels: await labels.array()
                 };
+                images.dispose();
+                labels.dispose();
                 return result;
             },
             options: {
@@ -53,19 +59,41 @@ exports.deployment = async (start) => {
     await server.register(MNISTDataPlugin);
     await server.initialize();
 
-    const { queueService, taskService } = server.services();
+    const goalCreationRoute = `/project/${PROJECT_ID}/goal`;
 
-    const trainingDataLength = 100;
+    const title = GOAL_TITLE;
 
-    const queueNames = await queueService.getProjectQueueNames(PROJECT_ID);
-    await queueService.deleteQueues(queueNames);
+    // Model Information
+    const optimizer = 'rmsprop';
+    const loss = 'categoricalCrossentropy';
+    const metrics = ['accuracy'];
 
-    const tasks = taskService
-        .createTasks(trainingDataLength, BATCH_SIZE, BATCHES_PER_REDUCE,
-            MODEL_HOST);
+    // Task Information
+    const trainingSetSize = TRAINING_DATA_LENGTH;
 
-    await queueService.addTasksToQueues(PROJECT_ID,tasks);
+    const payload = {
+        title,
+        model: {
+            modelFn: MODEL_FN,
+            optimizer,
+            loss,
+            metrics
+        },
+        taskInfo: {
+            trainingSetSize,
+            trainDataUrl: TRAIN_DATA_URL,
+            batchSize: BATCH_SIZE,
+            batchesPerReduce: BATCHES_PER_REDUCE,
+            mapFn: MAP_FN,
+            reduceFn: REDUCE_FN
+        }
+    };
 
+    await server.inject({
+        method: 'POST',
+        url: goalCreationRoute,
+        payload
+    });
 
     if (!start) {
         return server;
@@ -73,7 +101,6 @@ exports.deployment = async (start) => {
 
     await server.start();
 
-    await MNISTModel.save( IRRequest(MODEL_HOST, 1) );
 
 
     console.log(`Server started at ${server.info.uri}`);
