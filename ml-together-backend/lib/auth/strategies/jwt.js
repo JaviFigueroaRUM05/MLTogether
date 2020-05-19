@@ -14,22 +14,15 @@ module.exports = (server, options) => ({
           const db = request.mongo.db;
           const ObjectID = request.mongo.ObjectID;
           //console.log(decoded)
-          const user = await db.collection('Users').findOne(
+          const user = await db.collection('users').findOne(
               { _id: ObjectID(decoded.id)});
 
-             try {
               if (user) {
                 return { credentials: user, isValid: true }
+              }else {
+               return  {isValid: false }
               }
-             }
-             catch(error){
-              //this is bad
-               return  {credentials: user,isValid: false }
                         
-             }
-
-
-        //return { credentials: user, isValid: true }
       }
     }
 });

@@ -11,7 +11,7 @@ const JWT = require('jsonwebtoken')
     // Find an entry from the database that
     // matches either the email or username
 
-    const user = await db.collection('Users').findOne(
+    const user = await db.collection('users').findOne(
         { email: request.payload.email });
     
     //user with that email already exists
@@ -24,12 +24,12 @@ const JWT = require('jsonwebtoken')
   }
 
   async function verifyLogin(request, h) {
-    console.log('verifying email');
+    //console.log('verifying email');
     const db = request.mongo.db;
     // Find an entry from the database that
     // matches either the email or username
 
-    const user = await db.collection('Users').findOne(
+    const user = await db.collection('users').findOne(
         { email: request.payload.email });
     
     //user with that email doesn't exist
@@ -43,8 +43,8 @@ const JWT = require('jsonwebtoken')
 //TODO: keep key secret
   async function createToken(id) {
     console.log('Creating token')
-    console.log(id)
-    return await JWT.sign({ id }, '1B0765FACEFF119832996A609EDC113983186AD76DA6835574B892C55EE5AF4F', {
+   // console.log(id)
+    return JWT.sign({ id }, '1B0765FACEFF119832996A609EDC113983186AD76DA6835574B892C55EE5AF4F', {
         algorithm: 'HS256',
         expiresIn: '1h'
     });
@@ -62,7 +62,7 @@ const register = async function (request,h) {
             throw Boom.badRequest(err);
         }
        
-        await db.collection('Users').insertOne({email:email,password:hash});
+        await db.collection('users').insertOne({email:email,password:hash});
       });
         
     }else {
@@ -78,9 +78,8 @@ const login = async function (request,h) {
 
     const db = request.mongo.db;
     const {email,password}= request.payload;
-    const user = await db.collection('Users').findOne(
+    const user = await db.collection('users').findOne(
         { email: email });
-
         
     if(bcrypt.compareSync(password, user.password)) {
         console.log('passwords match!');
@@ -88,10 +87,11 @@ const login = async function (request,h) {
        const jwt =  await createToken(user._id)
        return h.response({token_id: jwt}).code(201);
        } else {
-        console.log('passwords dont match');
+       
+        throw Boom.badRequest("Passwords don't match");
        }
        //dont return user info...
-    return h.response({token_id: 'here'}).code(201);
+   
 };
 
 
