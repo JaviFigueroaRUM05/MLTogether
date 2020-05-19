@@ -16,7 +16,6 @@ module.exports = (server, options) => ({
           //console.log(decoded)
           const user = await db.collection('Users').findOne(
               { _id: ObjectID(decoded.id)});
-            
 
              try {
               if (user) {
@@ -24,7 +23,7 @@ module.exports = (server, options) => ({
               }
              }
              catch(error){
-              //better error handling here, this is bad
+              //this is bad
                return  {credentials: user,isValid: false }
                         
              }

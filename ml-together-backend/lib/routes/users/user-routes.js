@@ -38,7 +38,6 @@ module.exports = [
             pre: [
                 {method: handlers.verifyLogin}
             ],
-           
             handler: handlers.login,
             payload: {
                 output: 'stream',

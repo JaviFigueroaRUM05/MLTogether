@@ -49,14 +49,10 @@ module.exports = [
     {
         method: 'GET',
         path: '/projects',
-<<<<<<< HEAD
-        options: {            
-=======
         options: {
             description: 'Get all projects',
             notes: 'Returns a file for the current goal given the project id and the file.',
             tags: ['api'],
->>>>>>> develop
             handler: handlers.getProjects
 
         }
