@@ -6,7 +6,7 @@ const JWT = require('jsonwebtoken')
 
 
   async function verifyRegistration(request, h) {
-    console.log('verifying email');
+    
     const db = request.mongo.db;
     // Find an entry from the database that
     // matches either the email or username
@@ -34,7 +34,7 @@ const JWT = require('jsonwebtoken')
     
     //user with that email doesn't exist
     if (!user) {
-        throw Boom.badRequest("Email not found");
+        throw Boom.unauthorized("Email not found");
     }
 
     return request;
@@ -43,7 +43,7 @@ const JWT = require('jsonwebtoken')
 //TODO: keep key secret
   async function createToken(id) {
     console.log('Creating token')
-   // console.log(id)
+    
     return JWT.sign({ id }, '1B0765FACEFF119832996A609EDC113983186AD76DA6835574B892C55EE5AF4F', {
         algorithm: 'HS256',
         expiresIn: '1h'
@@ -88,7 +88,7 @@ const login = async function (request,h) {
        return h.response({token_id: jwt}).code(201);
        } else {
        
-        throw Boom.badRequest("Passwords don't match");
+        throw Boom.unauthorized("Passwords don't match");
        }
        //dont return user info...
    

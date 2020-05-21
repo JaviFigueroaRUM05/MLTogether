@@ -11,6 +11,17 @@ const getProjects = async function (request, h) {
     return h.response(projects).code(200);
 };
 
+const postProject = async function (request,h) {
+    
+    const db = request.mongo.db;
+    const payload = request.payload;
+    payload.userID  = request.auth.credentials._id;
+    
+    const project = await db.collection('projects').insertOne(payload);
+
+    return h.response(project).code(201);
+};
+
 const getProjectByID = async function (request,h) {
 
     const db = request.mongo.db;
@@ -24,10 +35,11 @@ const getProjectsByOwner = async function (request,h) {
 
     const db = request.mongo.db;
     const ObjectID = request.mongo.ObjectID;
-    const userID = request.auth.credentials.id
-    const project = await db.collection('projects').findOne({  owner:{_id: new ObjectID(userID)} });
-
-    return h.response(project).code(200);
+    const userID = request.auth.credentials._id;
+    
+    const projects = await db.collection('projects').find({ userID: new ObjectID(userID) }).toArray();
+    
+    return h.response(projects).code(200);
 };
 
 const postTrainedModelbyProjectID = async function (request,h) {
@@ -43,26 +55,26 @@ const postTrainedModelbyProjectID = async function (request,h) {
 };
 
 const getTrainedModelbyProjectID = async function (request,h) {
-
+    console.log('here')
     const db = request.mongo.db;
     const project = await db.collection('trainedModels').find({ projectId: request.params.projectId }).toArray();
 
     return h.response(project).code(200);
 };
 
-//TODO: ADD TO ROUTE AS A PRE-METHOD
+
+
 async function verifyProject(request, h) {
     console.log('verifying project existence');
     const db = request.mongo.db;
-    // Find an entry from the database that
-    // matches either the email or username
+    const ObjectID = request.mongo.ObjectID;
 
     const project = await db.collection('projects').findOne(
-        { _id: request.payload.projectId });
-    
-    //user with that email doesn't exist
+        { _id: new ObjectID(request.params.projectId) });
+    //project doesn't exist in the database
+
     if (!project) {
-        throw Boom.badRequest("Project not found");
+        throw Boom.badRequest("Project Not Found");
     }
 
     return request;
@@ -74,8 +86,6 @@ const deleteProjectTaskQueues = async function (request, h) {
 
     const projectId = request.params.projectId;
     const { queueService } = request.services();
-
-    // TODO: Check if project exists VERY IMPORTANT!!!!
 
     if ( request.query.all === true ) {
 
@@ -99,6 +109,8 @@ module.exports = {
     postTrainedModelbyProjectID,
     getTrainedModelbyProjectID,
     deleteProjectTaskQueues,
-    getProjectsByOwner
+    getProjectsByOwner,
+    verifyProject,
+    postProject
 };
 

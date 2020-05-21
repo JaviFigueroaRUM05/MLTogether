@@ -12,6 +12,9 @@ module.exports = [
         method: 'GET',
         path: '/projects/{projectId}/workerfiles/{param*}',
         options: {
+            pre: [
+                {method: handlers.verifyProject}
+            ],
             validate: {
                 params: Joi.object({
                     projectId: Joi.string().description('project id which the worker is from'),
@@ -58,10 +61,35 @@ module.exports = [
         }
     },
     {
+        method: 'POST',
+        path: '/projects',
+        options: {
+            description: 'Create a project',
+            auth: 'jwt',
+            tags: ['api'],
+            handler: handlers.postProject,
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data',
+                multipart: true
+            },
+
+        }
+    },
+    {
         method: 'GET',
         path: '/projects/{projectId}',
         options: {
-            handler: handlers.getProjectByID
+            pre: [
+                {method: handlers.verifyProject}
+            ],
+            handler: handlers.getProjectByID,
+            validate: {
+                params: Joi.object({
+                    projectId: Joi.string()                   
+                })
+            },
         }
     },
     {
@@ -76,14 +104,24 @@ module.exports = [
         method: 'GET',
         path: '/projects/{projectId}/trained-model',
         options: {
-            handler: handlers.getTrainedModelbyProjectID
+            pre: [
+                {method: handlers.verifyProject}
+            ],
+            handler: handlers.getTrainedModelbyProjectID,
+            validate: {
+                params: Joi.object({
+                    projectId: Joi.string()                   
+                })
+            }
         }
     },
     {
         method: 'POST',
         path: '/projects/{projectId}/trained-model',
         handler: handlers.postTrainedModelbyProjectID,
-        options: {
+        options: { pre: [
+            {method: handlers.verifyProject}
+        ],
             payload: {
                 output: 'stream',
                 parse: true,
@@ -112,6 +150,9 @@ module.exports = [
         path: '/projects/{projectId}/queues',
         handler: handlers.deleteProjectTaskQueues,
         options: {
+            pre: [
+                {method: handlers.verifyProject}
+            ],
             validate: {
                 failAction: (request, h, err) => {
                     //TODO: change this to appear in debug only
