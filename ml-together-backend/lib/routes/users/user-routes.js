@@ -11,21 +11,16 @@ module.exports = [
         path: '/register',
         options: {
             pre: [
-                {method: handlers.verifyRegistration}
+                { method: handlers.verifyRegistration }
             ],
             handler: handlers.register,
-            payload: {
-                output: 'stream',
-                parse: true,
-                allow: 'multipart/form-data',
-                multipart: true
-            },
+            tags: ['api'],
             validate: {
                 failAction: async (request, h, err) => {
                     //TODO: change this to appear in debug only
                     console.error(err);
                     throw err;
-                },              
+                },
                 payload: schema.registration
             }
         }
@@ -33,31 +28,26 @@ module.exports = [
 
     {
         method: 'POST',
-        path: '/login',       
+        path: '/login',
         options: {
             pre: [
-                {method: handlers.verifyLogin}
+                { method: handlers.verifyLogin }
             ],
+            tags: ['api'],
             handler: handlers.login,
-            payload: {
-                output: 'stream',
-                parse: true,
-                allow: 'multipart/form-data',
-                multipart: true
-            },
             validate: {
                 failAction: async (request, h, err) => {
                     //TODO: change this to appear in debug only
                     console.error(err);
                     throw err;
-                },              
+                },
                 payload: schema.login
             }
         }
     },
     {
         method: 'POST',
-        path: '/user/changepass',       
+        path: '/user/changepass',
         options: {
             auth: 'jwt',
             handler: handlers.changePass,
@@ -72,11 +62,11 @@ module.exports = [
                     //TODO: change this to appear in debug only
                     console.error(err);
                     throw err;
-                },              
+                },
                 payload: schema.changePassword
             }
         }
     }
-    
+
 
 ];
