@@ -54,6 +54,28 @@ module.exports = [
                 payload: schema.login
             }
         }
+    },
+    {
+        method: 'POST',
+        path: '/user/changepass',       
+        options: {
+            auth: 'jwt',
+            handler: handlers.changePass,
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data',
+                multipart: true
+            },
+            validate: {
+                failAction: async (request, h, err) => {
+                    //TODO: change this to appear in debug only
+                    console.error(err);
+                    throw err;
+                },              
+                payload: schema.changePassword
+            }
+        }
     }
     
 

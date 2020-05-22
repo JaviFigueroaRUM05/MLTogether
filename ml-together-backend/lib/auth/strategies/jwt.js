@@ -18,7 +18,7 @@ module.exports = (server, options) => ({
               { _id: ObjectID(decoded.id)});
        
               if (user) {
-                return { credentials: user, isValid: true }
+                return { credentials: {'id': user._id}, isValid: true }
               }else {
                return  {isValid: false }
               }

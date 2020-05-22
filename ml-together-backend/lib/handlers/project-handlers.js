@@ -15,7 +15,7 @@ const postProject = async function (request,h) {
     
     const db = request.mongo.db;
     const payload = request.payload;
-    payload.userID  = request.auth.credentials._id;
+    payload.userID  = request.auth.credentials.id;
     
     const project = await db.collection('projects').insertOne(payload);
 
@@ -35,8 +35,8 @@ const getProjectsByOwner = async function (request,h) {
 
     const db = request.mongo.db;
     const ObjectID = request.mongo.ObjectID;
-    const userID = request.auth.credentials._id;
-    
+    const userID = request.auth.credentials.id;
+    console.log(request.auth.credentials)
     const projects = await db.collection('projects').find({ userID: new ObjectID(userID) }).toArray();
     
     return h.response(projects).code(200);

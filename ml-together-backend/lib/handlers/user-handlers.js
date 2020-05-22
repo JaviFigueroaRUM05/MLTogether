@@ -96,6 +96,37 @@ const login = async function (request,h) {
 
 
 
+const changePass = async function (request,h) {
+
+    const db = request.mongo.db;
+    const ObjectID = request.mongo.ObjectID;
+    const userID = request.auth.credentials.id;
+    const {oldpassword,newpassword}= request.payload;
+    const user = await db.collection('users').findOne(
+        { _id: new ObjectID(userID) });
+        
+    if(bcrypt.compareSync(oldpassword, user.password)) {
+        console.log('passwords match!');
+        bcrypt.hash(newpassword, 10, async function(err, hash) {
+           
+            if (err) {
+                throw Boom.badRequest(err);
+            }
+          const  update = await db.collection('users').update({_id: new ObjectID(userID)},
+          {$set: {"password":hash}});
+        
+          });
+        
+       } else {
+       
+        throw Boom.badRequest("Old password does not match");
+       }
+       return h.response().code(201);
+   
+};
+
+
+
 
 
 
@@ -105,6 +136,7 @@ module.exports = {
     register,
     login,
     verifyLogin,
-    verifyRegistration
+    verifyRegistration,
+    changePass
 };
 
