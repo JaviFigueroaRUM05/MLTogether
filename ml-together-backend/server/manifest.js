@@ -99,10 +99,20 @@ module.exports = new Confidence.Store({
                 }
             },
             {   plugin: TaskBrokerPlugin,
-                options: {}
+                options: {
+                    taskQueueBaseName: 'task_queue',
+                    mapResultsQueueBaseName: 'map_results_queue',
+                    amqpURL: {
+                        $env: 'AMQP_URL',
+                        $default: 'amqp://localhost'
+                    },
+                    defaultMaxTimeToWait: 5000
+                }
             },
             {   plugin: IRPlugin,
-                options: {}
+                options: {
+                    
+                }
             },
             {
                 plugin: '../lib', // Main plugin

@@ -18,17 +18,6 @@ exports.plugin = {
             });
 
             await server.registerService(IntermediateResultsService);
-            // await server.register(  {
-            //     plugin: Mongo,
-            //     options: { url: 'mongodb://localhost:27017/mldev01',
-            //         settings: {
-            //             poolSize: 10,
-            //             useUnifiedTopology: true
-            //         },
-            //         decorate: true
-            //     }
-
-            // });
             server.dependency('hapi-mongodb');
 
         }
