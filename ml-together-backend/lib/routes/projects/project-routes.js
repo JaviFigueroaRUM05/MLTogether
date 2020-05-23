@@ -13,7 +13,7 @@ module.exports = [
         path: '/projects/{projectId}/workerfiles/{param*}',
         options: {
             pre: [
-                {method: handlers.verifyProject}
+                { method: handlers.verifyProject }
             ],
             validate: {
                 params: Joi.object({
@@ -67,13 +67,7 @@ module.exports = [
             description: 'Create a project',
             auth: 'jwt',
             tags: ['api'],
-            handler: handlers.postProject,
-            payload: {
-                output: 'stream',
-                parse: true,
-                allow: 'multipart/form-data',
-                multipart: true
-            },
+            handler: handlers.postProject
 
         }
     },
@@ -82,14 +76,14 @@ module.exports = [
         path: '/projects/{projectId}',
         options: {
             pre: [
-                {method: handlers.verifyProject}
+                { method: handlers.verifyProject }
             ],
             handler: handlers.getProjectByID,
             validate: {
                 params: Joi.object({
-                    projectId: Joi.string()                   
+                    projectId: Joi.string()
                 })
-            },
+            }
         }
     },
     {
@@ -105,12 +99,12 @@ module.exports = [
         path: '/projects/{projectId}/trained-model',
         options: {
             pre: [
-                {method: handlers.verifyProject}
+                { method: handlers.verifyProject }
             ],
             handler: handlers.getTrainedModelbyProjectID,
             validate: {
                 params: Joi.object({
-                    projectId: Joi.string()                   
+                    projectId: Joi.string()
                 })
             }
         }
@@ -120,29 +114,29 @@ module.exports = [
         path: '/projects/{projectId}/trained-model',
         handler: handlers.postTrainedModelbyProjectID,
         options: { pre: [
-            {method: handlers.verifyProject}
+            { method: handlers.verifyProject }
         ],
-            payload: {
-                output: 'stream',
-                parse: true,
-                allow: 'multipart/form-data',
-                multipart: true
+        payload: {
+            output: 'stream',
+            parse: true,
+            allow: 'multipart/form-data',
+            multipart: true
+        },
+        validate: {
+            failAction: async (request, h, err) => {
+                //TODO: change this to appear in debug only
+                console.error(err);
+                throw err;
             },
-            validate: {
-                failAction: async (request, h, err) => {
-                    //TODO: change this to appear in debug only
-                    console.error(err);
-                    throw err;
-                },
-                params:
+            params:
                             Joi.object({
                                 projectId: Joi.string()
                             })
-                ,
-                payload: Joi.object({
-                    trainedModel: Joi.any()
-                })
-            }
+            ,
+            payload: Joi.object({
+                trainedModel: Joi.any()
+            })
+        }
         }
     },
     {
@@ -151,7 +145,7 @@ module.exports = [
         handler: handlers.deleteProjectTaskQueues,
         options: {
             pre: [
-                {method: handlers.verifyProject}
+                { method: handlers.verifyProject }
             ],
             validate: {
                 failAction: (request, h, err) => {

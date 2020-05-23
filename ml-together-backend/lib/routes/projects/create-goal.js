@@ -9,10 +9,10 @@ module.exports = {
     method: 'POST',
     path: '/project/{projectId}/goal',
     options: {
+        pre: [
+            { method: verifyProject }
+        ],
         validate: {
-            pre: [
-                { method: verifyProject }
-            ],
             failAction: async (request, h, err) => {
                 //TODO: change this to appear in debug only
                 console.error(err);
