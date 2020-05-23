@@ -30,7 +30,6 @@ module.exports = {
 
             const pass = await BCrypt.hash(password,10);
             const user = (await db.collection('users').insertOne({ email,password: pass })).ops[0];
-            console.log(user);
             const jwt = createToken(user._id, h.realm.pluginOptions.jwtKey);
 
             return h.response({ token_id: jwt }).code(201);

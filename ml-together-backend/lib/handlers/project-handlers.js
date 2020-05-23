@@ -4,7 +4,6 @@ const Boom = require('boom');
 
 const verifyProject = async function (request, h) {
 
-    console.log('verifying project existence');
     const db = request.mongo.db;
     const ObjectID = request.mongo.ObjectID;
 
