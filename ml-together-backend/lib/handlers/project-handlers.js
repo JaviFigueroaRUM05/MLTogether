@@ -12,11 +12,11 @@ const getProjects = async function (request, h) {
 };
 
 const postProject = async function (request,h) {
-    
+
     const db = request.mongo.db;
     const payload = request.payload;
     payload.userID  = request.auth.credentials.id;
-    
+
     const project = await db.collection('projects').insertOne(payload);
 
     return h.response(project).code(201);
@@ -36,9 +36,9 @@ const getProjectsByOwner = async function (request,h) {
     const db = request.mongo.db;
     const ObjectID = request.mongo.ObjectID;
     const userID = request.auth.credentials.id;
-    console.log(request.auth.credentials)
+    console.log(request.auth.credentials);
     const projects = await db.collection('projects').find({ userID: new ObjectID(userID) }).toArray();
-    
+
     return h.response(projects).code(200);
 };
 
@@ -55,7 +55,7 @@ const postTrainedModelbyProjectID = async function (request,h) {
 };
 
 const getTrainedModelbyProjectID = async function (request,h) {
-    console.log('here')
+    console.log('here');
     const db = request.mongo.db;
     const project = await db.collection('trainedModels').find({ projectId: request.params.projectId }).toArray();
 
@@ -65,6 +65,7 @@ const getTrainedModelbyProjectID = async function (request,h) {
 
 
 async function verifyProject(request, h) {
+
     console.log('verifying project existence');
     const db = request.mongo.db;
     const ObjectID = request.mongo.ObjectID;
@@ -74,13 +75,13 @@ async function verifyProject(request, h) {
     //project doesn't exist in the database
 
     if (!project) {
-        throw Boom.badRequest("Project Not Found");
+        throw Boom.badRequest('Project Not Found');
     }
 
     return request;
- 
-  }
-  
+
+}
+
 
 const deleteProjectTaskQueues = async function (request, h) {
 

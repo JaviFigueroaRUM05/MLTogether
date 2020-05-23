@@ -59,6 +59,13 @@ exports.deployment = async (start) => {
     await server.register(MNISTDataPlugin);
     await server.initialize();
 
+
+    // TODO: delete mltest database
+
+    // TODO: create a new user
+
+    // TODO: use the token from the new user to create goal
+
     const goalCreationRoute = `/project/${PROJECT_ID}/goal`;
 
     const title = GOAL_TITLE;
