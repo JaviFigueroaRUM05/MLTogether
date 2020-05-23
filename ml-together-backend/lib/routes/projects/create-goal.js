@@ -46,8 +46,7 @@ module.exports = {
     handler: async (request, h) => {
 
         const { taskService, queueService,
-            intermediateResultsService } = request.services();
-        const { scriptGeneratorService } = request.services(true);
+            intermediateResultsService, scriptGeneratorService } = request.services(true);
         const host = request.server.info.host;
         const port = request.server.info.port;
         const projectId = request.params.projectId;

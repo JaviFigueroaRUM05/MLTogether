@@ -11,6 +11,10 @@ const Pack = require('../package');
 const Path = require('path');
 
 const WorkerScriptGeneratorPlugin = require('../lib/plugins/worker-script-generator');
+const TaskBrokerPlugin = require('../lib/plugins/task-broker');
+const IRPlugin = require('../lib/plugins/intermediate-results');
+
+
 
 // Pull .env into process.env
 Dotenv.config({
@@ -93,6 +97,12 @@ module.exports = new Confidence.Store({
                         temporaryPath: Path.join(__dirname, '../tmp')
                     }
                 }
+            },
+            {   plugin: TaskBrokerPlugin,
+                options: {}
+            },
+            {   plugin: IRPlugin,
+                options: {}
             },
             {
                 plugin: '../lib', // Main plugin
