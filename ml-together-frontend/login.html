@@ -2,13 +2,17 @@
 <html>
 <head>
 	<title>MLTogether</title>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">	
 	<link rel="icon" href="images/LogoMLTRound.png">
 	<!-- Bootstrap -->
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<!-- JQuery -->
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/zl-fetch"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="./jqueryCookies.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<!--FontAwesome-->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
@@ -32,15 +36,15 @@
 					<form>
 						<div class="input-group mb-3"> <!-- mb-3 to ensure that the input group gets a proper margin bottom -->
 							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-user"></i></span> <!-- user icon -->
+								<span class="input-group-text"><i class="fas fa-envelope"></i></span> <!-- user icon -->
 							</div>
-							<input type="text" name="" class="form-control input_user" value="" placeholder="username">
+							<input type="email" name="" class="form-control input_user" value="" placeholder="e-mail" id="email">
 						</div>
 						<div class="input-group mb-2"> <!-- smaller margin -->
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span> <!-- Password icon -->
 							</div>
-							<input type="password" name="" class="form-control input_pass" value="" placeholder="password">
+							<input type="password" name="" class="form-control input_pass" value="" placeholder="password" id="password">
 						</div>
 						<div class="form-group">
 							<div class="custom-control custom-checkbox"> <!-- Remember me box -->
@@ -49,11 +53,39 @@
 							</div>
 						</div>
 						<div class="d-flex justify-content-center mt-3 login_container"> <!-- Login button -->
-							<button type="button" name="button" class="btn login_btn">Login</button>
+							<input type="submit" value="Login" class="login_btn">
 						</div>
 					</form>
 				</div>
-
+				<script>
+					$(document).ready(function(){
+						//form submit
+						$("form").submit(function(event){
+							var _email      = $('#email').val();
+							var _password   = $('#password').val();
+							$.post("http://localhost:3000/login",{
+								email:_email, password: _password
+							}).done(function(data){
+								$.cookie('token',data.token)
+								console.log(data.token);
+							})
+						})
+					});
+				</script>
+				<!-- <script>
+					async function login(email, password) {
+					const response = await zlFetch.post("http://localhost:3000/login", {
+					auth: {
+						username: email,
+						password: password
+					},
+					body: { /*...*/ }
+						  })
+					console.log(response);
+					const { token } = response.body
+					localStorage.setItem('token', token)
+					}
+				</script> -->
 				<div class="mt-4"> <!-- No account box -->
 					<div class="d-flex justify-content-center links">
 						Don't have an account? <a href="signup.html" class="ml-2">Sign Up</a>
