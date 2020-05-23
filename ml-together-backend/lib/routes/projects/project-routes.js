@@ -68,12 +68,6 @@ module.exports = [
             auth: 'jwt',
             tags: ['api'],
             handler: handlers.postProject,
-            payload: {
-                output: 'stream',
-                parse: true,
-                allow: 'multipart/form-data',
-                multipart: true
-            },
 
         }
     },
@@ -84,6 +78,7 @@ module.exports = [
             pre: [
                 {method: handlers.verifyProject}
             ],
+            auth: 'jwt',
             handler: handlers.getProjectByID,
             validate: {
                 params: Joi.object({
@@ -107,6 +102,7 @@ module.exports = [
             pre: [
                 {method: handlers.verifyProject}
             ],
+            auth: 'jwt',
             handler: handlers.getTrainedModelbyProjectID,
             validate: {
                 params: Joi.object({
@@ -153,6 +149,7 @@ module.exports = [
             pre: [
                 {method: handlers.verifyProject}
             ],
+            
             validate: {
                 failAction: (request, h, err) => {
                     //TODO: change this to appear in debug only
@@ -174,6 +171,7 @@ module.exports = [
         method: 'POST',
         path: '/project/{projectId}/goal',
         options: {
+            auth: 'jwt',
             validate: {
                 failAction: async (request, h, err) => {
                     //TODO: change this to appear in debug only

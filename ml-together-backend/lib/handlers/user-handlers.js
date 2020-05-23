@@ -41,7 +41,7 @@ async function verifyLogin(request, h) {
 
 }
 
-//TODO: keep key secret
+
 async function createToken(id, key) {
     console.log('Creating token');
 
@@ -53,25 +53,14 @@ async function createToken(id, key) {
 
 const register = async function (request,h) {
 
-    const db = request.mongo.db;
-    const { email, password,confirmPassword } = request.payload;
-    //TODO: better password hashing
-    if (password == confirmPassword) {
-        bcrypt.hash(password, 10, async (err, hash) => {
-        // Store hash in database
-            if (err) {
-                throw Boom.badRequest(err);
-            }
-
-            await db.collection('users').insertOne({ email,password: hash });
-        });
-
-    }
-    else {
-        throw Boom.badRequest('Passwords don\'t match');
-    }
-
-    return h.response().code(201);
+     const db = request.mongo.db;
+     const { email, password} = request.payload;
+     
+     const pass = await bcrypt.hash(password,10)
+     const user = await db.collection('users').insertOne({ email,password: pass })
+     const jwt = await createToken(user._id, h.realm.pluginOptions.jwtKey);
+        
+    return h.response({ token_id: jwt }).code(201);
 
 };
 
@@ -93,7 +82,6 @@ const login = async function (request,h) {
 
     throw Boom.unauthorized('Passwords don\'t match');
 
-    //dont return user info...
 
 };
 

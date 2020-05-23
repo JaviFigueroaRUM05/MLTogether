@@ -2,7 +2,6 @@
 'use strict';
 
 const Boom = require('boom');
-//TODO: SET KEY IN ENV VARIABLES FILE!! IMPORTANT!!
 
 module.exports = (server, options) => ({
     scheme: 'jwt',
