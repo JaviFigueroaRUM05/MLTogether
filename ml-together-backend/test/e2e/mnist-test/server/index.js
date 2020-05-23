@@ -75,9 +75,7 @@ exports.deployment = async (start) => {
         url: registerRoute,
         payload: registerPayload
     });
-
-    const token = registerRes.payload.token_id;
-
+    const token = JSON.parse(registerRes.payload).token_id;
     const createProjectRoute = '/projects';
 
     const createProjectPayload = {
@@ -87,11 +85,12 @@ exports.deployment = async (start) => {
     const createProjectRes = await server.inject({
         method: 'POST',
         url: createProjectRoute,
-        payload: createProjectPayload
+        payload: createProjectPayload,
+        headers: {
+            authorization: `${token}`
+        }
     });
-
-    const projectId = createProjectRes.payload._id;
-
+    const projectId = JSON.parse(createProjectRes.payload)._id;
     // TODO: use the token from the new user to create goal
 
     const goalCreationRoute = `/project/${projectId}/goal`;
@@ -129,7 +128,7 @@ exports.deployment = async (start) => {
         url: goalCreationRoute,
         payload,
         headers: {
-            authorization: `Token ${token}`
+            authorization: `${token}`
         }
     });
 

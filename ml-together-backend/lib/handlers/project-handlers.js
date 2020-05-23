@@ -17,7 +17,7 @@ const postProject = async function (request,h) {
     const payload = request.payload;
     payload.userID  = request.auth.credentials.id;
 
-    const project = await db.collection('projects').insertOne(payload);
+    const project = (await db.collection('projects').insertOne(payload)).ops[0];
 
     return h.response(project).code(201);
 };

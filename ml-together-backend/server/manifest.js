@@ -69,7 +69,10 @@ module.exports = new Confidence.Store({
                         url: 'mongodb://localhost:27017/mltest'
                     },
                     $default: {
-                        url: 'mongodb://localhost:27017/mldev01'
+                        url: {
+                            $env: 'MONGO_URL',
+                            $default: 'mongodb://localhost:27017/mldev01'
+                        }
                     }
 
 

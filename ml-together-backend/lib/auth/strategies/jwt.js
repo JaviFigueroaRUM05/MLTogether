@@ -2,7 +2,6 @@
 'use strict';
 
 const Boom = require('boom');
-//TODO: SET KEY IN ENV VARIABLES FILE!! IMPORTANT!!
 
 module.exports = (server, options) => ({
     scheme: 'jwt',
@@ -14,7 +13,7 @@ module.exports = (server, options) => ({
 
             const db = request.mongo.db;
             const ObjectID = request.mongo.ObjectID;
-            //console.log(decoded)
+            console.log(decoded);
             const user = await db.collection('users').findOne(
                 { _id: ObjectID(decoded.id) });
 
@@ -27,7 +26,8 @@ module.exports = (server, options) => ({
 
         },
         errorFunc: ({ message }) => {
-
+            console.log(message);
+            console.log('here')
             throw Boom.unauthorized(message || 'Invalid or expired token');
         }
     }

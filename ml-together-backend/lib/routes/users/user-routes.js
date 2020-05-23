@@ -51,12 +51,6 @@ module.exports = [
         options: {
             auth: 'jwt',
             handler: handlers.changePass,
-            payload: {
-                output: 'stream',
-                parse: true,
-                allow: 'multipart/form-data',
-                multipart: true
-            },
             validate: {
                 failAction: async (request, h, err) => {
                     //TODO: change this to appear in debug only

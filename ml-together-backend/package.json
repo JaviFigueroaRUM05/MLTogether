@@ -14,7 +14,7 @@
   "scripts": {
     "start": "nodemon server",
     "test": "cross-env NODE_ENV=test lab -a @hapi/code --verbose -I _tfengine,proto,__core-js_shared__,core --pattern '.test' test",
-    "mnist": "cross-env NODE_ENV=test node ./test/e2e/mnist-test/server",
+    "mnist": "cross-env MONGO_URL=mongodb://localhost:27017/mltest node ./test/e2e/mnist-test/server",
     "lint": "eslint ."
   },
   "dependencies": {

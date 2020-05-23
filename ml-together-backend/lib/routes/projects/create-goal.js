@@ -12,6 +12,7 @@ module.exports = {
         pre: [
             { method: verifyProject }
         ],
+        auth: 'jwt',
         validate: {
             failAction: async (request, h, err) => {
                 //TODO: change this to appear in debug only
