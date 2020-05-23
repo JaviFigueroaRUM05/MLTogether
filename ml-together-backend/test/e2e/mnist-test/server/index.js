@@ -3,8 +3,8 @@
 const Joi = require('@hapi/joi');
 const Data = require('./data');
 const MainServer = require('../../../../server');
+const { deleteTestUsers, deleteTestProjects } = require('../../../utils/mongodb-manager');
 
-const PROJECT_ID = 'mnist121';
 const GOAL_TITLE = 'MNIST';
 const TRAIN_DATA_URL = 'http://localhost:3000/mnist/data';
 const BATCH_SIZE = 10;
@@ -59,7 +59,41 @@ exports.deployment = async (start) => {
     await server.register(MNISTDataPlugin);
     await server.initialize();
 
-    const goalCreationRoute = `/project/${PROJECT_ID}/goal`;
+    // Clean users collection & projects collection
+    await deleteTestUsers();
+    await deleteTestProjects();
+
+    //TODO: Fix the confirm password thingy
+    const registerRoute = '/register';
+    const registerPayload = {
+        email: 'juan@upr.edu',
+        password: 'Hello1234',
+        confirmPassword: 'Hello1234'
+    };
+    const registerRes = await server.inject({
+        method: 'POST',
+        url: registerRoute,
+        payload: registerPayload
+    });
+    const token = JSON.parse(registerRes.payload).token_id;
+    const createProjectRoute = '/projects';
+
+    const createProjectPayload = {
+        title: 'MNIST',
+        description: 'Project for MNIST'
+    };
+    const createProjectRes = await server.inject({
+        method: 'POST',
+        url: createProjectRoute,
+        payload: createProjectPayload,
+        headers: {
+            authorization: `${token}`
+        }
+    });
+    const projectId = JSON.parse(createProjectRes.payload)._id;
+    // TODO: use the token from the new user to create goal
+
+    const goalCreationRoute = `/project/${projectId}/goal`;
 
     const title = GOAL_TITLE;
 
@@ -92,7 +126,10 @@ exports.deployment = async (start) => {
     await server.inject({
         method: 'POST',
         url: goalCreationRoute,
-        payload
+        payload,
+        headers: {
+            authorization: `${token}`
+        }
     });
 
     if (!start) {

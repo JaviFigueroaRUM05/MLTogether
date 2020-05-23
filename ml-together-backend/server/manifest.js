@@ -11,6 +11,10 @@ const Pack = require('../package');
 const Path = require('path');
 
 const WorkerScriptGeneratorPlugin = require('../lib/plugins/worker-script-generator');
+const TaskBrokerPlugin = require('../lib/plugins/task-broker');
+const IRPlugin = require('../lib/plugins/intermediate-results');
+
+
 
 // Pull .env into process.env
 Dotenv.config({
@@ -69,7 +73,10 @@ module.exports = new Confidence.Store({
                         url: 'mongodb://localhost:27017/mltest'
                     },
                     $default: {
-                        url: 'mongodb://localhost:27017/mldev01'
+                        url: {
+                            $env: 'MONGO_URL',
+                            $default: 'mongodb://localhost:27017/mldev01'
+                        }
                     }
 
 
@@ -89,6 +96,22 @@ module.exports = new Confidence.Store({
                         publicPath: Path.join(__dirname, '../public/projects'),
                         temporaryPath: Path.join(__dirname, '../tmp')
                     }
+                }
+            },
+            {   plugin: TaskBrokerPlugin,
+                options: {
+                    taskQueueBaseName: 'task_queue',
+                    mapResultsQueueBaseName: 'map_results_queue',
+                    amqpURL: {
+                        $env: 'AMQP_URL',
+                        $default: 'amqp://localhost'
+                    },
+                    defaultMaxTimeToWait: 5000
+                }
+            },
+            {   plugin: IRPlugin,
+                options: {
+                    
                 }
             },
             {

@@ -13,7 +13,6 @@ module.exports = (server, options) => ({
 
             const db = request.mongo.db;
             const ObjectID = request.mongo.ObjectID;
-            //console.log(decoded)
             const user = await db.collection('users').findOne(
                 { _id: ObjectID(decoded.id) });
 

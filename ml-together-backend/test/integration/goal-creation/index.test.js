@@ -11,6 +11,7 @@ const MapFn = require('./utils/test-map');
 const ReduceFn = require('./utils/test-reduce');
 const FS = require('fs');
 const Path = require('path');
+const { deleteTestUsers, deleteTestProjects } = require('../../utils/mongodb-manager');
 
 const {
     experiment,
@@ -27,8 +28,9 @@ experiment('create Goal route', () => {
 
 
     let server;
-    const projectId = 'testproject';
-    const goalCreationRoute = `/project/${projectId}/goal`;
+    let projectId;
+    let goalCreationRoute;
+    let token;
 
     const title = Faker.lorem.word();
     const description = Faker.lorem.words(50);
@@ -66,18 +68,56 @@ experiment('create Goal route', () => {
         }
     };
 
-    beforeEach( async () => {
+    before( async () => {
 
         server = await MLTogetherServer.deployment(false);
 
-        // Create user
-        // Auth
-        // Create a project
+        // Clean users collection & projects collection
+        await deleteTestUsers();
+        await deleteTestProjects();
+
+        //TODO: Fix the confirm password thingy
+        const registerRoute = '/register';
+
+        const registerPayload = {
+            email: 'juan@upr.edu',
+            password: 'Hello1234',
+            confirmPassword: 'Hello1234'
+        };
+        const registerRes = await server.inject({
+            method: 'POST',
+            url: registerRoute,
+            payload: registerPayload
+        });
+        token = JSON.parse(registerRes.payload).token_id;
+        const createProjectRoute = '/projects';
+
+        const createProjectPayload = {
+            title: 'MNIST',
+            description: 'Project for MNIST'
+        };
+        const createProjectRes = await server.inject({
+            method: 'POST',
+            url: createProjectRoute,
+            payload: createProjectPayload,
+            headers: {
+                authorization: `${token}`
+            }
+        });
+        projectId = JSON.parse(createProjectRes.payload)._id;
+        goalCreationRoute = `/project/${projectId}/goal`;
+    });
+
+    beforeEach( async () => {
+
         try {
             await server.inject({
                 method: 'POST',
                 url: goalCreationRoute,
-                payload
+                payload,
+                headers: {
+                    authorization: `${token}`
+                }
             });
         }
         catch (err) {
