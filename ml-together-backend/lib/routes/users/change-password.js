@@ -16,27 +16,22 @@ module.exports = {
             const db = request.mongo.db;
             const ObjectID = request.mongo.ObjectID;
             const userID = request.auth.credentials.id;
+            const { userService } = request.services(true);
             const { oldpassword,newpassword } = request.payload;
             const user = await db.collection('users').findOne(
                 { _id: new ObjectID(userID) });
-
             if (bcrypt.compareSync(oldpassword, user.password)) {
-                bcrypt.hash(newpassword, 10, async (err, hash) => {
-                if (err) {
-                    throw Boom.badRequest(err);
-                }
-                const update = await db.collection('users').update(
-                    { _id: new ObjectID(userID) },{ $set: { 'password': hash } });
-
-                });
-
+                const hash = await userService.hash(newpassword)
+                const update = await (db.collection('users').updateOne(
+                    { _id: new ObjectID(userID) },{ $set: { 'password': hash } }))
+                
             }
             else {
-
-                throw Boom.badRequest('Old password does not match');
+                
+                throw Boom.badRequest('Old password does not match')
             }
 
-            return h.response().code(201);
+            return h.response({}).code(201);
 
         },
         validate: {
