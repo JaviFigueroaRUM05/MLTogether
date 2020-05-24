@@ -1,14 +1,12 @@
 'use strict';
 
-//TODO: Error validation Boom
-
 module.exports = {
 
     method: 'GET',
     path: '/projects',
     options: {
         description: 'Get all projects',
-        notes: 'Returns a file for the current goal given the project id and the file.',
+        notes: 'Returns all projects',
         tags: ['api'],
         handler: async function (request, h) {
 

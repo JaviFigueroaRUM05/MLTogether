@@ -21,15 +21,12 @@ module.exports = {
                 { _id: new ObjectID(userID) });
 
             if (bcrypt.compareSync(oldpassword, user.password)) {
-                console.log('passwords match!');
                 bcrypt.hash(newpassword, 10, async (err, hash) => {
-
-                    if (err) {
-                        throw Boom.badRequest(err);
-                    }
-
-                    const  update = await db.collection('users').update({ _id: new ObjectID(userID) },
-                        { $set: { 'password': hash } });
+                if (err) {
+                    throw Boom.badRequest(err);
+                }
+                const update = await db.collection('users').update(
+                    { _id: new ObjectID(userID) },{ $set: { 'password': hash } });
 
                 });
 
@@ -48,11 +45,14 @@ module.exports = {
                 console.error(err);
                 throw err;
             },
+            headers: Joi.object({
+                authorization: Joi.string().required()
+            }).unknown(),
             payload: Joi.object({
-                oldpassword: Joi.string().min(7).required().strict(),
-                newpassword: Joi.string().min(7).required().strict(),
-                newpasswordconfirm: Joi.string().valid(Joi.ref('newpassword')).required().strict()
-            })
+                oldpassword: Joi.string().min(7).required().strict().example('oldpassword'),
+                newpassword: Joi.string().min(7).required().strict().example('new password')
+            }),
+
         }
     }
 };

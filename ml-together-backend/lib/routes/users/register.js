@@ -36,6 +36,7 @@ module.exports = {
 
         },
         tags: ['api'],
+        description: 'Register an account with the system',
         validate: {
             failAction: (request, h, err) => {
                 //TODO: change this to appear in debug only
@@ -43,9 +44,9 @@ module.exports = {
                 throw err;
             },
             payload: Joi.object({
+                fullName: Joi.string().required(),
                 email: Joi.string().email().lowercase().required().example('juan@upr.edu'),
-                password: Joi.string().min(7).required().strict().example('hello1234'),
-                confirmPassword: Joi.string().valid(Joi.ref('password')).required().strict().example('hello1234')
+                password: Joi.string().min(7).required().strict().example('hello1234')
             })
         }
     }
