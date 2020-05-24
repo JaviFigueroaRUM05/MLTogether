@@ -12,6 +12,7 @@ module.exports = {
         ],
         auth: 'jwt',
         handler: async function (request,h) {
+
             const db = request.mongo.db;
             const project = await db.collection('trainedModels').find({ projectId: request.params.projectId }).toArray();
             return h.response(project).code(200);
