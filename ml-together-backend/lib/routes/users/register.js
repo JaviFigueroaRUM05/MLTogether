@@ -1,20 +1,8 @@
 'use strict';
 
-const Boom = require('boom');
-const BCrypt = require('bcrypt');
-const JWT = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
 
 const { verifyRegistration } = require('../../handlers/user-handlers');
-
-
-const createToken = function (id, key) {
-
-    return JWT.sign({ id }, key, {
-        algorithm: 'HS256',
-        expiresIn: '1h'
-    });
-};
 
 module.exports = {
     method: 'POST',
@@ -25,7 +13,6 @@ module.exports = {
         ],
         handler: async function (request,h) {
 
-            const db = request.mongo.db;
             const { userService } = request.services(true);
             const { email, password } = request.payload;
 
