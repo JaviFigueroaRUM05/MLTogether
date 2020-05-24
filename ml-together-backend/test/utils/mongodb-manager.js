@@ -73,11 +73,17 @@ const getTestUsers = async function () {
     return await getAllFromCollection(URL, 'users');
 };
 
+const getTestProjects = async function () {
+
+    return await getAllFromCollection(URL, 'projects');
+};
+
 
 
 
 module.exports = {
     deleteTestUsers,
     deleteTestProjects,
-    getTestUsers
+    getTestUsers,
+    getTestProjects
 };

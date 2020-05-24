@@ -11,7 +11,6 @@ module.exports = {
         pre: [
             { method: verifyProject }
         ],
-        auth: 'jwt',
         handler: async function (request,h) {
 
             const db = request.mongo.db;
@@ -22,11 +21,8 @@ module.exports = {
         },
         validate: {
             params: Joi.object({
-                projectId: Joi.string()
-            }),
-            headers: Joi.object({
-                authorization: Joi.string().required()
-            }).unknown()
+                projectId: Joi.string().example('55153a8014829a865bbf700d')
+            })
         }
     }
 };
