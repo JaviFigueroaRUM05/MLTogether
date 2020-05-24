@@ -8,18 +8,19 @@ const LibPlugin = require('../../../../lib').plugin;
 const Hapi = require('@hapi/hapi');
 const Mongo = require('hapi-mongodb');
 const Faker = require('faker');
+const BCrypt = require('bcrypt');
 
-const { deleteTestUsers } = require('../../../utils/mongodb-manager');
+const { deleteTestUsers, getTestUsers } = require('../../../utils/mongodb-manager');
 
 const { experiment, it, beforeEach } = exports.lab = Lab.script();
 const { expect } = Code;
 
-experiment('Login Route', () => {
+experiment('Register Route', () => {
 
     let server;
     let email;
     let password;
-    const registerRoute = '/login';
+    const registerRoute = '/register';
 
     beforeEach( async () => {
 
@@ -46,9 +47,6 @@ experiment('Login Route', () => {
 
         await deleteTestUsers();
 
-        const { userService } = server.services();
-        await userService.registerUser(email, password);
-
     });
 
     it('registers the Lib plugin.', () => {
@@ -56,13 +54,13 @@ experiment('Login Route', () => {
         expect(server.registrations[LibPlugin.pkg.name]).to.exist();
     });
 
-    it('logins successfully with correct credentials', async () => {
+    it('registers successfully with correct payload', async () => {
 
         const payload = {
             email,
-            password
+            password,
+            confirmPassword: password
         };
-
         let response;
         try {
             response = await server.inject({
@@ -76,39 +74,17 @@ experiment('Login Route', () => {
             return false;
         }
 
-        expect(response.statusCode).to.be.equal(200);
+        expect(response.statusCode).to.be.equal(201);
 
         const result = JSON.parse(response.payload);
 
         expect(result).to.include('token_id');
 
-    });
+        const users = await getTestUsers();
 
-    it('returns unauthorized with incorrect password', async () => {
+        expect(users[0]).to.include(['_id', 'email', 'password']);
+        expect(BCrypt.compareSync(password, users[0].password)).to.be.true();
 
-        let wrongPassword;
-        do {
-            wrongPassword = Faker.internet.password(16, false);
-        } while (password === wrongPassword);
-
-        const payload = {
-            email,
-            password: wrongPassword
-        };
-        let response;
-        try {
-            response = await server.inject({
-                method: 'POST',
-                url: registerRoute,
-                payload
-            });
-        }
-        catch (err) {
-            console.error(err);
-            return false;
-        }
-
-        expect(response.statusCode).to.be.equal(401);
 
     });
 
