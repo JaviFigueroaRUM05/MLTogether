@@ -19,10 +19,11 @@ experiment('Login Route', () => {
     let server;
     let email;
     let password;
+    let fullName;
     const registerRoute = '/login';
 
     beforeEach( async () => {
-
+        fullName = Faker.name.firstName() + ' ' + Faker.name.lastName();
         email = Faker.internet.email();
         password = Faker.internet.password(16, false);
         server = Hapi.server();
@@ -47,7 +48,7 @@ experiment('Login Route', () => {
         await deleteTestUsers();
 
         const { userService } = server.services();
-        await userService.registerUser(email, password);
+        await userService.registerUser(fullName,email, password);
 
     });
 

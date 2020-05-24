@@ -20,10 +20,11 @@ experiment('Register Route', () => {
     let server;
     let email;
     let password;
+    let fullName;
     const registerRoute = '/register';
 
     beforeEach( async () => {
-
+        fullName = Faker.name.firstName() + ' ' + Faker.name.lastName();
         email = Faker.internet.email();
         password = Faker.internet.password(16, false);
         server = Hapi.server();
@@ -57,9 +58,9 @@ experiment('Register Route', () => {
     it('registers successfully with correct payload', async () => {
 
         const payload = {
+            fullName,
             email,
-            password,
-            confirmPassword: password
+            password
         };
         let response;
         try {

@@ -66,6 +66,7 @@ exports.deployment = async (start) => {
     //TODO: Fix the confirm password thingy
     const registerRoute = '/register';
     const registerPayload = {
+        fullName: 'Juan Apellido',
         email: 'juan@upr.edu',
         password: 'Hello1234',
         confirmPassword: 'Hello1234'

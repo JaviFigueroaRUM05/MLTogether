@@ -8,14 +8,6 @@ const Joi = require('@hapi/joi');
 const { verifyRegistration } = require('../../handlers/user-handlers');
 
 
-const createToken = function (id, key) {
-
-    return JWT.sign({ id }, key, {
-        algorithm: 'HS256',
-        expiresIn: '1h'
-    });
-};
-
 module.exports = {
     method: 'POST',
     path: '/register',
@@ -27,9 +19,9 @@ module.exports = {
 
             const db = request.mongo.db;
             const { userService } = request.services(true);
-            const { email, password } = request.payload;
+            const { fullName,email, password } = request.payload;
 
-            const jwt = await userService.registerUser(email, password);
+            const jwt = await userService.registerUser(fullName,email, password);
 
             return h.response({ token_id: jwt }).code(201);
         },
@@ -42,7 +34,7 @@ module.exports = {
                 throw err;
             },
             payload: Joi.object({
-                fullName: Joi.string().required(),
+                fullName: Joi.string().required('Juan Apellido'),
                 email: Joi.string().email().lowercase().required().example('juan@upr.edu'),
                 password: Joi.string().min(7).required().strict().example('hello1234')
             })
