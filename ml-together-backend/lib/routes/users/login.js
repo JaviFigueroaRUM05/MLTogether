@@ -30,7 +30,6 @@ module.exports = {
             const user = await db.collection('users').findOne(
                 { email });
 
-            console.log(user);
 
             if (BCrypt.compareSync(password, user.password)) {
                 console.log('passwords match!');
