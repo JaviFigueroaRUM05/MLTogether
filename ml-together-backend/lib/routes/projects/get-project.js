@@ -2,6 +2,7 @@
 
 const Joi = require('@hapi/joi');
 const { verifyProject } = require('../../handlers/project-handlers');
+const { projectModel } = require('../../utils/response-models');
 
 module.exports = {
 
@@ -11,6 +12,7 @@ module.exports = {
         pre: [
             { method: verifyProject }
         ],
+        tags: ['api', 'projects'],
         handler: async function (request,h) {
 
             const db = request.mongo.db;
@@ -23,6 +25,8 @@ module.exports = {
             params: Joi.object({
                 projectId: Joi.string().example('55153a8014829a865bbf700d')
             })
-        }
+        },
+        response: { schema: projectModel }
+
     }
 };

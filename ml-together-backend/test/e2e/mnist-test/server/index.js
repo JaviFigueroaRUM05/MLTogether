@@ -94,7 +94,7 @@ exports.deployment = async (start) => {
     const projectId = JSON.parse(createProjectRes.payload)._id;
     // TODO: use the token from the new user to create goal
 
-    const goalCreationRoute = `/project/${projectId}/goal`;
+    const goalCreationRoute = `/projects/${projectId}/goal`;
 
     const title = GOAL_TITLE;
 

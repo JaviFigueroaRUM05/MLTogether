@@ -7,7 +7,7 @@ module.exports = {
     options: {
         description: 'Get all projects',
         notes: 'Returns all projects',
-        tags: ['api'],
+        tags: ['api', 'projects'],
         handler: async function (request, h) {
 
             const db = request.mongo.db;

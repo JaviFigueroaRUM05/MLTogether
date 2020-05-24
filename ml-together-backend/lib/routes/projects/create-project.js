@@ -8,7 +8,7 @@ module.exports = {
     options: {
         description: 'Lets logged in user create a project',
         auth: 'jwt',
-        tags: ['api'],
+        tags: ['api', 'projects'],
         validate: {
             payload: Joi.object({
                 title: Joi.string().required().example('Cancer Research'),

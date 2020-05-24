@@ -11,6 +11,7 @@ module.exports = {
     path: '/user/changepass',
     options: {
         auth: 'jwt',
+        tags: ['api','users'],
         handler: async function (request,h) {
 
             const db = request.mongo.db;

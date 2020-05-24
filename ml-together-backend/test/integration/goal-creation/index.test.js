@@ -38,7 +38,7 @@ experiment('create Goal route', () => {
     // Model Information
     const modelFn = ModelFn;
     const optimizer = 'rmsprop';
-    const loss = 'categoricalCrossentropy';
+    const loss = ['categoricalCrossentropy'];
     const metrics = ['accuracy'];
 
     // Task Information
@@ -77,7 +77,7 @@ experiment('create Goal route', () => {
         await deleteTestProjects();
 
         //TODO: Fix the confirm password thingy
-        const registerRoute = '/register';
+        const registerRoute = '/api/register';
 
         const registerPayload = {
             fullName: "Juan Apellido",
@@ -90,7 +90,8 @@ experiment('create Goal route', () => {
             payload: registerPayload
         });
         token = JSON.parse(registerRes.payload).token_id;
-        const createProjectRoute = '/projects';
+        console.log(registerRes);
+        const createProjectRoute = '/api/projects';
 
         const createProjectPayload = {
             title: 'MNIST',
@@ -105,7 +106,7 @@ experiment('create Goal route', () => {
             }
         });
         projectId = JSON.parse(createProjectRes.payload)._id;
-        goalCreationRoute = `/project/${projectId}/goal`;
+        goalCreationRoute = `/api/projects/${projectId}/goal`;
     });
 
     beforeEach( async () => {
@@ -129,7 +130,7 @@ experiment('create Goal route', () => {
     it('can fetch initial model', async () => {
 
         TF.engine().startScope();
-        const route = `/projects/${projectId}/ir/0`;
+        const route = `/api/projects/${projectId}/ir/0`;
         const responseModel = await TF.loadLayersModel(
             IOHandlers.serverInjectRequest(server,route)
         );

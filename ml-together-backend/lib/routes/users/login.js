@@ -4,7 +4,7 @@ const BCrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
 const Boom = require('boom');
-
+const { authModel } = require('../../utils/response-models');
 const { verifyLogin } = require('../../handlers/user-handlers');
 
 const createToken =  function createToken(id, key) {
@@ -22,7 +22,9 @@ module.exports = {
         pre: [
             { method: verifyLogin }
         ],
-        tags: ['api'],
+        tags: ['api', 'users'],
+        description: 'Obtain an auth token',
+        notes: 'Obtain an auth token using existing credentials',
         handler: async function (request,h) {
 
             const db = request.mongo.db;
@@ -49,9 +51,11 @@ module.exports = {
                 throw err;
             },
             payload: Joi.object({
-                email: Joi.string().email().lowercase().required(),
+                email: Joi.string().email().lowercase().required().example('juan@upr.edu'),
                 password: Joi.string().min(7).required().strict()
             })
-        }
+        },
+        response: { schema: authModel }
+
     }
 };

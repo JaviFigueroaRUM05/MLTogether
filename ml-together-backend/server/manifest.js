@@ -101,10 +101,16 @@ module.exports = new Confidence.Store({
                 }
             },
             {   plugin: IRPlugin,
-                options: {}
+                options: {},
+                routes: {
+                    prefix: '/api'
+                }
             },
             {
                 plugin: '../lib', // Main plugin
+                routes: {
+                    prefix: '/api'
+                },
                 options: {
                     jwtKey: {
                         $filter: { $env: 'NODE_ENV' },
@@ -133,7 +139,26 @@ module.exports = new Confidence.Store({
                     info: {
                         title: 'MLTogether API Documentation',
                         version: Pack.version
-                    }
+                    },
+                    grouping: 'tags',
+                    tags: [
+                        {
+                            name: 'users',
+                            description: 'Users data'
+                        },
+                        {
+                            name: 'projects',
+                            description: 'Projects data'
+                        },
+                        {
+                            name: 'goals',
+                            description: 'Creation of goals',
+                            externalDocs: {
+                                description: 'Find out more about how to create a goal',
+                                url: 'https://www.notion.so/manuelbg/Goal-Creation-6892ecdc40fc43b8ba9eac555be39c42'
+                            }
+                        }
+                    ]
                 }
             }
 

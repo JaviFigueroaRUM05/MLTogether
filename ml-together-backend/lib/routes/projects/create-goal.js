@@ -3,18 +3,23 @@
 const TF = require('@tensorflow/tfjs-node');
 const Joi = require('@hapi/joi');
 const { verifyProject } = require('../../handlers/project-handlers');
+const { goalModel } = require('../../utils/response-models');
 
 
 module.exports = {
     method: 'POST',
-    path: '/project/{projectId}/goal',
+    path: '/projects/{projectId}/goal',
     options: {
         pre: [
             { method: verifyProject }
         ],
+        description: 'Creates a goal for a given project',
+        notes: 'Creates a goal for a given project. For more detailed information on how to use this route, visit https://www.notion.so/manuelbg/Goal-Creation-6892ecdc40fc43b8ba9eac555be39c42',
         auth: 'jwt',
+        tags: ['api', 'goals'],
         validate: {
             failAction: async (request, h, err) => {
+
                 console.error(err);
                 throw err;
             },
@@ -25,24 +30,7 @@ module.exports = {
                 projectId: Joi.string().required()
             })
             ,
-            payload: Joi.object({
-                title: Joi.string().required(),
-                description: Joi.string().optional(),
-                model: Joi.object({
-                    modelFn: Joi.string().required(),
-                    optimizer: Joi.string().required(),
-                    loss: Joi.string().required(),
-                    metrics: Joi.array().items(Joi.string()).required()
-                }).required(),
-                taskInfo: Joi.object({
-                    trainingSetSize: Joi.number().required(),
-                    batchSize: Joi.number().required(),
-                    batchesPerReduce: Joi.number().required(),
-                    trainDataUrl: Joi.string().uri().required(),
-                    mapFn: Joi.string().required(),
-                    reduceFn: Joi.string().required()
-                }).required()
-            })
+            payload: goalModel
         }
     },
     handler: async (request, h) => {
