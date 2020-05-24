@@ -15,10 +15,12 @@ module.exports = {
         auth: 'jwt',
         validate: {
             failAction: async (request, h, err) => {
-                //TODO: change this to appear in debug only
                 console.error(err);
                 throw err;
             },
+            headers: Joi.object({
+                authorization: Joi.string().required()
+            }).unknown(),
             params: Joi.object({
                 projectId: Joi.string().required()
             })

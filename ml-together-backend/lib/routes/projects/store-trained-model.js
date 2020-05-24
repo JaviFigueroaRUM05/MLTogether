@@ -21,6 +21,7 @@ module.exports = {
     options: { pre: [
         { method: verifyProject }
     ],
+    
     payload: {
         output: 'stream',
         parse: true,

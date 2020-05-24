@@ -20,7 +20,10 @@ module.exports = {
         validate: {
             params: Joi.object({
                 projectId: Joi.string()
-            })
+            }),
+            headers: Joi.object({
+                authorization: Joi.string().required()
+            }).unknown()
         }
     }
 };

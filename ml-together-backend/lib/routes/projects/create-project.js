@@ -6,7 +6,7 @@ module.exports = {
     method: 'POST',
     path: '/projects',
     options: {
-        description: 'Create a project',
+        description: 'Lets logged in user create a project',
         auth: 'jwt',
         tags: ['api'],
         validate: {
@@ -26,7 +26,6 @@ module.exports = {
             payload.userID  = request.auth.credentials.id;
 
             const project = (await db.collection('projects').insertOne(payload)).ops[0];
-
             return h.response(project).code(201);
         }
 

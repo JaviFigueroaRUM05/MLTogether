@@ -26,10 +26,10 @@ class UserService extends Schmervice.Service {
         return await BCrypt.hash(password,10);
     }
 
-    async registerUser(email, password) {
+    async registerUser(fullName,email, password) {
 
         const pass = await this.hash(password);
-        const user = (await this.server.mongo.db.collection('users').insertOne({ email: email.toLowerCase(),password: pass })).ops[0];
+        const user = (await this.server.mongo.db.collection('users').insertOne({fullName: fullName, email: email.toLowerCase(),password: pass })).ops[0];
         const jwt = this.createToken(user._id);
         return jwt;
     }

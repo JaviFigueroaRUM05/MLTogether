@@ -80,9 +80,9 @@ experiment('create Goal route', () => {
         const registerRoute = '/register';
 
         const registerPayload = {
+            fullName: "Juan Apellido",
             email: 'juan@upr.edu',
-            password: 'Hello1234',
-            confirmPassword: 'Hello1234'
+            password: 'Hello1234'
         };
         const registerRes = await server.inject({
             method: 'POST',
