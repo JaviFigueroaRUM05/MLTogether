@@ -1,13 +1,5 @@
-version: '3.7'
-
+version: "3"
 services:
-    apiapplication:
-        build: ./
-        ports:
-            - 3000:3000
-        depends_on:
-            - database
-            - rabbitmq
     database:
         image: mongo
         restart: always
@@ -18,3 +10,10 @@ services:
         ports:
             - "4370"
             - "5672"
+    apiapplication:
+        build: ./
+        ports:
+            - 3000:3000
+        depends_on:
+            - database
+            - rabbitmq
