@@ -26,14 +26,12 @@ module.exports = {
         handler: async function (request,h) {
 
             const db = request.mongo.db;
+            const { userService } = request.services(true);
             const { email, password } = request.payload;
 
-            const pass = await BCrypt.hash(password,10);
-            const user = (await db.collection('users').insertOne({ email,password: pass })).ops[0];
-            const jwt = createToken(user._id, h.realm.pluginOptions.jwtKey);
+            const jwt = await userService.registerUser(email, password);
 
             return h.response({ token_id: jwt }).code(201);
-
         },
         tags: ['api'],
         validate: {

@@ -1,7 +1,6 @@
 'use strict';
 
-const Inert = require('@hapi/inert');
-const Vision = require('@hapi/vision');
+
 const Dotenv = require('dotenv');
 const Confidence = require('confidence');
 const Toys = require('toys');
@@ -48,14 +47,6 @@ module.exports = new Confidence.Store({
     },
     register: {
         plugins: [
-            {
-                plugin: Inert,
-                options: {}
-            },
-            {
-                plugin: Vision,
-                options: {}
-            },
             {
                 plugin: Mongo,
                 options: {
@@ -110,9 +101,7 @@ module.exports = new Confidence.Store({
                 }
             },
             {   plugin: IRPlugin,
-                options: {
-                    
-                }
+                options: {}
             },
             {
                 plugin: '../lib', // Main plugin
