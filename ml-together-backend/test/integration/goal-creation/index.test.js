@@ -90,7 +90,6 @@ experiment('create Goal route', () => {
             payload: registerPayload
         });
         token = JSON.parse(registerRes.payload).token_id;
-        console.log(registerRes);
         const createProjectRoute = '/api/projects';
 
         const createProjectPayload = {
@@ -130,7 +129,7 @@ experiment('create Goal route', () => {
     it('can fetch initial model', async () => {
 
         TF.engine().startScope();
-        const route = `/api/projects/${projectId}/ir/0`;
+        const route = `/api/projects/${projectId}/ir/1`;
         const responseModel = await TF.loadLayersModel(
             IOHandlers.serverInjectRequest(server,route)
         );

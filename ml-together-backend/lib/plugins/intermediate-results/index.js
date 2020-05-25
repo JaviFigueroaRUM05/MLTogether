@@ -2,6 +2,7 @@
 
 const Joi = require('@hapi/joi');
 const Handler = require('./results-handlers');
+const Nes = require('nes');
 const Mongo = require('hapi-mongodb');
 const Schmervice = require('schmervice');
 const IntermediateResultsService = require('./services/intermediate-results');
@@ -19,6 +20,30 @@ exports.plugin = {
 
             await server.registerService(IntermediateResultsService);
             server.dependency('hapi-mongodb');
+            server.dependency('nes');
+
+            try {
+
+                server.subscription('/models/{projectId}', {
+                    onSubscribe: async function (socket, path, params) {
+
+                        try {
+                            const { intermediateResultsService } = server.services();
+                            const projectId = params.projectId;
+                            const ids = await intermediateResultsService.getResultsIdsFromProject(projectId);
+                            await socket.publish(`/models/${projectId}`,{ modelIds: ids });
+                        }
+                        catch (err) {
+                            console.error(err);
+                        }
+
+                    }
+                });
+            }
+            catch (err) {
+                console.warn('No Nes plugin has been detected while registering Intermediate Results, not registering \'/models/{projectId}\'. ');
+            }
+
 
         }
         catch (err) {

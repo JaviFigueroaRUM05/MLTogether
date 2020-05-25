@@ -34,7 +34,6 @@ module.exports = {
 
 
             if (BCrypt.compareSync(password, user.password)) {
-                console.log('passwords match!');
                 //authentication token
                 const jwt =  await createToken(user._id, h.realm.pluginOptions.jwtKey);
                 return h.response({ token_id: jwt }).code(200);

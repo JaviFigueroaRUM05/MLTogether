@@ -100,7 +100,6 @@ experiment('Get Project', () => {
 
         const getNonexistantProjectRoute = `/projects/${nonexistantProjectId}`;
 
-        console.log(nonexistantProjectId);
         let response;
         try {
             response = await server.inject({

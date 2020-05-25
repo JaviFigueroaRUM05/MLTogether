@@ -21,6 +21,8 @@ const GetIRByProjectID = async function (request, h) {
 
 const createIR = async function (request, h) {
 
+    const {intermediateResultsService} = request.services();
+
     const db = request.mongo.db;
     const payload = request.payload;
     //adding the pid
@@ -28,6 +30,8 @@ const createIR = async function (request, h) {
     //TODO: additional payload json validation
 
     const results = await db.collection('intermediateResults').insertOne(payload);
+
+    await intermediateResultsService.publishResultsIds(request.params.projectId);
 
     return h.response(results).code(201);
 };
@@ -39,7 +43,6 @@ const removeProjectIRs = async function (request, h) {
 
 
     const results = await db.collection('intermediateResults').deleteMany({ projectId: request.params.projectId });
-
 
     return h.response(results).code(200);
 };

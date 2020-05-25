@@ -260,10 +260,24 @@ const runWorker = async function (projectId) {
     const modelManager = new ModelManager();
 
 
+
+
     // Work Loop
     // eslint-disable-next-line no-constant-condition
     while (true) {
         const task = await getTask(projectId, nesClient);
+
+        await new Promise( (resolve,reject) => {
+            nesClient.subscribe(`/models/${projectId}`, (update, flags) => {
+                const ids = update.modelIds;
+                const found = ids.find(x => x.modelId === task.modelId.toString());
+                if(found) resolve();
+            });
+
+        });
+
+        await nesClient.unsubscribe(`/models/${projectId}`);
+
         const taskResults = await completeTask(task, modelManager, projectId);
 
         if (taskResults === null) {

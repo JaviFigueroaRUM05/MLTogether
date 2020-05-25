@@ -38,8 +38,6 @@ module.exports = {
                             path = Path.join(__dirname,'../../../../public/projects', projectId);
                     }
 
-                    console.log(path)
-
                     return path;
                 },
                 redirectToSlash: true,
