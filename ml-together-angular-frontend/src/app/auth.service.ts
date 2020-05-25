@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from './user';
+import { Project} from './project';
 import { JwtResponse } from  './jwt-response';
 import { HttpClient } from '@angular/common/http';
 import { tap } from  'rxjs/operators';
