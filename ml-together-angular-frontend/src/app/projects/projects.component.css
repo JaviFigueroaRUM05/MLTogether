@@ -13,7 +13,7 @@ html {
   width: 100%;
   /* margin-left: -145px; */
   padding: 10px;
-  background-image: url('../images/net3.png');
+  background-image: url('/assets/images/net3.png');
   opacity: 0.15;
   position:absolute;
   /* background-color: rgb(65, 65, 65); */
