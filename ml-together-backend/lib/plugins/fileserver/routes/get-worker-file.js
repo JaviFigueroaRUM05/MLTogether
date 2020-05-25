@@ -4,7 +4,7 @@ const Joi = require('@hapi/joi');
 const { verifyProject } = require('../../../handlers/project-handlers');
 const Path = require('path');
 
-
+// TODO: Remove dependency on project service
 module.exports = {
     method: 'GET',
     path: '/projects/{projectId}/workerfiles/{param*}',

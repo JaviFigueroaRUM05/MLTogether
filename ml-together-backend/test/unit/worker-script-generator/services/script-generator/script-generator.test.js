@@ -94,6 +94,22 @@ experiment('ScriptGeneratorService', () => {
             expect(FS.existsSync(file)).to.be.true();
 
         });
+
+        it('deletes the tmp script', {timeout: 5000}, async () => {
+
+            const { scriptGeneratorService } = server.services();
+            const projectId = 'test';
+            const mapFnString = 'return;';
+            const reduceFnString = 'return;';
+            const dataUrl = 'http://localhost:3000';
+            await scriptGeneratorService.initialize();
+
+            await scriptGeneratorService
+                .generateWorkerScript(projectId, mapFnString, reduceFnString, dataUrl);
+            const temporaryFile = `${scriptGeneratorService.temporaryPath}/${scriptGeneratorService.ejsPrefix}-${projectId}.js`;
+
+            expect(FS.existsSync(temporaryFile)).to.be.false();
+        });
     });
 
     after( () => {
