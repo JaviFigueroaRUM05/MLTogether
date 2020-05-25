@@ -1,7 +1,7 @@
 'use strict';
 
 const Joi = require('@hapi/joi');
-const { verifyProject } = require('../../handlers/project-handlers');
+const { verifyProject } = require('../../../handlers/project-handlers');
 const Path = require('path');
 
 
@@ -32,11 +32,13 @@ module.exports = {
                         case 'images':
                         case 'css':
                         case '':
-                            path = Path.join(__dirname,'../../../public');
+                            path = Path.join(__dirname,'../../../../public');
                             break;
                         default:
-                            path = Path.join(__dirname,'../../../public', projectId);
+                            path = Path.join(__dirname,'../../../../public/projects', projectId);
                     }
+
+                    console.log(path)
 
                     return path;
                 },

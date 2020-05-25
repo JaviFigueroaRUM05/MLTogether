@@ -12,6 +12,7 @@ const Path = require('path');
 const WorkerScriptGeneratorPlugin = require('../lib/plugins/worker-script-generator');
 const TaskBrokerPlugin = require('../lib/plugins/task-broker');
 const IRPlugin = require('../lib/plugins/intermediate-results');
+const FileServerPlugin = require('../lib/plugins/fileserver');
 
 
 
@@ -105,6 +106,9 @@ module.exports = new Confidence.Store({
                 routes: {
                     prefix: '/api'
                 }
+            },
+            {   plugin: FileServerPlugin,
+                options: {}
             },
             {
                 plugin: '../lib', // Main plugin

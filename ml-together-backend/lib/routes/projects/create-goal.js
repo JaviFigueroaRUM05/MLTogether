@@ -44,7 +44,7 @@ module.exports = {
 
 
         // Create and save tasks
-        const modelHost = `http://${host}:${port}/projects/${projectId}/ir`;
+        const modelHost = `http://${host}:${port}/api/projects/${projectId}/ir`;
         const taskInfo = request.payload.taskInfo;
         const { trainingSetSize, batchSize, batchesPerReduce } = taskInfo;
 
@@ -62,7 +62,7 @@ module.exports = {
 
         const modelFunction = new Function('TF',modelFn);
         const model = modelFunction(TF);
-        await intermediateResultsService.addToResults(projectId, '0', model);
+        await intermediateResultsService.addToResults(projectId, '1', model);
 
         // Generate Script
         const { mapFn, reduceFn, trainDataUrl } = taskInfo;

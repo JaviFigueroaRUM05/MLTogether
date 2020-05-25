@@ -64,12 +64,11 @@ exports.deployment = async (start) => {
     await deleteTestProjects();
 
     //TODO: Fix the confirm password thingy
-    const registerRoute = '/register';
+    const registerRoute = '/api/register';
     const registerPayload = {
         fullName: 'Juan Apellido',
         email: 'juan@upr.edu',
-        password: 'Hello1234',
-        confirmPassword: 'Hello1234'
+        password: 'Hello1234'
     };
     const registerRes = await server.inject({
         method: 'POST',
@@ -77,7 +76,7 @@ exports.deployment = async (start) => {
         payload: registerPayload
     });
     const token = JSON.parse(registerRes.payload).token_id;
-    const createProjectRoute = '/projects';
+    const createProjectRoute = '/api/projects';
 
     const createProjectPayload = {
         title: 'MNIST',
@@ -94,13 +93,13 @@ exports.deployment = async (start) => {
     const projectId = JSON.parse(createProjectRes.payload)._id;
     // TODO: use the token from the new user to create goal
 
-    const goalCreationRoute = `/projects/${projectId}/goal`;
+    const goalCreationRoute = `/api/projects/${projectId}/goal`;
 
     const title = GOAL_TITLE;
 
     // Model Information
     const optimizer = 'rmsprop';
-    const loss = 'categoricalCrossentropy';
+    const loss = ['categoricalCrossentropy'];
     const metrics = ['accuracy'];
 
     // Task Information
