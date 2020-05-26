@@ -1,8 +1,9 @@
 'use strict';
 
 const Joi = require('@hapi/joi');
-const { authModel } = require('../../utils/response-models');
+const { authModel, ErrorsOnRegisterOutputValidations  } = require('../../utils/response-models');
 const { verifyRegistration } = require('../../handlers/user-handlers');
+const _ = require('lodash');
 
 module.exports = {
     method: 'POST',
@@ -34,7 +35,10 @@ module.exports = {
                 password: Joi.string().min(7).required().strict().example('hello1234')
             })
         },
-        response: { schema: authModel }
-
+        response: _.merge({}, ErrorsOnRegisterOutputValidations, {
+            status: {
+                200: authModel
+            }
+        })
     }
 };

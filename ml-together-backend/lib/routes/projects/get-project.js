@@ -2,7 +2,8 @@
 
 const Joi = require('@hapi/joi');
 const { verifyProject } = require('../../handlers/project-handlers');
-const { projectModel } = require('../../utils/response-models');
+const { projectModel, ErrorsOnGetOutputValidations } = require('../../utils/response-models');
+const _ = require('lodash');
 
 module.exports = {
 
@@ -12,6 +13,8 @@ module.exports = {
         pre: [
             { method: verifyProject }
         ],
+        description: 'Get a specific projects',
+        notes: 'Returns a projects given its specific id',
         tags: ['api', 'projects'],
         handler: async function (request,h) {
 
@@ -26,7 +29,10 @@ module.exports = {
                 projectId: Joi.string().example('55153a8014829a865bbf700d')
             })
         },
-        response: { schema: projectModel }
-
+        response: _.merge({}, ErrorsOnGetOutputValidations, {
+            status: {
+                200: projectModel
+            }
+        })
     }
 };

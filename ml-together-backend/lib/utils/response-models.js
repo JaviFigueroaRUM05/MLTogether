@@ -3,8 +3,80 @@
 const exampleModelFn = require('./example-model-fn');
 const exampleMapFn = require('./example-map-fn');
 const exampleReduceFn = require('./example-reduce-fn');
+const _ = require('lodash');
 
 const Joi = require('@hapi/joi');
+
+const schemaForStatusCode = function (statusCode) {
+
+    const schema = {
+        statusCode: Joi.number().required().description('HTTP Status Code').equal(statusCode),
+        error: Joi.string().description('Error title').example('Error Title'),
+        message: Joi.string().description('Error details').example('Error Description')
+    };
+
+    return Joi.object().keys(schema).label(`${statusCode}Error`);
+};
+
+// --------------------------------------------------
+//    Errror Schemas
+// --------------------------------------------------
+
+const HeadersPayLoad = Joi.object().keys({
+    'Authorization': Joi.string().required().description('A valid Json Web Token')
+}).unknown().rename('authorization', 'Authorization');
+
+const NotFoundStatus = {
+    status: {
+        404: schemaForStatusCode(404)
+    }
+};
+
+const BadRequestStatus = {
+    status: {
+        400: schemaForStatusCode(400)
+    }
+};
+
+const UnauthorizedStatus = {
+    status: {
+        401: schemaForStatusCode(401)
+    }
+};
+
+const ForbiddenStatus = {
+    status: {
+        403: schemaForStatusCode(403)
+    }
+};
+
+const ErrorsOutputValidations = {
+    status: {
+        500: schemaForStatusCode(500)
+    }
+};
+
+const ErrorsWithAuthOutputValidations = _.merge({}, ErrorsOutputValidations, UnauthorizedStatus);
+
+const ErrorsWithoutAuthOutputValidations = _.merge({}, ErrorsOutputValidations, UnauthorizedStatus);
+
+
+const ErrorsOnGetOutputValidations = _.merge({}, ErrorsOutputValidations, NotFoundStatus);
+
+const ErrorsOnPostOutputValidations = _.merge({}, ErrorsOutputValidations, ErrorsWithAuthOutputValidations, BadRequestStatus);
+
+const ErrorsOnRegisterOutputValidations = _.merge({}, ErrorsOutputValidations, BadRequestStatus);
+
+
+const ErrorsOnPutOutputValidations = _.merge({}, ErrorsOutputValidations, NotFoundStatus, UnauthorizedStatus, ForbiddenStatus);
+
+const ErrorsOnDeleteOutputValidations = _.merge({}, ErrorsOutputValidations, NotFoundStatus, UnauthorizedStatus, ForbiddenStatus);
+
+
+// --------------------------------------------------
+//    Models
+// --------------------------------------------------
+
 
 const projectModel = Joi.object({
     _id: Joi.any().required().example('55153a8014829a865bbf700d'),
@@ -14,7 +86,7 @@ const projectModel = Joi.object({
 }).label('Project');
 
 const authModel = Joi.object({
-    token_id: Joi.string().description('json web token '),
+    token_id: Joi.string().description('json web token ')
 }).label('Auth');
 
 const machineLearningModelInfo = Joi.object({
@@ -51,7 +123,7 @@ const taskInformation = Joi.object({
     reduceFn: Joi.string().required()
         .description('reduce function written in javascript.')
         .example(exampleReduceFn)
-}).label('TaskInfo').description('information on how to train the machine learning model')
+}).label('TaskInfo').description('information on how to train the machine learning model');
 const goalModel = Joi.object({
     title: Joi.string().required().description('title of the goal'),
     description: Joi.string().optional().description('description of the goal'),
@@ -62,5 +134,13 @@ const goalModel = Joi.object({
 module.exports = {
     projectModel,
     authModel,
-    goalModel
+    goalModel,
+    ErrorsOutputValidations,
+    ErrorsWithAuthOutputValidations,
+    ErrorsOnGetOutputValidations,
+    ErrorsOnPostOutputValidations,
+    ErrorsOnPutOutputValidations,
+    ErrorsOnDeleteOutputValidations,
+    ErrorsOnRegisterOutputValidations,
+    HeadersPayLoad
 };

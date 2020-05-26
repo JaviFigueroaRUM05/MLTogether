@@ -2,6 +2,7 @@
 
 const Glue = require('@hapi/glue');
 const Manifest = require('./manifest');
+const Nodemon = require('nodemon');
 
 exports.deployment = async (start) => {
 
@@ -31,15 +32,36 @@ if (!module.parent) {
 
     process.on('unhandledRejection', (err) => {
 
-        throw err;
+        console.error(err);
+        process.exit(1);
     });
-    process.on('SIGINT', () => {
+    process
+        .on('SIGINT', async () => {
 
-        console.log('stopping hapi server');
-        server.stop({ timeout: 10000 }).then((err) => {
+            console.log('stopping hapi server');
+            await server.mongo.client.close();
+            server.stop({ timeout: 10000 }).then((err) => {
 
-            console.log('hapi server stopped');
-            process.exit((err) ? 1 : 0);
+                console.log('hapi server stopped');
+                process.exit((err) ? 1 : 0);
+            });
+        })
+        .on('SIGHUP', async () => {
+
+            console.log('stopping hapi server');
+            await server.mongo.client.close();
+            server.stop({ timeout: 10000 }).then((err) => {
+
+                console.log('hapi server stopped');
+                process.exit((err) ? 1 : 0);
+            });
+        })
+        .on('SIGUSR2', () => {
+
+            server.stop({ timeout: 10000 }).then((err) => {
+
+                console.log('hapi server stopped');
+                process.kill(process.pid, 'SIGUSR2');
+            });
         });
-    });
 }

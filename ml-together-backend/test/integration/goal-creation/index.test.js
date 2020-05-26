@@ -80,7 +80,7 @@ experiment('create Goal route', () => {
         const registerRoute = '/api/register';
 
         const registerPayload = {
-            fullName: "Juan Apellido",
+            fullName: 'Juan Apellido',
             email: 'juan@upr.edu',
             password: 'Hello1234'
         };

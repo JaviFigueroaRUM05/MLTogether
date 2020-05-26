@@ -1,6 +1,8 @@
 'use strict';
 
 const Joi = require('@hapi/joi');
+const { ErrorsWithAuthOutputValidations, HeadersPayLoad, projectModel, ErrorsOnPostOutputValidations } = require('../../utils/response-models');
+const _ = require('lodash');
 
 module.exports = {
     method: 'POST',
@@ -13,11 +15,14 @@ module.exports = {
             payload: Joi.object({
                 title: Joi.string().required().example('Cancer Research'),
                 description: Joi.string().required().example('Doing Cancer Research by using machine learning models.')
-            }),
-            headers: Joi.object({
-                authorization: Joi.string().required()
-            }).unknown()
+            }).label('ProjectPayload'),
+            headers: HeadersPayLoad 
         },
+        response: _.merge({}, ErrorsWithAuthOutputValidations, ErrorsOnPostOutputValidations, {
+            status: {
+                200: projectModel
+            }
+        }),
 
         handler: async function (request,h) {
 

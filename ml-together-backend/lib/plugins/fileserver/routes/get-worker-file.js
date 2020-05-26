@@ -20,7 +20,7 @@ module.exports = {
         },
         description: 'Get a worker file',
         notes: 'Returns a file for the current goal given the project id and the file.',
-        tags: ['api'],
+        tags: ['api', 'file-server'],
         handler: {
             directory: {
                 path: function (request) {

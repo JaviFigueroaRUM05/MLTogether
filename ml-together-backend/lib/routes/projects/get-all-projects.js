@@ -1,5 +1,9 @@
 'use strict';
 
+const Joi = require('@hapi/joi');
+const _ = require('lodash');
+const { projectModel, ErrorsOutputValidations } = require('../../utils/response-models');
+
 module.exports = {
 
     method: 'GET',
@@ -14,7 +18,12 @@ module.exports = {
             const projects = await db.collection('projects').find().toArray();
 
             return h.response(projects).code(200);
-        }
+        },
+        response: _.merge({}, ErrorsOutputValidations, {
+            status: {
+                200: Joi.array().items(projectModel).label('ProjectList')
+            }
+        })
 
     }
 };

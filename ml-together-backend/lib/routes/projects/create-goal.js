@@ -3,7 +3,8 @@
 const TF = require('@tensorflow/tfjs-node');
 const Joi = require('@hapi/joi');
 const { verifyProject } = require('../../handlers/project-handlers');
-const { goalModel } = require('../../utils/response-models');
+const { goalModel, ErrorsOnPostOutputValidations, HeadersPayLoad } = require('../../utils/response-models');
+const _ = require('lodash');
 
 
 module.exports = {
@@ -23,15 +24,18 @@ module.exports = {
                 console.error(err);
                 throw err;
             },
-            headers: Joi.object({
-                authorization: Joi.string().required()
-            }).unknown(),
+            headers: HeadersPayLoad,
             params: Joi.object({
                 projectId: Joi.string().required()
             })
             ,
-            payload: goalModel
-        }
+            payload: goalModel,
+        },
+        response: _.merge({}, ErrorsOnPostOutputValidations, {
+            status: {
+                200: Joi.object({ status: Joi.string().required().description('HTTP Status Code').equal('ok') })
+            }
+        })
     },
     handler: async (request, h) => {
 

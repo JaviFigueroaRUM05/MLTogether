@@ -4,8 +4,9 @@ const BCrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
 const Boom = require('boom');
-const { authModel } = require('../../utils/response-models');
+const { authModel, ErrorsOnPostOutputValidations  } = require('../../utils/response-models');
 const { verifyLogin } = require('../../handlers/user-handlers');
+const _ = require('lodash');
 
 const createToken =  function createToken(id, key) {
 
@@ -54,7 +55,11 @@ module.exports = {
                 password: Joi.string().min(7).required().strict()
             })
         },
-        response: { schema: authModel }
+        response: _.merge({}, ErrorsOnPostOutputValidations, {
+            status: {
+                200: authModel
+            }
+        })
 
     }
 };

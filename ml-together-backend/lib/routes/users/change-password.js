@@ -2,8 +2,10 @@
 
 const bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
+const _ = require('lodash');
 const Joi = require('@hapi/joi');
 const Boom = require('boom');
+const { HeadersPayLoad, ErrorsOnPostOutputValidations } = require('../../utils/response-models');
 
 module.exports = {
 
@@ -22,17 +24,17 @@ module.exports = {
             const user = await db.collection('users').findOne(
                 { _id: new ObjectID(userID) });
             if (bcrypt.compareSync(oldpassword, user.password)) {
-                const hash = await userService.hash(newpassword)
+                const hash = await userService.hash(newpassword);
                 const update = await (db.collection('users').updateOne(
-                    { _id: new ObjectID(userID) },{ $set: { 'password': hash } }))
-                
+                    { _id: new ObjectID(userID) },{ $set: { 'password': hash } }));
+
             }
             else {
-                
-                throw Boom.badRequest('Old password does not match')
+
+                throw Boom.badRequest('Old password does not match');
             }
 
-            return h.response({}).code(201);
+            return h.response({ status: 'ok', message: 'Password changed sucessfully!' }).code(200);
 
         },
         validate: {
@@ -41,15 +43,20 @@ module.exports = {
                 console.error(err);
                 throw err;
             },
-            headers: Joi.object({
-                authorization: Joi.string().required()
-            }).unknown(),
+            headers: HeadersPayLoad,
             payload: Joi.object({
                 oldpassword: Joi.string().min(7).required().strict().example('oldpassword'),
                 newpassword: Joi.string().min(7).required().strict().example('new password')
-            }),
-
-        }
+            })
+        },
+        response: _.merge({}, ErrorsOnPostOutputValidations, {
+            status: {
+                200: Joi.object({
+                    status: Joi.string().required().equal('ok'),
+                    message: Joi.string().required().equal('Password changed sucessfully!')
+                })
+            }
+        })
     }
 };
 

@@ -162,6 +162,10 @@ module.exports = new Confidence.Store({
                                 description: 'Find out more about how to create a goal',
                                 url: 'https://www.notion.so/manuelbg/Goal-Creation-6892ecdc40fc43b8ba9eac555be39c42'
                             }
+                        },
+                        {
+                            name: 'file-server',
+                            description: 'Routes for Main Web Application and Worker Web Application'
                         }
                     ]
                 }

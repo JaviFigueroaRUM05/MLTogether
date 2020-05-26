@@ -86,7 +86,7 @@ experiment('Change Password', () => {
             return false;
         }
 
-        expect(response.statusCode).to.be.equal(201);
+        expect(response.statusCode).to.be.equal(200);
 
         const users = await getTestUsers();
 
@@ -122,16 +122,13 @@ experiment('Change Password', () => {
 
     });
 
-    it('Original password does not match the one in the database', async () => {
+    it('original password does not match the one in the database', async () => {
 
         newpassword = Faker.internet.password(16, false);
         const oldpassword = Faker.internet.password(16, false);
         const payload = {
             oldpassword,
-            newpassword,
-            headers: {
-                authorization: `${token}`
-            }
+            newpassword
         };
 
         let response;
