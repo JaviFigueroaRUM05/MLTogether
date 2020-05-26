@@ -5,17 +5,17 @@
 			<div class="col-12 col-sm-5 col-md-4 d-flex flex-column" id="project-list-area" style="position:relative; height: 100vh;"> <!--Left side -->
 				<!-- Projectbar -->
 				<div class="row d-flex flex-row align-items-center p-2" id="navbar">
-					<img alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px; cursor:pointer;" onclick="showProfileSettings()" id="display-pic"> <!-- Open profile when click on image -->
+					<img alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px; cursor:pointer;"  (click)="toggle()" id="display-pic" src="./assets/images/Icon.png"> <!-- Open profile when click on image -->
 					<div class="text-white font-weight-bold" id="username"></div>
 					<div class="home-button"> <!--Home -->
-						<a class="fas fa-home text-white" role="button" style="cursor:pointer" href="home.html"></a>
+						<a class="fas fa-home text-white" role="button" style="cursor:pointer" href="./"></a>
 					</div>
 					<div class="new-project-button"> <!--Add a new project -->
 						<a class="fas fa-plus text-white" role="button" style="cursor:pointer"></a>
 					</div>
 					<div class="nav-item dropdown"> <!--MIGHT BE REMOVED-->
-						<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v text-white"></i></a>
-						<div class="dropdown-menu dropdown-menu-right"> <!--These refer to the projects-->
+						<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-sign-out-alt text-white"></i></a>
+						<div class="dropdown-menu dropdown-menu-right"> 
 							<!-- <a class="dropdown-item" href="#">Archived</a>
 							<a class="dropdown-item" href="#">Starred</a>
 							<a class="dropdown-item" onclick="showSettings()">Settings</a> -->
@@ -24,52 +24,46 @@
 					</div>
 				</div>
 				<!-- Profile Settings -->
-				<div class="d-flex flex-column w-100 h-100" id="profile-settings">
+				<div class="d-flex flex-column w-100 h-100" [ngClass]="statusClass">
 					<!-- Settings Navbar -->
 					<div class="row d-flex flex-row align-items-center p-2 m-0" style="background:#9b59b6; min-height:65px;"> <!--purple-->
-						<i class="fas fa-arrow-left p-2 mx-3 my-1 text-white" style="font-size: 1.5rem; cursor: pointer;" onclick="hideProfileSettings()"></i> <!--Arrow hides prof-->
+						<i class="fas fa-arrow-left p-2 mx-3 my-1 text-white" style="font-size: 1.5rem; cursor: pointer;" (click)="untoggle()"></i> <!--Arrow hides prof-->
 						<div class="text-white font-weight-bold">Profile</div>
 					</div>
+					<!-- <ng-container *ngIf="show"></ng-container> -->
 					<div class="d-flex flex-column" style="overflow:auto;"> <!--Profile info container-->
-						<img alt="Profile Photo" class="img-fluid rounded-circle my-5 justify-self-center mx-auto" id="profile-pic"> <!--Big Profile pic -->
-						<input type="file" id="profile-pic-input" class="d-none"> <!--Clickable-->
+						<img alt="Profile Photo" class="img-fluid rounded-circle my-5 justify-self-center mx-auto" id="profile-pic" src="./assets/images/Icon.png"> <!--Big Profile pic -->
 						<!-- THE FOLLOWING ARE INPUT TYPES BUT MAY BE CHANGED IN THE FUTURE -->
 						<div class="tab px-3 py-2">
 							<div class="text-muted mb-2"><label for="input-name">Your Name</label></div> <!--Full name, not username -->
-							<input type="text" name="name" id="input-name" class="w-100 border-0 py-2 profile-input">
-						</div>
-						<div class="tab px-3 py-2">
-							<div class="text-muted mb-2"><label for="input-about">About</label></div> <!--Information about user-->
-							<input type="text" name="name" id="input-about" value="Lorem ipsum dolor sit amet, consectetur adipiscing elit.." class="w-100 border-0 py-2 profile-input">
+							<div class="w-100 border-0 py-2 profile-input">{{userName}}</div>
+							<!-- <input type="text" name="name" id="input-name" class="w-100 border-0 py-2 profile-input"> -->
 						</div>
 						<div class="tab px-3 py-2">
 							<div class="text-muted mb-2"><label for="input-email">e-mail</label></div>
-							<input type="text" name="name" id="input-about" value="developer@email.com" class="w-100 border-0 py-2 profile-input">
+							<div class="w-100 border-0 py-2 profile-input">{{email}}</div>
+							<!-- <input type="text" name="name" id="input-about" value="developer@email.com" class="w-100 border-0 py-2 profile-input"> -->
 						</div>
 					</div>
-				</div>
-				<!-- General Settings -->
-				<div class="d-flex flex-column w-100 h-100" id="general-settings">
-					<!-- Settings Navbar -->
-					<div class="row d-flex flex-row align-items-center p-2 m-0" style="background:#9b59b6; min-height:65px;"> <!--purple-->
-						<i class="fas fa-arrow-left p-2 mx-3 my-1 text-white" style="font-size: 1.5rem; cursor: pointer;" onclick="hideSettings()"></i> <!--Arrow hides prof-->
-						<div class="text-white font-weight-bold">Settings</div>
-					</div>
-					<div class="d-flex flex-column" style="overflow:auto;"> <!--Settings container-->
-						<div class="tab px-3 py-2">
-							<div class="mb-2" style="margin-bottom:0rem !important;"> <!--!important to overwrite mb-2 property-->
-								<label for="input-name" style="margin-right: 0.5rem; vertical-align:middle; margin-bottom:0rem;" id="theme-name">Light Mode</label>
-								<label class="switch-theme" style="margin-bottom:0rem;">
-									<input type="checkbox" autocomplete="off" id="theme-check" onchange="toggleChangeTheme()" checked>
-									<span class="slider round"></span>
-								</label>
-							</div>
-						</div>
-					</div>
+					<!-- </ng-container> -->
 				</div>
 				<!-- Project List -->
 				<!-- Generated by javascript -->
 				<div class="row" id="project-list" style="overflow:auto; cursor:pointer; height: 100vh;"></div>
+				<div class="project-list-item d-flex flex-row w-100 p-2 border-bottom" id="project-list-item" *ngFor="let proj of project">
+					<img src="./assets/images/p.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px;">
+					<div class="w-50">
+						<div class="name" id="project-item-name">{{proj.name}}</div>
+						<div class="small status" id="project-item-status">Project Type Here</div>
+					</div>
+					<!-- <div class="flex-grow-1 text-right">
+						<div class="small time">${mDate(item.lastSeen).projectListFormat()}</div>
+						<a class="nav-link" data-toggle="dropdown" href="#">
+						<i class="far fa-bell"></i>
+						${item.notifications ? "<div class=\"badge badge-info small\" id=\"unread-count\">" + item.notifications + "</div>" : ""}
+						</a>
+					</div> -->
+				</div>
 			</div>
 			<!-- Project Area -->
 			<div class="d-none d-sm-flex flex-column col-12 col-sm-7 col-md-8 p-0 h-100" id="project-area">
@@ -90,18 +84,6 @@
 					<i class="fas fa-arrow-left p-2 mr-2 text-white" style="font-size: 1.5rem; cursor: pointer;" onclick="showChatList()"></i>
 				</div> -->
 				<a href="#"><img src="./assets/images/LogoMLTRound.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px;" id="pic"></a> <!--Project Pic-->
-				<div class="d-flex flex-column">
-					<div class="text-white font-weight-bold" id="name"></div>
-					<div class="text-white small" id="details"></div> <!--Last seen + date -->
-				</div>
-				<div class="d-flex flex-row align-items-center ml-auto">
-
-
-					<a href="#"><i class="fas fa-ellipsis-v mr-2 mx-sm-3 text-white"></i></a> <!--NOT IMPLEMENTED YET-->
-
-
-
-				</div>
 			</div>
 			<!-- Projects -->
 			<div class="d-flex flex-column" id="projects">
@@ -196,8 +178,6 @@
 		</div>
 	</div>
 </div>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
-crossorigin="anonymous"></script>
-<script type="text/javascript" src="/assets/js/home.js"></script>
+<!-- <script type="text/javascript" src="/assets/js/home.js"></script> -->
 </body>
 </html>

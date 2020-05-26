@@ -1,3 +1,4 @@
+@import url('https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js');
 .content-header h1 {
     font-size: 1.8rem;
     margin: 0;
@@ -275,15 +276,34 @@ input:checked + .slider:before {
 	overflow: auto;
 }
 
-#profile-settings {
+.profile-settings{
 	position: absolute;
 	top: 0;
-	left: -110%;
 	background: hsl(0, 0%, 95%);
 	transition: all 0.2s ease-in;
 	-moz-transition: all .2s ease-in-out;
 	-webkit-transition: all .2s ease-in-out;
+	left: 0%;
 }
+
+.h-profile-settings{
+	position: absolute;
+	top: 0;
+	background: hsl(0, 0%, 95%);
+	transition: all 0.2s ease-in;
+	-moz-transition: all .2s ease-in-out;
+	-webkit-transition: all .2s ease-in-out;
+	left: -110%;
+}
+
+/* #profile-settings {
+	position: absolute;
+	top: 0;
+	background: hsl(0, 0%, 95%);
+	transition: all 0.2s ease-in;
+	-moz-transition: all .2s ease-in-out;
+	-webkit-transition: all .2s ease-in-out;
+} */
 
 #general-settings {
 	position: absolute;

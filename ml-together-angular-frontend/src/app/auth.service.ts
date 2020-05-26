@@ -22,6 +22,8 @@ export class AuthService {
         if (res.user) {
           localStorage.setItem("ACCESS_TOKEN", res.user.access_token);
           localStorage.setItem("EXPIRES_IN", res.user.expires_in);
+          localStorage.setItem("USERNAME", res.user.name);
+          localStorage.setItem("EMAIL", res.user.email);
           this.authSubject.next(true);
         }
       })

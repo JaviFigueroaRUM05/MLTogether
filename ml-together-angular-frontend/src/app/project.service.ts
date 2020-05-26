@@ -15,6 +15,10 @@ export class ProjectService {
   SERVER = "http://localhost:3000";
   
   getProjectById$(id: string): Observable<Project> {
-    return this.httpClient.get<Project>(`${this.SERVER}project/${id}`);
+    return this.httpClient.get<Project>(`${this.SERVER}projects/${id}`);
+  }
+
+  getAllProjectsByOwner(owner: string){
+    return this.httpClient.get<Project>(`${this.SERVER}projects/${owner}`);
   }
 }

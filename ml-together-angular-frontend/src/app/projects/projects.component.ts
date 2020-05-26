@@ -25,8 +25,8 @@ export class ProjectsComponent implements OnInit {
 
   ngOnInit() {
     this._routeSubs();
-    this.project = this.projectService.getProjectById$(this.id)
-      this._setPageParams(this.project.name, this.project.author, this.project.description);
+    this.project = this.projectService.getProjectById$(this.id);
+    this._setPageParams(this.project.name, this.project.author, this.project.description);
   }
 
   private _routeSubs() {
