@@ -5,6 +5,8 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { HomeComponent} from './home/home.component';
+import { IdeComponent } from './ide/ide.component';
+import { TestProjComponent } from './test-proj/test-proj.component';
 
 const routes: Routes = [
   // { path: '', pathMatch: 'full', redirectTo: 'login'},
@@ -13,6 +15,8 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'admin', component: AdminComponent },
   { path: 'projects/:projectId', component: ProjectsComponent},
+  { path: 'projects/view/:projectID', component: IdeComponent},
+  { path: 'projects/test/:projectID', component: TestProjComponent}
 ];
 
 @NgModule({

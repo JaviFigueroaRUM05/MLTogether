@@ -27,10 +27,8 @@
               "src/styles.css"
             ],
             "scripts": [
-              "src/assets/js/data.js",
-              "src/assets/js/date.js",
-              "src/assets/js/script.js",
-              "src/assets/js/home.js"
+              "src/assets/js/home.js",
+              "src/assets/js/ide.js"
             ]
           },
           "configurations": {
@@ -97,10 +95,8 @@
               "src/styles.css"
             ],
             "scripts": [
-              "src/assets/js/data.js",
-              "src/assets/js/date.js",
-              "src/assets/js/script.js",
-              "src/assets/js/home.js"
+              "src/assets/js/home.js",
+              "src/assets/js/ide.js"
             ]
           }
         },
