@@ -11,6 +11,7 @@ import { ProjectsComponent } from './projects/projects.component';
 import { HomeComponent } from './home/home.component';
 import { IdeComponent } from './ide/ide.component';
 import { TestProjComponent } from './test-proj/test-proj.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { TestProjComponent } from './test-proj/test-proj.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

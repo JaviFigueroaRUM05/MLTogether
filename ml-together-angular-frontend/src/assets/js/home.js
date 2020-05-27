@@ -1,37 +1,10 @@
-$(document).ready(function(){
-  // Initialize Tooltip
-  $('[data-toggle="tooltip"]').tooltip();
-
-  // Add smooth scrolling to all links in navbar + footer link
-  $(".navbar a, footer a[href='#myPage']").on('click', function(event) {
-
-    // Make sure this.hash has a value before overriding default behavior
-    if (this.hash !== "") {
-
-      // Prevent default anchor click behavior
-      event.preventDefault();
-
-      // Store hash
-      var hash = this.hash;
-
-      // Using jQuery's animate() method to add smooth page scroll
-      // The optional number (900) specifies the number of milliseconds it takes to scroll to the specified area
-      $('html, body').animate({
-        scrollTop: $(hash).offset().top
-      }, 900, function(){
-
-        // Add hash (#) to URL when done scrolling (default click behavior)
-        window.location.hash = hash;
-      });
-    } // End if
-  });
-})
-
+var imgObj = new Image();
+imgObj.src='../assets/images/LogoMLTRound.png';
 document.addEventListener('DOMContentLoaded',domloaded,false);
 function domloaded(){
   var canvas = document.querySelector("canvas");
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
+  canvas.width = canvas.clientWidth*2;
+  canvas.height = canvas.clientHeight*1.25;
   var ctx = canvas.getContext("2d");
 
   var TAU = 2 * Math.PI;
@@ -102,6 +75,7 @@ function domloaded(){
   }
 
   function draw() {
+    
     for (var index = 0; index < balls.length; index++) {
       var ball = balls[index];
       ctx.beginPath();
@@ -121,6 +95,8 @@ function domloaded(){
         }
       }
       ctx.stroke();
+
+      ctx.drawImage(imgObj,canvas.clientWidth/3,canvas.clientHeight/3,300,500)
       ball.draw(ctx, canvas);
     }
   }
