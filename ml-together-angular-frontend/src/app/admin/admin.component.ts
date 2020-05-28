@@ -4,6 +4,8 @@ import { AuthService } from '../auth.service';
 import { Project } from '../project';
 import { ProjectService } from '../project.service';
 import { FormBuilder, FormGroup, Validators } from  '@angular/forms';
+import { environment } from '../../environments/environment';
+
 // import {Projects} from '../mock-projects'
 
 @Component({
@@ -19,13 +21,15 @@ export class AdminComponent implements OnInit {
   // project;
   statusClass = 'h-profile-settings';
   style = 'overlay';
-  projects;
+  projects = [];
+  host = environment.workerFilesHost;
   
   constructor(private authService: AuthService, private router: Router, private projectService : ProjectService, private route: ActivatedRoute, private formBuilder: FormBuilder) { }  
 
   ngOnInit() {
     this.userName = localStorage.getItem("USERNAME");
     this.email = localStorage.getItem("EMAIL");
+    this.initProjects()
   } 
 
   logout(){
@@ -37,7 +41,9 @@ export class AdminComponent implements OnInit {
     this.style = 'h-overlay';
   }
   initProjects(){
-    this.projects = this.projectService.getAllProjectsByOwner(this.userName);
+    this.projectService.getAllProjectsByOwner().subscribe( (projects) => {
+      this.projects = projects
+    });
   }
   toggle() {
     this.statusClass = 'profile-settings';

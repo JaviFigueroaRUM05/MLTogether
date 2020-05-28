@@ -5,6 +5,7 @@ import { JwtResponse } from  './jwt-response';
 import { HttpClient } from '@angular/common/http';
 import { tap } from  'rxjs/operators';
 import { Observable, BehaviorSubject } from  'rxjs';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ import { Observable, BehaviorSubject } from  'rxjs';
 export class AuthService {  
   constructor(private httpClient: HttpClient) { }  
   
-  AUTH_SERVER = "http://localhost:3000/api";
+  AUTH_SERVER = environment.apiHost;
   authSubject  =  new  BehaviorSubject(false);
 
   signIn(user: User): Observable<any> {
