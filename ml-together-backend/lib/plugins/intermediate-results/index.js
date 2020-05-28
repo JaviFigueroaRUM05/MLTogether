@@ -2,10 +2,7 @@
 
 const Joi = require('@hapi/joi');
 const Handler = require('./results-handlers');
-const Nes = require('nes');
-const Mongo = require('hapi-mongodb');
-const Schmervice = require('schmervice');
-const IntermediateResultsService = require('./services/intermediate-results');
+const HauteCouture = require('haute-couture');
 
 exports.plugin = {
 
@@ -13,12 +10,10 @@ exports.plugin = {
     version: '1.0.0',
     register: async (server, options) => {
 
-        try {
-            await server.register({
-                plugin: Schmervice
-            });
+        await HauteCouture.using()(server, options);
 
-            await server.registerService(IntermediateResultsService);
+        try {
+
             server.dependency('hapi-mongodb');
             server.dependency('nes');
 
