@@ -1,0 +1,18 @@
+<div class="wrapper">
+    <div id="edit">
+        <nav class="text-light d-flex align-items-center pl-2" id="editor-nav"><span>Editor</span>
+            <div>
+                <div class="btn btn" id="exec-btn" action><span class="fas fa-play" aria-hidden="true" (click)="exec()"></span></div>
+                <div class="btn btn" id="exec-btn" action><span class="fas fa-upload" aria-hidden="true"></span></div>
+            </div>
+        </nav>
+        <div ace-editor id="editor"></div>
+        <canvas id="canvas" style="display: none;"></canvas>
+    </div>
+    <div id="cons">
+        <nav class="text-light d-flex align-items-center pl-2" id="console-nav"><span>Console</span>
+            <div class="btn" id="clr-btn" action><span class="fas fa-trash" aria-hidden="true" (click)="clear()"></span></div>
+        </nav>
+        <pre id="console" class="border text-dark p-2">&raquo;  </pre>
+    </div>
+</div>
