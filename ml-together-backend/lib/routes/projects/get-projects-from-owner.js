@@ -29,7 +29,7 @@ module.exports = {
             headers: HeadersPayLoad },
         response: _.merge({}, ErrorsOnGetOutputValidations, {
                 status: {
-                    200: Joi.array().items(projectModel)
+                    200: Joi.array().items(projectModel).label('ProjectList')
                 }
             })
     }
