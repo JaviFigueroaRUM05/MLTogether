@@ -29,7 +29,7 @@ export class CreateComponent implements OnInit {
     }
     this.projectService.createProj(this.form.value).subscribe((res)=>{
       // console.log("Logged in!");
-      this.router.navigateByUrl('/view/'+localStorage.getItem("ID"));
+      this.router.navigateByUrl('/projects/view/'+res._id);
     });
   }
 
