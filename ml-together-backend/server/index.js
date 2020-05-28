@@ -55,13 +55,5 @@ if (!module.parent) {
                 console.log('hapi server stopped');
                 process.exit((err) ? 1 : 0);
             });
-        })
-        .on('SIGUSR2', () => {
-
-            server.stop({ timeout: 10000 }).then((err) => {
-
-                console.log('hapi server stopped');
-                process.kill(process.pid, 'SIGUSR2');
-            });
         });
 }

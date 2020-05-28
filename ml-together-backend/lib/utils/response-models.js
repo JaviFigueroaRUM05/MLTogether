@@ -85,6 +85,12 @@ const projectModel = Joi.object({
     userID: Joi.any().strip()
 }).label('Project');
 
+const intermediateResultModel = Joi.object({
+    projectId: Joi.any().required().example('55153a8014829a865bbf700d'),
+    modelId: Joi.number().required().example(5),
+    model: Joi.any().required().description('Machine learning model neccesary data for Tensorflow to load model.')
+}).label('IntermediateResult');
+
 const authModel = Joi.object({
     token_id: Joi.string().description('json web token ')
 }).label('Auth');
@@ -135,6 +141,7 @@ module.exports = {
     projectModel,
     authModel,
     goalModel,
+    intermediateResultModel,
     ErrorsOutputValidations,
     ErrorsWithAuthOutputValidations,
     ErrorsOnGetOutputValidations,
