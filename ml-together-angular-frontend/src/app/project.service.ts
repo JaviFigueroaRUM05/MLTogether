@@ -30,8 +30,8 @@ export class ProjectService {
     const headers = new HttpHeaders().set('Authorization',  `${token}`);
     return this.httpClient.post<Project>(`${this.SERVER}/projects`, project, { headers } ).pipe(
       tap((res:  Project ) => {
-        if (res.id) {
-          localStorage.setItem("ID", res.id.toString());
+        if (res._id) {
+          localStorage.setItem("ID", res._id.toString());
         }
       })
     );
