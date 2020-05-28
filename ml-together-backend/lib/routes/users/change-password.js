@@ -14,6 +14,7 @@ module.exports = {
     options: {
         auth: 'jwt',
         tags: ['api','users'],
+        description: 'Change the password of an account',
         handler: async function (request,h) {
 
             const db = request.mongo.db;
