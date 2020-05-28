@@ -140,8 +140,22 @@ const goalModel = Joi.object({
     taskInfo: taskInformation.required()
 }).label('Goal');
 
+const multipleProjectsModel = 
+    Joi.array().items(Joi.object({
+        _id: Joi.any().required().example('55153a8014829a865bbf700d'),
+        title: Joi.string().required().example('Cancer Research'),
+        description: Joi.string().required().example('Doing Cancer Research by using machine learning models.'),
+        userID: Joi.any().strip()},
+         Joi.object({
+        _id: Joi.any().required().example('52345a8014829a865bbf700d'),
+        title: Joi.string().required().example('COVID-19 Research'),
+        description: Joi.string().required().example('Doing COVID-19 Research by using machine learning models.'),
+        userID: Joi.any().strip()}))
+    );
+
 module.exports = {
     projectModel,
+    multipleProjectsModel,
     authModel,
     goalModel,
     intermediateResultModel,
