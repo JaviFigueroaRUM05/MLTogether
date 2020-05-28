@@ -3,6 +3,8 @@ import * as ace from 'ace-builds';
 
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-ambiance';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-ide',
@@ -17,10 +19,13 @@ export class IdeComponent implements OnInit {
   default_clear = console.clear;
   default_error = console.error;
   default_warn = console.warn;
+  routeSub: Subscription;
+  id: string;
 
-  constructor() { }
+  constructor(private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this._routeSubs();
     this.element = document.getElementById('editor');
     this.codeEditor = ace.edit(this.element, {
         value:'function test(m) {\n\treturn m;\n}\nconsole.log(test("Hello World"));',
@@ -81,5 +86,14 @@ export class IdeComponent implements OnInit {
   }
   clear(){
     console.clear();
+  }
+  upload(){
+    this.router.navigateByUrl('/test/'+this.id);
+  }
+  private _routeSubs() {
+    this.routeSub = this.route.params
+      .subscribe(params => {
+        this.id = params['projectID'];
+    });
   }
 }

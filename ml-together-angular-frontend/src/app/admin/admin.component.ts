@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { Project } from '../project';
 import { ProjectService } from '../project.service';
+import { FormBuilder, FormGroup, Validators } from  '@angular/forms';
 
 @Component({
   selector: 'app-admin',
@@ -15,8 +16,9 @@ export class AdminComponent implements OnInit {
   email: string;
   project;
   statusClass = 'h-profile-settings';
-  constructor(private authService: AuthService, private router: Router, private projectService : ProjectService, private route: ActivatedRoute,) { }  
   
+  constructor(private authService: AuthService, private router: Router, private projectService : ProjectService, private route: ActivatedRoute, private formBuilder: FormBuilder) { }  
+
   ngOnInit() {
     this.userName = localStorage.getItem("USERNAME");
     this.email = localStorage.getItem("EMAIL");
