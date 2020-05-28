@@ -10,26 +10,33 @@ const Mongo = require('hapi-mongodb');
 const Faker = require('faker');
 const BCrypt = require('bcrypt');
 
-const { deleteTestUsers, getTestUsers } = require('../../../utils/mongodb-manager');
+const { deleteTestUsers, deleteTestProjects, getTestProjects } = require('../../../utils/mongodb-manager');
 
 const { experiment, it, beforeEach } = exports.lab = Lab.script();
 const { expect } = Code;
 
-experiment('Change Password', () => {
+experiment('Create Project', () => {
 
     let server;
     let email;
     let password;
     let fullName;
-    let newpassword;
     let token;
-    const changepass = '/user/changepass';
+    let title;
+    let description;
+    let project;
+    const createProjectRoute = '/projects';
 
     beforeEach( async () => {
 
         fullName = Faker.name.firstName() + ' ' + Faker.name.lastName();
         email = Faker.internet.email();
         password = Faker.internet.password(16, false);
+
+        title = Faker.lorem.words(5);
+        description = Faker.lorem.words(50);
+
+
         server = Hapi.server();
 
         await server.register({
@@ -50,6 +57,7 @@ experiment('Change Password', () => {
         });
 
         await deleteTestUsers();
+        await deleteTestProjects();
 
         const { userService } = server.services();
         token = await userService.registerUser(fullName,email, password);
@@ -61,20 +69,18 @@ experiment('Change Password', () => {
         expect(server.registrations[LibPlugin.pkg.name]).to.exist();
     });
 
-    it('changes password succesfully', async () => {
+    it('creates a project successfully with correct payload', async () => {
 
-        newpassword = Faker.internet.password(16, false);
-        const oldpassword = password;
         const payload = {
-            oldpassword,
-            newpassword
+            title,
+            description
         };
 
         let response;
         try {
             response = await server.inject({
                 method: 'POST',
-                url: changepass,
+                url: createProjectRoute,
                 payload,
                 headers: {
                     authorization: `${token}`
@@ -86,29 +92,28 @@ experiment('Change Password', () => {
             return false;
         }
 
-        expect(response.statusCode).to.be.equal(200);
+        expect(response.statusCode).to.be.equal(201);
 
-        const users = await getTestUsers();
+        const projects = await getTestProjects();
 
-        expect(BCrypt.compareSync(newpassword, users[0].password)).to.be.true();
-
+        expect(projects[0]).to.include(['_id', 'title', 'description']);
+        expect(projects[0].title).to.equal(title);
+        expect(projects[0].description).to.equal(description);
 
     });
 
     it('returns unauthorized because of lack of token', async () => {
 
-        newpassword = Faker.internet.password(16, false);
-        const oldpassword = password;
-        const payload = {
-            oldpassword,
-            newpassword
-        };
 
         let response;
+        const payload = {
+            title,
+            description
+        };
         try {
             response = await server.inject({
                 method: 'POST',
-                url: changepass,
+                url: createProjectRoute,
                 payload
             });
         }
@@ -118,36 +123,6 @@ experiment('Change Password', () => {
         }
 
         expect(response.statusCode).to.be.equal(401);
-
-
-    });
-
-    it('original password does not match the one in the database', async () => {
-
-        newpassword = Faker.internet.password(16, false);
-        const oldpassword = Faker.internet.password(16, false);
-        const payload = {
-            oldpassword,
-            newpassword
-        };
-
-        let response;
-        try {
-            response = await server.inject({
-                method: 'POST',
-                url: changepass,
-                payload,
-                headers: {
-                    authorization: `${token}`
-                }
-            });
-        }
-        catch (err) {
-            console.error(err);
-            return false;
-        }
-
-        expect(response.statusCode).to.be.equal(400);
 
 
     });

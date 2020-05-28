@@ -1,10 +1,10 @@
 'use strict';
 
 const Joi = require('@hapi/joi');
-const { verifyProject } = require('../../handlers/project-handlers');
+const { verifyProject } = require('../../../handlers/project-handlers');
 const Path = require('path');
 
-
+// TODO: Remove dependency on project service
 module.exports = {
     method: 'GET',
     path: '/projects/{projectId}/workerfiles/{param*}',
@@ -20,7 +20,7 @@ module.exports = {
         },
         description: 'Get a worker file',
         notes: 'Returns a file for the current goal given the project id and the file.',
-        tags: ['api'],
+        tags: ['api', 'file-server'],
         handler: {
             directory: {
                 path: function (request) {
@@ -32,10 +32,10 @@ module.exports = {
                         case 'images':
                         case 'css':
                         case '':
-                            path = Path.join(__dirname,'../../../public');
+                            path = Path.join(__dirname,'../../../../public');
                             break;
                         default:
-                            path = Path.join(__dirname,'../../../public', projectId);
+                            path = Path.join(__dirname,'../../../../public/projects', projectId);
                     }
 
                     return path;

@@ -1,12 +1,9 @@
 'use strict';
 
-const Boom = require('boom');
-const BCrypt = require('bcrypt');
-const JWT = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
-
+const { authModel, ErrorsOnRegisterOutputValidations  } = require('../../utils/response-models');
 const { verifyRegistration } = require('../../handlers/user-handlers');
-
+const _ = require('lodash');
 
 module.exports = {
     method: 'POST',
@@ -17,7 +14,6 @@ module.exports = {
         ],
         handler: async function (request,h) {
 
-            const db = request.mongo.db;
             const { userService } = request.services(true);
             const { fullName,email, password } = request.payload;
 
@@ -25,7 +21,7 @@ module.exports = {
 
             return h.response({ token_id: jwt }).code(201);
         },
-        tags: ['api'],
+        tags: ['api','users'],
         description: 'Register an account with the system',
         validate: {
             failAction: (request, h, err) => {
@@ -38,6 +34,11 @@ module.exports = {
                 email: Joi.string().email().lowercase().required().example('juan@upr.edu'),
                 password: Joi.string().min(7).required().strict().example('hello1234')
             })
-        }
+        },
+        response: _.merge({}, ErrorsOnRegisterOutputValidations, {
+            status: {
+                200: authModel
+            }
+        })
     }
 };

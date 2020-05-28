@@ -17,3 +17,6 @@ services:
         depends_on:
             - database
             - rabbitmq
+        environment: 
+            - MONGO_URL=mongodb://database
+            - AMQP_URL=amqp://rabbitmq

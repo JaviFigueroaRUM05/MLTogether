@@ -2,6 +2,8 @@
 
 const Joi = require('@hapi/joi');
 const { verifyProject } = require('../../handlers/project-handlers');
+const { projectModel, ErrorsOnGetOutputValidations } = require('../../utils/response-models');
+const _ = require('lodash');
 
 module.exports = {
 
@@ -11,7 +13,9 @@ module.exports = {
         pre: [
             { method: verifyProject }
         ],
-        auth: 'jwt',
+        description: 'Get a specific projects',
+        notes: 'Returns a projects given its specific id',
+        tags: ['api', 'projects'],
         handler: async function (request,h) {
 
             const db = request.mongo.db;
@@ -22,11 +26,13 @@ module.exports = {
         },
         validate: {
             params: Joi.object({
-                projectId: Joi.string()
-            }),
-            headers: Joi.object({
-                authorization: Joi.string().required()
-            }).unknown()
-        }
+                projectId: Joi.string().example('55153a8014829a865bbf700d')
+            })
+        },
+        response: _.merge({}, ErrorsOnGetOutputValidations, {
+            status: {
+                200: projectModel
+            }
+        })
     }
 };

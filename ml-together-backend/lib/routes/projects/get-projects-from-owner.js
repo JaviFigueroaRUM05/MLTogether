@@ -8,7 +8,6 @@ module.exports = {
     path: '/projects/owner',
     options: {
         auth: 'jwt',
-        tags: ['api'],
         description: 'Get logged-in user\'s created projects',
         notes: 'Returns information about projects owned',
         handler: async function (request,h) {

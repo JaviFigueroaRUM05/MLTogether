@@ -9,7 +9,7 @@ const isMapResultQueueFull = function (currentBatchIndex, batchesPerReduce) {
 
 class TaskService extends Schmervice.Service {
 
-    createMapTask(mapResultsId, modelURL, dataStart, dataEnd) {
+    createMapTask(mapResultsId, modelURL, modelId, dataStart, dataEnd) {
 
         if (dataStart > dataEnd) {
             throw new RangeError(
@@ -22,19 +22,21 @@ class TaskService extends Schmervice.Service {
             dataStart,
             dataEnd,
             mapResultsId,
-            modelURL
+            modelURL,
+            modelId
         };
 
         return mapTask;
     }
 
-    createReduceTask(mapResultsId, modelURL, modelStoringURL, modelStoringId,
+    createReduceTask(mapResultsId, modelURL, modelId, modelStoringURL, modelStoringId,
         numberOfBatches) {
 
         const reduce = {
             function: 'reduce',
             mapResultsId,
             modelURL,
+            modelId,
             modelStoringURL,
             modelStoringId,
             numberOfBatches
@@ -79,10 +81,11 @@ class TaskService extends Schmervice.Service {
             const dataStart = i * batchSize;
             const dataEnd = (i + 1) * batchSize;
             const modelURL = `${modelURLRoot}/${currentMapResultsId}`;
+            const modelId = currentMapResultsId;
 
             const mapTask = this.createMapTask(
                 currentMapResultsId,
-                modelURL, dataStart, dataEnd);
+                modelURL, modelId, dataStart, dataEnd);
             tasks.push(mapTask);
             ++numberOfBatches;
 
@@ -93,7 +96,7 @@ class TaskService extends Schmervice.Service {
                 const nextModelId = currentMapResultsId + 1;
                 const modelStoringURL = `${modelURLRoot}`;
                 const reduceTask = this.createReduceTask(currentMapResultsId,
-                    modelURL, modelStoringURL, nextModelId, numberOfBatches);
+                    modelURL, modelId, modelStoringURL, nextModelId, numberOfBatches);
                 tasks.push(reduceTask);
                 numberOfBatches = 0;
                 ++currentMapResultsId;

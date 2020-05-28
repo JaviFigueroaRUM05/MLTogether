@@ -12,6 +12,7 @@ const Path = require('path');
 const WorkerScriptGeneratorPlugin = require('../lib/plugins/worker-script-generator');
 const TaskBrokerPlugin = require('../lib/plugins/task-broker');
 const IRPlugin = require('../lib/plugins/intermediate-results');
+const FileServerPlugin = require('../lib/plugins/fileserver');
 
 
 
@@ -61,12 +62,12 @@ module.exports = new Confidence.Store({
                         decorate: true
                     },
                     test: {
-                        url: 'mongodb://localhost:27017/mltest'
+                        url: 'mongodb://localhost/mltest'
                     },
                     $default: {
                         url: {
                             $env: 'MONGO_URL',
-                            $default: 'mongodb://localhost:27017/mldev01'
+                            $default: 'mongodb://localhost/mldev01'
                         }
                     }
 
@@ -81,7 +82,8 @@ module.exports = new Confidence.Store({
                     test: {
                         publicPath: Path.join(__dirname, '../test/tmp/public/projects'),
                         temporaryPath: Path.join(__dirname, '../test/tmp/tmp'),
-                        templatesPath: Path.join(__dirname, '../test/utils')
+                        templatesPath: Path.join(__dirname, '../test/utils'),
+                        doBundle: false
                     },
                     $default: {
                         publicPath: Path.join(__dirname, '../public/projects'),
@@ -101,10 +103,19 @@ module.exports = new Confidence.Store({
                 }
             },
             {   plugin: IRPlugin,
+                options: {},
+                routes: {
+                    prefix: '/api'
+                }
+            },
+            {   plugin: FileServerPlugin,
                 options: {}
             },
             {
                 plugin: '../lib', // Main plugin
+                routes: {
+                    prefix: '/api'
+                },
                 options: {
                     jwtKey: {
                         $filter: { $env: 'NODE_ENV' },
@@ -133,7 +144,30 @@ module.exports = new Confidence.Store({
                     info: {
                         title: 'MLTogether API Documentation',
                         version: Pack.version
-                    }
+                    },
+                    grouping: 'tags',
+                    tags: [
+                        {
+                            name: 'users',
+                            description: 'Users data'
+                        },
+                        {
+                            name: 'projects',
+                            description: 'Projects data'
+                        },
+                        {
+                            name: 'goals',
+                            description: 'Creation of goals',
+                            externalDocs: {
+                                description: 'Find out more about how to create a goal',
+                                url: 'https://www.notion.so/manuelbg/Goal-Creation-6892ecdc40fc43b8ba9eac555be39c42'
+                            }
+                        },
+                        {
+                            name: 'file-server',
+                            description: 'Routes for Main Web Application and Worker Web Application'
+                        }
+                    ]
                 }
             }
 

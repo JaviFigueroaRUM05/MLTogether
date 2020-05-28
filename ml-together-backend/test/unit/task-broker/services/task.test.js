@@ -62,22 +62,24 @@ experiment('TaskService', () => {
             const { taskService } = server.services();
             const mapResultsId = Faker.random.number();
             const modelURL = Faker.internet.url();
+            const modelId = Faker.random.number();
             const dataStart = Faker.random.number({ min: 0, max: 30 });
             const dataEnd = Faker.random.number({ min: 30, max: 60 });
 
-            const task = taskService.createMapTask(mapResultsId, modelURL, dataStart, dataEnd);
+            const task = taskService.createMapTask(mapResultsId, modelURL, modelId, dataStart, dataEnd);
             expect(task).to.include(['function', 'dataStart', 'dataEnd',
-                'mapResultsId', 'modelURL']);
+                'mapResultsId', 'modelURL', 'modelId']);
         });
         it('throws error when dataStart > dataEnd', () => {
 
             const { taskService } = server.services();
             const mapResultsId = Faker.random.number();
             const modelURL = Faker.internet.url();
+            const modelId = Faker.random.number();
             const dataStart = 60;
             const dataEnd = 30;
             const func = taskService.createMapTask.bind(this,mapResultsId, modelURL,
-                dataStart, dataEnd);
+                modelId, dataStart, dataEnd);
             expect(func).to.throw(RangeError,
                 `dataStart-> ${dataStart} is greater than dataEnd -> ${dataEnd}`);
 
@@ -103,14 +105,15 @@ experiment('TaskService', () => {
             const { taskService } = server.services();
             const mapResultsId = Faker.random.number();
             const modelURL = Faker.internet.url();
+            const modelId = Faker.random.number();
             const modelStoringURL = Faker.internet.url();
             const modelStoringId = Faker.random.number();
             const numberOfBatches = Faker.random.number();
 
             const task = taskService.createReduceTask(mapResultsId,
-                modelURL, modelStoringURL, modelStoringId,numberOfBatches);
+                modelURL, modelId, modelStoringURL, modelStoringId,numberOfBatches);
             expect(task).to.include(['function', 'modelStoringURL',
-                'modelStoringId', 'mapResultsId', 'modelURL',
+                'modelStoringId', 'modelId', 'mapResultsId', 'modelURL',
                 'numberOfBatches']);
         });
     });

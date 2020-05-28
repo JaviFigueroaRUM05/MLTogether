@@ -25,8 +25,6 @@ const verifyLogin = async function (request, h) {
     const db = request.mongo.db;
     // Find an entry from the database that
     // matches either the email or username
-    console.log('verifying email');
-    console.log(request.payload)
 
     const user = await db.collection('users').findOne(
         { email: request.payload.email });

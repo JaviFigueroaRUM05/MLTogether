@@ -3,47 +3,39 @@
 const TF = require('@tensorflow/tfjs-node');
 const Joi = require('@hapi/joi');
 const { verifyProject } = require('../../handlers/project-handlers');
+const { goalModel, ErrorsOnPostOutputValidations, HeadersPayLoad } = require('../../utils/response-models');
+const _ = require('lodash');
 
 
 module.exports = {
     method: 'POST',
-    path: '/project/{projectId}/goal',
+    path: '/projects/{projectId}/goal',
     options: {
         pre: [
             { method: verifyProject }
         ],
+        description: 'Creates a goal for a given project',
+        notes: 'Creates a goal for a given project. For more detailed information on how to use this route, visit https://www.notion.so/manuelbg/Goal-Creation-6892ecdc40fc43b8ba9eac555be39c42',
         auth: 'jwt',
+        tags: ['api', 'goals'],
         validate: {
             failAction: async (request, h, err) => {
+
                 console.error(err);
                 throw err;
             },
-            headers: Joi.object({
-                authorization: Joi.string().required()
-            }).unknown(),
+            headers: HeadersPayLoad,
             params: Joi.object({
                 projectId: Joi.string().required()
             })
             ,
-            payload: Joi.object({
-                title: Joi.string().required(),
-                description: Joi.string().optional(),
-                model: Joi.object({
-                    modelFn: Joi.string().required(),
-                    optimizer: Joi.string().required(),
-                    loss: Joi.string().required(),
-                    metrics: Joi.array().items(Joi.string()).required()
-                }).required(),
-                taskInfo: Joi.object({
-                    trainingSetSize: Joi.number().required(),
-                    batchSize: Joi.number().required(),
-                    batchesPerReduce: Joi.number().required(),
-                    trainDataUrl: Joi.string().uri().required(),
-                    mapFn: Joi.string().required(),
-                    reduceFn: Joi.string().required()
-                }).required()
-            })
-        }
+            payload: goalModel,
+        },
+        response: _.merge({}, ErrorsOnPostOutputValidations, {
+            status: {
+                200: Joi.object({ status: Joi.string().required().description('HTTP Status Code').equal('ok') })
+            }
+        })
     },
     handler: async (request, h) => {
 
@@ -56,7 +48,7 @@ module.exports = {
 
 
         // Create and save tasks
-        const modelHost = `http://${host}:${port}/projects/${projectId}/ir`;
+        const modelHost = `http://${host}:${port}/api/projects/${projectId}/ir`;
         const taskInfo = request.payload.taskInfo;
         const { trainingSetSize, batchSize, batchesPerReduce } = taskInfo;
 
@@ -74,7 +66,7 @@ module.exports = {
 
         const modelFunction = new Function('TF',modelFn);
         const model = modelFunction(TF);
-        await intermediateResultsService.addToResults(projectId, '0', model);
+        await intermediateResultsService.addToResults(projectId, '1', model);
 
         // Generate Script
         const { mapFn, reduceFn, trainDataUrl } = taskInfo;

@@ -36,6 +36,8 @@ class ScriptGeneratorService extends Schmervice.Service {
 
         this.ejsPrefix = this.options.ejsPrefix || 'worker';
         this.webpackPrefix = this.options.webpackPrefix || 'main';
+
+        this.doBundle = this.options.doBundle || true;
     }
 
     async initialize() {
@@ -134,7 +136,7 @@ class ScriptGeneratorService extends Schmervice.Service {
                 cache: false, // Enabled or disables caching, defaults to true
                 cacheDir: '.cache', // The directory cache gets put in, defaults to .cache
                 contentHash: false, // Disable content hash from being included on the filename
-                minify: true, // Minify files, enabled if process.env.NODE_ENV === 'production'
+                minify: this.doBundle, // Minify files, enabled if process.env.NODE_ENV === 'production'
                 //bundleNodeModules: false, // By default, package.json dependencies are not included when using 'node' or 'electron' with 'target' option above. Set to true to adds them to the bundle, false by default
                 logLevel: 3, // 5 = save everything to a file, 4 = like 3, but with timestamps and additionally log http requests to dev server, 3 = log info, warnings & errors, 2 = log warnings & errors, 1 = log errors, 0 = log nothing
                 hmr: false, // Enable or disable HMR while watching
@@ -143,6 +145,9 @@ class ScriptGeneratorService extends Schmervice.Service {
 
             const bundler = new Bundler(ejsOutputDir, options);
             const bundle = await bundler.bundle();
+
+            FS.rmdirSync(ejsOutputDir, { recursive: true });
+
 
             return Path.resolve(`${this.publicPath}/${projectId}`, webpackOutputFilename);
 

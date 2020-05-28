@@ -4,8 +4,9 @@ const BCrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
 const Boom = require('boom');
-
+const { authModel, ErrorsOnPostOutputValidations  } = require('../../utils/response-models');
 const { verifyLogin } = require('../../handlers/user-handlers');
+const _ = require('lodash');
 
 const createToken =  function createToken(id, key) {
 
@@ -22,7 +23,9 @@ module.exports = {
         pre: [
             { method: verifyLogin }
         ],
-        tags: ['api'],
+        tags: ['api', 'users'],
+        description: 'Obtain an auth token',
+        notes: 'Obtain an auth token using existing credentials',
         handler: async function (request,h) {
 
             const db = request.mongo.db;
@@ -32,7 +35,6 @@ module.exports = {
 
 
             if (BCrypt.compareSync(password, user.password)) {
-                console.log('passwords match!');
                 //authentication token
                 const jwt =  await createToken(user._id, h.realm.pluginOptions.jwtKey);
                 return h.response({ token_id: jwt }).code(200);
@@ -49,9 +51,15 @@ module.exports = {
                 throw err;
             },
             payload: Joi.object({
-                email: Joi.string().email().lowercase().required(),
+                email: Joi.string().email().lowercase().required().example('juan@upr.edu'),
                 password: Joi.string().min(7).required().strict()
             })
-        }
+        },
+        response: _.merge({}, ErrorsOnPostOutputValidations, {
+            status: {
+                200: authModel
+            }
+        })
+
     }
 };
