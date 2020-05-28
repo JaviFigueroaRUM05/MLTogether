@@ -16,7 +16,7 @@ export class CreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.form  =  this.formBuilder.group({
-      name: ['', Validators.required],
+      title: ['', Validators.required],
       description: ['', Validators.required]
   });
   }
@@ -29,7 +29,7 @@ export class CreateComponent implements OnInit {
     }
     this.projectService.createProj(this.form.value).subscribe((res)=>{
       // console.log("Logged in!");
-      this.router.navigateByUrl('/view'+localStorage.getItem("ID"));
+      this.router.navigateByUrl('/view/'+localStorage.getItem("ID"));
     });
   }
 

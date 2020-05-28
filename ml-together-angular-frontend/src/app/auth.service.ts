@@ -12,18 +12,18 @@ import { Observable, BehaviorSubject } from  'rxjs';
 export class AuthService {  
   constructor(private httpClient: HttpClient) { }  
   
-  AUTH_SERVER = "http://localhost:3000";
+  AUTH_SERVER = "http://localhost:3000/api";
   authSubject  =  new  BehaviorSubject(false);
 
-  signIn(user: User): Observable<JwtResponse> {
+  signIn(user: User): Observable<any> {
     return this.httpClient.post(`${this.AUTH_SERVER}/login`, user).pipe(
-      tap(async (res: JwtResponse) => {
+      tap(async (res: any) => {
 
-        if (res.user) {
-          localStorage.setItem("ACCESS_TOKEN", res.user.access_token);
-          localStorage.setItem("EXPIRES_IN", res.user.expires_in);
-          localStorage.setItem("USERNAME", res.user.name);
-          localStorage.setItem("EMAIL", res.user.email);
+        if (res) {
+          localStorage.setItem("ACCESS_TOKEN", res.token_id);
+          //localStorage.setItem("EXPIRES_IN", res.expires_in);
+          localStorage.setItem("USERNAME", res.fullName);
+          localStorage.setItem("EMAIL", res.email);
           this.authSubject.next(true);
         }
       })
@@ -44,13 +44,15 @@ export class AuthService {
     return  this.authSubject.asObservable();
   }
 
-  register(user: User): Observable<JwtResponse> {
-    return this.httpClient.post<JwtResponse>(`${this.AUTH_SERVER}/register`, user).pipe(
-      tap((res:  JwtResponse ) => {
+  register(user: User): Observable<any> {
+    return this.httpClient.post<any>(`${this.AUTH_SERVER}/register`, user).pipe(
+      tap((res:  any ) => {
 
-        if (res.user) {
-          localStorage.set("ACCESS_TOKEN", res.user.access_token);
-          localStorage.set("EXPIRES_IN", res.user.expires_in);
+        if (res) {
+          localStorage.setItem("ACCESS_TOKEN", res.token_id);
+          //localStorage.setItem("EXPIRES_IN", res.expires_in);
+          localStorage.setItem("USERNAME", res.fullName);
+          localStorage.setItem("EMAIL", res.email);
           this.authSubject.next(true);
         }
       })

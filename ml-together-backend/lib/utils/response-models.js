@@ -12,7 +12,8 @@ const schemaForStatusCode = function (statusCode) {
     const schema = {
         statusCode: Joi.number().required().description('HTTP Status Code').equal(statusCode),
         error: Joi.string().description('Error title').example('Error Title'),
-        message: Joi.string().description('Error details').example('Error Description')
+        message: Joi.string().description('Error details').example('Error Description'),
+        validation: Joi.any().description('Additional validation info (Debug)')
     };
 
     return Joi.object().keys(schema).label(`${statusCode}Error`);
@@ -92,7 +93,9 @@ const intermediateResultModel = Joi.object({
 }).label('IntermediateResult');
 
 const authModel = Joi.object({
-    token_id: Joi.string().description('json web token ')
+    token_id: Joi.string().description('json web token '),
+    fullName: Joi.string().required('Juan Apellido'),
+    email: Joi.string().email().lowercase().required().example('juan@upr.edu')
 }).label('Auth');
 
 const machineLearningModelInfo = Joi.object({
