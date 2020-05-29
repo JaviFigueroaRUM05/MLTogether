@@ -62,8 +62,8 @@ class QueueService extends Schmervice.Service {
         this.mapResultsQueueBaseName = this.options.mapResultsQueueBaseName ||
             'map_results_queue';
 
-        this.amqpURL =  this.options.amqpURL || 'amqp://localhost';
-
+        this.amqpURL =  `amqp://${this.options.amqpURL}` || 'amqp://localhost';
+        this.amqpHost = this.options.amqpURL || 'localhost';
         this.defaultMaxTimeToWait = this.options.defaultMaxTimeToWait || 5000;
     }
 
@@ -217,7 +217,7 @@ class QueueService extends Schmervice.Service {
 
     async getProjectQueueNames(projectId) {
         // TODO: Make this url modular
-        const url = 'http://localhost:15672/api/queues';
+        const url = `http://${this.amqpHost}:15672/api/queues`;
         const httpRequestOptions = {
             method: 'GET',
             url,

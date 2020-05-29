@@ -98,7 +98,7 @@ module.exports = new Confidence.Store({
                     mapResultsQueueBaseName: 'map_results_queue',
                     amqpURL: {
                         $env: 'AMQP_URL',
-                        $default: 'amqp://localhost'
+                        $default: 'localhost'
                     },
                     defaultMaxTimeToWait: 5000
                 }
