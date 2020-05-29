@@ -30,7 +30,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/JaviFigueroaRUM05/MLTogether/blob/develop/ml-together-frontend/images/LogoMLTRound.png">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="ml-together-frontend/images/LogoMLTRound.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Best-README-Template</h3>
