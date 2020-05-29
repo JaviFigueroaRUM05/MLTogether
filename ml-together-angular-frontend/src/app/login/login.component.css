@@ -24,8 +24,9 @@ html {
 }
 
 .login_card {
-  height: 400px;
-  width: 350px;
+  min-height: 400px;
+  min-width: 25vw;
+  max-width: 400px;
   margin-top: auto;
   margin-bottom: auto;
   margin-left: 154px;
@@ -111,8 +112,13 @@ a {
     color: rgb(230, 14, 14);
 }
 
-@media (max-width: 768px) { 
+@media only screen and (max-width: 768px) { 
     .cont-img{
         display: none;
+    }
+    .login_card {
+      margin-left: 0px;
+      max-width: 90vw;
+
     }
  }

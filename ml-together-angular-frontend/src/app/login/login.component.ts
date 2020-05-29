@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from  '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from  '@angular/forms';
 import { Router } from  '@angular/router';
 import { AuthService } from  '../auth.service';
 
@@ -13,17 +13,28 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
   authForm: FormGroup;
   isSubmitted  =  false;
+  authError;
   
   ngOnInit() {
-    this.authForm  =  this.formBuilder.group({
-        email: ['', Validators.required],
-        password: ['', Validators.required]
-    });
+    this.authForm  =  new FormGroup({
+      email: new FormControl('',{
+        validators: [Validators.required, Validators.email],
+        updateOn: 'blur'
+      }),
+      password: new FormControl('', {
+        validators: [Validators.required],
+        updateOn: 'blur'
+      })
+    })
     
 }
   get formControls() { 
     return this.authForm.controls;
   }
+
+  get email() { return this.authForm.get('email'); }
+  get password() { return this.authForm.get('password'); }
+
 
   signIn(){
     this.isSubmitted=true;
@@ -31,15 +42,20 @@ export class LoginComponent implements OnInit {
     if(this.authForm.invalid){
         return;
     }
-    this.authService.signIn(this.authForm.value).subscribe((res)=>{
-      console.log("Logged in!");
-      this.router.navigateByUrl('/admin');
-    }); 
+    this.authService.signIn(this.authForm.value).subscribe(
+      res => this.router.navigateByUrl('/admin'),
+      err => {
+        console.log(err)
+        this.authError = err.error.message}
+    );
     // this.isSubmitted = true;
     // if(this.authForm.invalid){
     //   return;
     // }
     // this.authService.signIn(this.authForm.value);
     // this.router.navigateByUrl('/admin');
+  }
+  resetAuthError(){
+    this.authError=null;
   }
 }
