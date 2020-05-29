@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'admin', component: AdminComponent },
-  { path: 'projects/:projectId', component: ProjectsComponent},
+  // { path: 'projects/:projectId', component: ProjectsComponent},
   { path: 'projects/view/:projectID', component: IdeComponent},
   { path: 'projects/test/:projectID', component: TestProjComponent},
   { path: 'create', component: CreateComponent}

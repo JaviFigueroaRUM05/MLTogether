@@ -18,7 +18,7 @@ export class ProjectsComponent implements OnInit {
   pageName: string;
   description: string;
   author:string;
-  projectName: string;
+  title: string;
 
   constructor(private projectService : ProjectService, private route: ActivatedRoute, private name: Title) {
   }
@@ -26,7 +26,7 @@ export class ProjectsComponent implements OnInit {
   ngOnInit() {
     this._routeSubs();
     this.project = this.projectService.getProjectById$(this.id);
-    this._setPageParams(this.project.name, this.project.author, this.project.description);
+    this._setPageParams(this.project.title, this.project.author, this.project.description);
   }
 
   private _routeSubs() {
@@ -41,6 +41,6 @@ export class ProjectsComponent implements OnInit {
     this.name.setTitle(name);
     this.author = author;
     this.description = description;
-    this.projectName = name;
+    this.title = name;
   }
 }

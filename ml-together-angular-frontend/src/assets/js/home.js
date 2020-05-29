@@ -95,8 +95,6 @@ function domloaded(){
         }
       }
       ctx.stroke();
-
-      ctx.drawImage(imgObj,canvas.clientWidth/3,canvas.clientHeight/3,300,500)
       ball.draw(ctx, canvas);
     }
   }

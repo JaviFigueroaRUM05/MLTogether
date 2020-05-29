@@ -163,7 +163,7 @@ body {
   }
   #canvas{
     width: 100%;
-    height: 650px;
+    /* height: 650px; */
   }
 
   #nav-items{
