@@ -377,3 +377,23 @@ a {
     overflow: auto;
     height: 240px;
   }
+
+  .login_btn {
+    /* width: 100%; */
+    background: #60a3bc !important; /* Blue */
+    color: white !important;
+    right: 35px;
+    position: absolute;
+    border-radius: 0.25rem;
+    /* width: 110px; */
+    height: 50px;
+    margin-top: 10px;
+  }
+  
+  .login_btn:focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+  }
+  .login_container {
+    padding: 0 2rem;
+  }

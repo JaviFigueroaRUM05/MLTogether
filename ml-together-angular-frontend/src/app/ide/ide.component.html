@@ -5,8 +5,8 @@
         </div>
         <div>
             <a href="https://www.notion.so/manuelbg/Goal-Creation-6892ecdc40fc43b8ba9eac555be39c42" style="color: white; font-size: 15px; padding-right: 15px;">Documentation</a>
-            <div class="btn btn" id="exec-btn" action><span class="fas fa-play" aria-hidden="true" (click)="exec()"></span></div>
-            <button class="btn btn" id="exec-btn" action><span class="fas fa-upload" aria-hidden="true"></span></button>
+            <!-- <div class="btn btn" id="exec-btn" action><span class="fas fa-play" aria-hidden="true" (click)="exec()"></span></div> -->
+            <button class="btn btn" id="exec-btn" action type="submit"><span class="fas fa-upload" aria-hidden="true"></span></button>
         </div>
     </nav>
     <div class="wrapper" style="overflow-x: hidden;">
@@ -48,23 +48,31 @@
                     <input type="text" name="" class="form-control input_metrics" value="" placeholder="metrics" id="metrics" formControlName="metrics" style="border-radius: 0;">
                 </div>
                 <div class="input-group">
-                    <input type="text" name="" class="form-control input_tsize" value="" placeholder="training set size" id="tsize" formControlName="tsize" style="border-radius: 0;">
+                    <input type="number" name="" class="form-control input_tsize" value="" placeholder="training set size" id="tsize" formControlName="tsize" style="border-radius: 0;">
                 </div>
                 <div class="input-group">
-                    <input type="text" name="" class="form-control input_bsize" value="" placeholder="batch size" id="bsize" formControlName="bsize" style="border-radius: 0;">
+                    <input type="number" name="" class="form-control input_bsize" value="" placeholder="batch size" id="bsize" formControlName="bsize" style="border-radius: 0;">
                 </div>
                 <div class="input-group">
-                    <input type="text" name="" class="form-control input_bperReduce" value="" placeholder="batches per reduce" id="bperReduce" formControlName="bperReduce" style="border-radius: 0;">
+                    <input type="number" name="" class="form-control input_bperReduce" value="" placeholder="batches per reduce" id="bperReduce" formControlName="bperReduce" style="border-radius: 0;">
                 </div>
                 <div class="input-group">
                     <input type="text" name="" class="form-control input_turl" value="" placeholder="training data url" id="turl" formControlName="turl" style="border-radius: 0;">
                 </div>
-                </form>
+            </form>     
+            <br>
                 <canvas id="canvas" style="display: none;"></canvas>
             </div>
         </div>
        
-        
+        <div class="d-flex justify-content-center mt-3 login_container" style="height: 100px;"> <!-- Login button -->
+            <input type="submit" value="Create Goal" class="login_btn">
+        </div>
+        <footer class="text-center" style="height: 25px;">
+            <a class="up-arrow" href="#home" data-toggle="tooltip" title="TO TOP">
+              <span class="glyphicon glyphicon-chevron-up"></span>
+            </a>
+          </footer>
         <!-- <div id="cons">
             <nav class="text-light d-flex align-items-center pl-2" id="console-nav"><span>Console</span>
                 <div class="btn" id="clr-btn" action><span class="fas fa-trash" aria-hidden="true" (click)="clear()"></span></div>
