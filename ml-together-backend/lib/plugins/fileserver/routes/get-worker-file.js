@@ -31,9 +31,9 @@ module.exports = {
                     switch (paramParts[0]) {
                         case 'images':
                         case 'css':
+                        case '':
                             path = Path.join(__dirname,'../../../../public/worker-web-app');
                             break;
-                        case '':
                         default:
                             path = Path.join(__dirname,'../../../../public/worker-web-app/projects', projectId);
                     }
