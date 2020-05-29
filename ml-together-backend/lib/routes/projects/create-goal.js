@@ -26,7 +26,7 @@ module.exports = {
             },
             headers: HeadersPayLoad,
             params: Joi.object({
-                projectId: Joi.string().required()
+                projectId: Joi.string().required().description('The ID of a previously created project')
             })
             ,
             payload: goalModel,

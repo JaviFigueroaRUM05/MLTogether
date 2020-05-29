@@ -37,7 +37,7 @@ module.exports = {
             if (BCrypt.compareSync(password, user.password)) {
                 //authentication token
                 const jwt =  await createToken(user._id, h.realm.pluginOptions.jwtKey);
-                return h.response({ token_id: jwt }).code(200);
+                return h.response({ token_id: jwt,  fullName: user.fullName, email: user.email }).code(200);
             }
 
             throw Boom.unauthorized('Passwords don\'t match');

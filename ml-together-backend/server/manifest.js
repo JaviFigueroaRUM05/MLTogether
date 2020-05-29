@@ -13,6 +13,7 @@ const WorkerScriptGeneratorPlugin = require('../lib/plugins/worker-script-genera
 const TaskBrokerPlugin = require('../lib/plugins/task-broker');
 const IRPlugin = require('../lib/plugins/intermediate-results');
 const FileServerPlugin = require('../lib/plugins/fileserver');
+const MNISTDataPlugin = require('../lib/plugins/mnist-data-server');
 
 
 
@@ -128,6 +129,10 @@ module.exports = new Confidence.Store({
                         }
                     }
                 }
+            },
+            {
+                plugin: MNISTDataPlugin,
+                options: {}
             },
             {
                 plugin: {

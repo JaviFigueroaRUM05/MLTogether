@@ -19,7 +19,7 @@ module.exports = {
 
             const jwt = await userService.registerUser(fullName,email, password);
 
-            return h.response({ token_id: jwt }).code(201);
+            return h.response({ token_id: jwt, fullName, email }).code(201);
         },
         tags: ['api','users'],
         description: 'Register an account with the system',

@@ -12,7 +12,8 @@ const schemaForStatusCode = function (statusCode) {
     const schema = {
         statusCode: Joi.number().required().description('HTTP Status Code').equal(statusCode),
         error: Joi.string().description('Error title').example('Error Title'),
-        message: Joi.string().description('Error details').example('Error Description')
+        message: Joi.string().description('Error details').example('Error Description'),
+        validation: Joi.any().description('Additional validation info (Debug)')
     };
 
     return Joi.object().keys(schema).label(`${statusCode}Error`);
@@ -92,7 +93,9 @@ const intermediateResultModel = Joi.object({
 }).label('IntermediateResult');
 
 const authModel = Joi.object({
-    token_id: Joi.string().description('json web token ')
+    token_id: Joi.string().description('json web token '),
+    fullName: Joi.string().required('Juan Apellido'),
+    email: Joi.string().email().lowercase().required().example('juan@upr.edu')
 }).label('Auth');
 
 const machineLearningModelInfo = Joi.object({
@@ -137,8 +140,22 @@ const goalModel = Joi.object({
     taskInfo: taskInformation.required()
 }).label('Goal');
 
+const multipleProjectsModel = 
+    Joi.array().items(Joi.object({
+        _id: Joi.any().required().example('55153a8014829a865bbf700d'),
+        title: Joi.string().required().example('Cancer Research'),
+        description: Joi.string().required().example('Doing Cancer Research by using machine learning models.'),
+        userID: Joi.any().strip()},
+         Joi.object({
+        _id: Joi.any().required().example('52345a8014829a865bbf700d'),
+        title: Joi.string().required().example('COVID-19 Research'),
+        description: Joi.string().required().example('Doing COVID-19 Research by using machine learning models.'),
+        userID: Joi.any().strip()}))
+    );
+
 module.exports = {
     projectModel,
+    multipleProjectsModel,
     authModel,
     goalModel,
     intermediateResultModel,
