@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiHost: 'http://www.mltogether.com/api',
-  workerFilesHost: 'http://www.mltogether.com'
+  apiHost: 'http://mltogether.com/api',
+  workerFilesHost: 'http://mltogether.com'
 };
