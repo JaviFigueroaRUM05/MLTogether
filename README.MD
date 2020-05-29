@@ -34,16 +34,16 @@
   <h3 align="center">ML-Together</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    A Browser-Based Volunteer Computing System!
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://www.researchgate.net/publication/317487002_Lightweight_Volunteer_Computing_Platform_using_Web_Workers"><strong>Learn About Volunteer Computing»</strong></a>
     <br />
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/JaviFigueroaRUM05/MLTogether/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">Documentation</a>
   </p>
 </p>
 
