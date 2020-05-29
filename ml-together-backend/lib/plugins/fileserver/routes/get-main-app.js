@@ -17,7 +17,7 @@ module.exports = {
                 path: function (request) {
 
                     const paramParts = request.params.param.split('/');
-                    if (paramParts[0].split('.')[1] === 'js') {
+                    if (paramParts[0].split('.')[1] === 'js' || paramParts[0].split('.')[1] === 'css') {
                         return Path.join(__dirname,'../../../../public/main-web-app/' + paramParts[0]);
                     }
 
