@@ -6,7 +6,7 @@ import { ProjectService } from '../project.service';
 import { FormBuilder, FormGroup, Validators } from  '@angular/forms';
 import { environment } from '../../environments/environment';
 
-// import {Projects} from '../mock-projects'
+import {Projects} from '../mock-projects'
 
 @Component({
   selector: 'app-admin',
@@ -21,7 +21,8 @@ export class AdminComponent implements OnInit {
   // project;
   statusClass = 'h-profile-settings';
   style = 'overlay';
-  projects = [];
+  // projects = [];
+  projects = Projects;
   host = environment.workerFilesHost;
   
   constructor(private authService: AuthService, private router: Router, private projectService : ProjectService, private route: ActivatedRoute, private formBuilder: FormBuilder) { }  
@@ -29,7 +30,7 @@ export class AdminComponent implements OnInit {
   ngOnInit() {
     this.userName = localStorage.getItem("USERNAME");
     this.email = localStorage.getItem("EMAIL");
-    this.initProjects()
+    // this.initProjects()
   } 
 
   logout(){
