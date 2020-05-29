@@ -10,6 +10,7 @@ services:
         ports:
             - "4370"
             - "5672"
+            - "15672"
     apiapplication:
         build: ./
         ports:
