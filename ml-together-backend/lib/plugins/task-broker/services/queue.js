@@ -61,7 +61,7 @@ class QueueService extends Schmervice.Service {
 
         this.mapResultsQueueBaseName = this.options.mapResultsQueueBaseName ||
             'map_results_queue';
-
+        console.log(`amqp://${this.options.amqpURL}`)
         this.amqpURL =  `amqp://${this.options.amqpURL}` || 'amqp://localhost';
         this.amqpHost = this.options.amqpURL || 'localhost';
         this.defaultMaxTimeToWait = this.options.defaultMaxTimeToWait || 5000;
