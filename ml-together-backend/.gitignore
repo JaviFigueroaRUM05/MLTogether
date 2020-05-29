@@ -2,7 +2,15 @@ node_modules
 tmp
 .tmp
 server/.env
-public/projects
+public/worker-web-app/projects/*
+!public/worker-web-app/projects/.gitkeep
+
+public/main-web-app/*
+!public/main-web-app/.gitkeep
+
+tmp/*
+!tmp/.gitkeep
+
 t10k-images-idx3-ubyte
 t10k-labels-idx1-ubyte
 train-images-idx3-ubyte

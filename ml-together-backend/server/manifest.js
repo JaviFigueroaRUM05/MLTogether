@@ -87,7 +87,7 @@ module.exports = new Confidence.Store({
                         doBundle: false
                     },
                     $default: {
-                        publicPath: Path.join(__dirname, '../public/projects'),
+                        publicPath: Path.join(__dirname, '../public/worker-web-app/projects'),
                         temporaryPath: Path.join(__dirname, '../tmp')
                     }
                 }
