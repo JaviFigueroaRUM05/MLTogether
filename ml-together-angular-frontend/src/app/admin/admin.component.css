@@ -248,7 +248,7 @@ input:checked + .slider:before {
 
 #project-area .overlay {
 	background: #f8f9fa;
-  background-image: url("/assets/images/color.png");
+  /* background-image: url("/assets/images/color.png"); */
   background-size:auto;
 }
 

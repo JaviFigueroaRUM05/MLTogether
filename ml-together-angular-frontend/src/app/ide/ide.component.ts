@@ -8,6 +8,8 @@ import { Subscription } from 'rxjs';
 import {IdeTemplate} from './ide-template';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ProjectService } from '../project.service';
+import { GoalService } from '../goal.service';
+import { Goal } from '../goal';
 @Component({
   selector: 'app-ide',
   templateUrl: './ide.component.html',
@@ -31,8 +33,9 @@ export class IdeComponent implements OnInit {
   id: string;
   form: FormGroup;
   isSubmitted  =  false;
+  goal: Goal;
 
-  constructor(private router: Router, private route: ActivatedRoute, private projectService : ProjectService, private formBuilder: FormBuilder) { }
+  constructor(private goalService: GoalService, private router: Router, private route: ActivatedRoute, private projectService : ProjectService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.form  =  this.formBuilder.group({
@@ -125,14 +128,27 @@ export class IdeComponent implements OnInit {
     console.clear();
   }
   upload(){
-    // const payload = JSON.parse(this.codeEditor.getValue());
-
-    // console.log(payload);
     this.isSubmitted=true;
     console.log(this.form.value);
     if(this.form.invalid){
         return;
     }
+    this.goal.title = this.form.get('title').value;
+    this.goal.description = this.form.get('description').value;
+    this.goal.model.modelfn = this.codeEditor3.getValue();
+    this.goal.model.loss = this.form.get('loss').value;
+    this.goal.model.metrics = this.form.get('metrics').value;
+    this.goal.model.optimizer = this.form.get('optimizer').value;
+    this.goal.taskInfo.bperReduce = this.form.get('bperReduce').value;
+    this.goal.taskInfo.bsize = this.form.get('bsize').value;
+    this.goal.taskInfo.mapfn = this.codeEditor.getValue();
+    this.goal.taskInfo.reducefn = this.codeEditor2.getValue();
+    this.goal.taskInfo.tsize = this.form.get('tsize').value;
+    this.goal.taskInfo.turl = this.form.get('turl').value;
+    this.goalService.createGoal(this.goal, this.id).subscribe((res)=>{
+      // console.log("Logged in!");
+      this.router.navigateByUrl('/projects/admin');
+    });;
   }
   private _routeSubs() {
     this.routeSub = this.route.params
