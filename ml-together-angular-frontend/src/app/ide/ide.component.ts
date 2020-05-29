@@ -39,15 +39,15 @@ export class IdeComponent implements OnInit {
 
   ngOnInit() {
     this.form  =  this.formBuilder.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      optimizer:  ['', Validators.required],
-      loss:  ['', Validators.required],
-      metrics:  ['', Validators.required],
-      tsize:  ['', Validators.required],
-      bsize:  ['', Validators.required],
-      bperReduce:  ['', Validators.required],
-      turl:  ['', Validators.required]
+      title: ['MNIST', Validators.required],
+      description: ['Test', Validators.required],
+      optimizer:  ['rmsprop', Validators.required],
+      loss:  ['categoricalCrossentropy', Validators.required],
+      metrics:  ['accuracy', Validators.required],
+      tsize:  ['60000', Validators.required],
+      bsize:  ['10', Validators.required],
+      bperReduce:  ['20', Validators.required],
+      turl:  ['http://localhost:3000/mnist/data', Validators.required]
     });
     this._routeSubs();
     this.element = document.getElementById('editor');
@@ -133,21 +133,28 @@ export class IdeComponent implements OnInit {
     if(this.form.invalid){
         return;
     }
-    this.goal.title = this.form.get('title').value;
-    this.goal.description = this.form.get('description').value;
-    this.goal.model.modelfn = this.codeEditor3.getValue();
-    this.goal.model.loss = this.form.get('loss').value;
-    this.goal.model.metrics = this.form.get('metrics').value;
-    this.goal.model.optimizer = this.form.get('optimizer').value;
-    this.goal.taskInfo.bperReduce = this.form.get('bperReduce').value;
-    this.goal.taskInfo.bsize = this.form.get('bsize').value;
-    this.goal.taskInfo.mapfn = this.codeEditor.getValue();
-    this.goal.taskInfo.reducefn = this.codeEditor2.getValue();
-    this.goal.taskInfo.tsize = this.form.get('tsize').value;
-    this.goal.taskInfo.turl = this.form.get('turl').value;
-    this.goalService.createGoal(this.goal, this.id).subscribe((res)=>{
-      // console.log("Logged in!");
-      this.router.navigateByUrl('/projects/admin');
+    const goal: Goal = {
+      title: this.form.get('title').value,
+      description: this.form.get('description').value,
+      model: {
+        modelFn:this.codeEditor3.getValue(),
+        loss:[this.form.get('loss').value],
+        metrics:[this.form.get('metrics').value],
+        optimizer:this.form.get('optimizer').value
+
+      },
+      taskInfo:{
+        batchesPerReduce:this.form.get('bperReduce').value,
+        batchSize:this.form.get('bsize').value,
+        mapFn:this.codeEditor.getValue(),
+        reduceFn:this.codeEditor2.getValue(),
+        trainingSetSize:this.form.get('tsize').value,
+        trainDataUrl:this.form.get('turl').value,
+      }
+    }
+    this.goalService.createGoal(goal, this.id).subscribe((res)=>{
+      console.log(res);
+      // this.router.navigateByUrl('/projects/admin');
     });;
   }
   private _routeSubs() {

@@ -18,10 +18,8 @@ export class GoalService {
     const token = localStorage.getItem('ACCESS_TOKEN');
     const headers = new HttpHeaders().set('Authorization',  `${token}`);
     return this.httpClient.post<Goal>(`${this.SERVER}/projects/`+id+`/goal`, goal, { headers } ).pipe(
-      tap((res:  Goal ) => {
-        if (res.id) {
-          localStorage.setItem("ID", res.id.toString());
-        }
+      tap((res:  any ) => {
+        return res;
       })
     );
   }
