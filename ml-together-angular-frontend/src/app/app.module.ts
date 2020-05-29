@@ -10,7 +10,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { ProjectsComponent } from './projects/projects.component';
 import { HomeComponent } from './home/home.component';
 import { IdeComponent } from './ide/ide.component';
-import { TestProjComponent } from './test-proj/test-proj.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CreateComponent } from './create/create.component';
 
@@ -23,7 +22,6 @@ import { CreateComponent } from './create/create.component';
     ProjectsComponent,
     HomeComponent,
     IdeComponent,
-    TestProjComponent,
     CreateComponent
   ],
   imports: [

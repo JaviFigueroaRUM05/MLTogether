@@ -6,7 +6,6 @@ import { RegisterComponent } from './register/register.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { HomeComponent} from './home/home.component';
 import { IdeComponent } from './ide/ide.component';
-import { TestProjComponent } from './test-proj/test-proj.component';
 import {CreateComponent} from './create/create.component';
 
 const routes: Routes = [
@@ -17,7 +16,6 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent },
   // { path: 'projects/:projectId', component: ProjectsComponent},
   { path: 'projects/view/:projectID', component: IdeComponent},
-  { path: 'projects/test/:projectID', component: TestProjComponent},
   { path: 'create', component: CreateComponent}
 ];
 

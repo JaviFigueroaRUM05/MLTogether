@@ -28,8 +28,7 @@
               "src/styles.css"
             ],
             "scripts": [
-              "src/assets/js/home.js",
-              "src/assets/js/ide.js"
+              "src/assets/js/home.js"
             ]
           },
           "configurations": {
@@ -97,8 +96,7 @@
               "src/styles.css"
             ],
             "scripts": [
-              "src/assets/js/home.js",
-              "src/assets/js/ide.js"
+              "src/assets/js/home.js"
             ]
           }
         },
