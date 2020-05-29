@@ -21,7 +21,9 @@ module.exports = {
             directory: {
                 path: function (request) {
 
-                    return Path.join(__dirname,'../../../../public/assets');
+                    console.log('here');
+
+                    return Path.join(__dirname,'../../../../public/main-web-app/assets');
                 },
                 redirectToSlash: true,
                 index: true
