@@ -21,8 +21,6 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -33,7 +31,7 @@
     <img src="ml-together-frontend/images/LogoMLTRound.png" alt="Logo" width="250" height="250">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">ML-Together</h3>
 
   <p align="center">
     An awesome README template to jumpstart your projects!
