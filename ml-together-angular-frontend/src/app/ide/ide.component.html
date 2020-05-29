@@ -1,83 +1,123 @@
 <body style="overflow-y: hidden;">
-    <nav class="text-light d-flex align-items-center pl-2" id="editor-nav" style="z-index: 1000; width: 100%;">
-        <div>
-            <a href="./admin"><i class="fas fa-arrow-left" style="color: white; font-size: 20px; padding-left: 5px; padding-right: 15px;"></i></a><span style="font-size: 20px;">ML-Together Editor</span>
+  <nav class="text-light d-flex align-items-center pl-2" id="editor-nav" style="z-index: 1000; width: 100%;">
+    <div>
+      <a href="./admin"><i class="fas fa-arrow-left"
+          style="color: white; font-size: 20px; padding-left: 5px; padding-right: 15px;"></i></a><span
+        style="font-size: 20px;">ML-Together Editor</span>
+    </div>
+    <div>
+      <a href="https://www.notion.so/manuelbg/Goal-Creation-6892ecdc40fc43b8ba9eac555be39c42"
+        style="color: white; font-size: 15px; padding-right: 15px;">Documentation</a>
+      <!-- <div class="btn btn" id="exec-btn" action><span class="fas fa-play" aria-hidden="true" (click)="exec()"></span></div> -->
+      <button class="btn btn" id="exec-btn" (click)="upload()"><span class="fas fa-upload"
+          aria-hidden="true"></span></button>
+    </div>
+  </nav>
+  <div class="wrapper" style="overflow-x: hidden;">
+    <div class="row">
+      <div class="column" style="width: 20%;">
+        <div style="background-color: #60a3bc; height: 38px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Goal Title</h4>
         </div>
-        <div>
-            <a href="https://www.notion.so/manuelbg/Goal-Creation-6892ecdc40fc43b8ba9eac555be39c42" style="color: white; font-size: 15px; padding-right: 15px;">Documentation</a>
-            <!-- <div class="btn btn" id="exec-btn" action><span class="fas fa-play" aria-hidden="true" (click)="exec()"></span></div> -->
-            <button class="btn btn" id="exec-btn" (click)="upload()" ><span class="fas fa-upload" aria-hidden="true"></span></button>
+        <div style="background-color: #60a3bc; height: 100px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Goal Description</h4>
         </div>
-    </nav>
-    <div class="wrapper" style="overflow-x: hidden;">
-        <div class="row">
-            <div class="column" style="width: 20%;">
-                <div style="background-color: #60a3bc; height: 38px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Goal Title</h4></div>
-                <div style="background-color: #60a3bc; height: 100px; margin-left: 15px;" ><h4 style="color: white; padding-left: 5px;">Goal Description</h4></div>
-                <div style="background-color:  #60a3bc; height: 600px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Map Function</h4></div>
-                <div style="background-color:  #60a3bc; height: 600px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Reduce Function</h4></div>
-                <div style="background-color:  #60a3bc; height: 600px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Model Function</h4></div>
-                <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Optimizer</h4></div>
-                <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Loss</h4></div>
-                <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Metrics</h4></div>
-                <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Training Set Size</h4></div>
-                <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Batch Size</h4></div>
-                <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Batches Per Reduce</h4></div>
-                <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;"><h4 style="color: white; padding-left: 5px;">Training Data URL</h4></div>
-            </div>
-            <div id="edit" style="width: 80%;">
-                <form [formGroup]="form" class="login-container" (ngSubmit)="upload()" style="background-color:#3d3d3d; border-radius: 0rem;"> 
-                    
-                    <div class="input-group">
-                        <input type="text" name="" class="form-control input_name" value="" placeholder="title" id="name" formControlName="title" style="border-radius: 0;">
-                    </div>
-                   
-                    <div class="input-group"> 
-                        <textarea type="textarea" name="" class="form-control input_desc" value="" placeholder="description" id="description" formControlName="description" style="resize: none; height: 100px; border-radius: 0;" ></textarea>
-                    </div>
-                <div ace-editor id="editor" style="height: 600px;"></div>
-                <div ace-editor id="editor-2"style="height: 600px;"></div>
-                <div ace-editor id="editor-3"style="height: 600px;"></div>
-                <div class="input-group">
-                    <input type="text" name="" class="form-control input_opt" value="" placeholder="optimizer" id="optimizer" formControlName="optimizer" style="border-radius: 0;">
-                </div>
-                <div class="input-group">
-                    <input type="text" name="" class="form-control input_loss" value="" placeholder="loss" id="loss" formControlName="loss" style="border-radius: 0;">
-                </div>
-                <div class="input-group">
-                    <input type="text" name="" class="form-control input_metrics" value="" placeholder="metrics" id="metrics" formControlName="metrics" style="border-radius: 0;">
-                </div>
-                <div class="input-group">
-                    <input type="number" name="" class="form-control input_tsize" value="" placeholder="training set size" id="tsize" formControlName="tsize" style="border-radius: 0;">
-                </div>
-                <div class="input-group">
-                    <input type="number" name="" class="form-control input_bsize" value="" placeholder="batch size" id="bsize" formControlName="bsize" style="border-radius: 0;">
-                </div>
-                <div class="input-group">
-                    <input type="number" name="" class="form-control input_bperReduce" value="" placeholder="batches per reduce" id="bperReduce" formControlName="bperReduce" style="border-radius: 0;">
-                </div>
-                <div class="input-group">
-                    <input type="text" name="" class="form-control input_turl" value="" placeholder="training data url" id="turl" formControlName="turl" style="border-radius: 0;">
-                </div>
-            </form>     
-            <br>
-                <canvas id="canvas" style="display: none;"></canvas>
-            </div>
+        <div style="background-color:  #60a3bc; height: 600px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Map Function</h4>
         </div>
-       
-        <div class="d-flex justify-content-center mt-3 login_container" style="height: 100px;"> <!-- Login button -->
-            <input type="submit" value="Create Goal" class="login_btn">
+        <div style="background-color:  #60a3bc; height: 600px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Reduce Function</h4>
         </div>
-        <footer class="text-center" style="height: 25px;">
-            <a class="up-arrow" href="#home" data-toggle="tooltip" title="TO TOP">
-              <span class="glyphicon glyphicon-chevron-up"></span>
-            </a>
-          </footer>
-        <!-- <div id="cons">
+        <div style="background-color:  #60a3bc; height: 600px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Model Function</h4>
+        </div>
+        <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Optimizer</h4>
+        </div>
+        <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Loss</h4>
+        </div>
+        <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Metrics</h4>
+        </div>
+        <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Training Set Size</h4>
+        </div>
+        <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Batch Size</h4>
+        </div>
+        <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Batches Per Reduce</h4>
+        </div>
+        <div style="background-color:  #60a3bc; height: 38px; margin-left: 15px;">
+          <h4 style="color: white; padding-left: 5px;">Training Data URL</h4>
+        </div>
+      </div>
+      <div id="edit" style="width: 80%;">
+        <form [formGroup]="form" class="login-container" (ngSubmit)="upload()"
+          style="background-color:#3d3d3d; border-radius: 0rem;">
+
+          <div class="input-group">
+            <input type="text" name="" class="form-control input_name" value="" placeholder="title" id="name"
+              formControlName="title" style="border-radius: 0;">
+          </div>
+
+          <div class="input-group">
+            <textarea type="textarea" name="" class="form-control input_desc" value="" placeholder="description"
+              id="description" formControlName="description"
+              style="resize: none; height: 100px; border-radius: 0;"></textarea>
+          </div>
+          <div ace-editor id="editor" style="height: 600px;"></div>
+          <div ace-editor id="editor-2" style="height: 600px;"></div>
+          <div ace-editor id="editor-3" style="height: 600px;"></div>
+          <div class="input-group">
+            <input type="text" name="" class="form-control input_opt" value="" placeholder="optimizer" id="optimizer"
+              formControlName="optimizer" style="border-radius: 0;">
+          </div>
+          <div class="input-group">
+            <input type="text" name="" class="form-control input_loss" value="" placeholder="loss" id="loss"
+              formControlName="loss" style="border-radius: 0;">
+          </div>
+          <div class="input-group">
+            <input type="text" name="" class="form-control input_metrics" value="" placeholder="metrics" id="metrics"
+              formControlName="metrics" style="border-radius: 0;">
+          </div>
+          <div class="input-group">
+            <input type="number" name="" class="form-control input_tsize" value="" placeholder="training set size"
+              id="tsize" formControlName="tsize" style="border-radius: 0;">
+          </div>
+          <div class="input-group">
+            <input type="number" name="" class="form-control input_bsize" value="" placeholder="batch size" id="bsize"
+              formControlName="bsize" style="border-radius: 0;">
+          </div>
+          <div class="input-group">
+            <input type="number" name="" class="form-control input_bperReduce" value="" placeholder="batches per reduce"
+              id="bperReduce" formControlName="bperReduce" style="border-radius: 0;">
+          </div>
+          <div class="input-group">
+            <input type="text" name="" class="form-control input_turl" value="" placeholder="training data url"
+              id="turl" formControlName="turl" style="border-radius: 0;">
+          </div>
+        </form>
+        <br>
+        <canvas id="canvas" style="display: none;"></canvas>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center mt-3 login_container" style="height: 100px;">
+      <!-- Login button -->
+      <button (click)="upload()" class="login_btn">Create Goal</button>
+    </div>
+    <footer class="text-center" style="height: 25px;">
+      <a class="up-arrow" href="#home" data-toggle="tooltip" title="TO TOP">
+        <span class="glyphicon glyphicon-chevron-up"></span>
+      </a>
+    </footer>
+    <!-- <div id="cons">
             <nav class="text-light d-flex align-items-center pl-2" id="console-nav"><span>Console</span>
                 <div class="btn" id="clr-btn" action><span class="fas fa-trash" aria-hidden="true" (click)="clear()"></span></div>
             </nav>
             <pre id="console" class="border text-dark p-2">&raquo;  </pre>
         </div> -->
-    </div>
+  </div>
 </body>

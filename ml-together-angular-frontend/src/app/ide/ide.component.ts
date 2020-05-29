@@ -154,7 +154,7 @@ export class IdeComponent implements OnInit {
     }
     this.goalService.createGoal(goal, this.id).subscribe((res)=>{
       console.log(res);
-      // this.router.navigateByUrl('/projects/admin');
+      this.router.navigateByUrl('/admin');
     });;
   }
   private _routeSubs() {
