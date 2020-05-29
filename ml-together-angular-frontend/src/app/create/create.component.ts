@@ -18,7 +18,7 @@ export class CreateComponent implements OnInit {
     this.form  =  this.formBuilder.group({
       title: ['', Validators.required],
       description: ['', Validators.required]
-  });
+    });
   }
   
   create(){

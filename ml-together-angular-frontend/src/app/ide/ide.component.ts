@@ -6,6 +6,8 @@ import 'ace-builds/src-noconflict/theme-ambiance';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {IdeTemplate} from './ide-template';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ProjectService } from '../project.service';
 @Component({
   selector: 'app-ide',
   templateUrl: './ide.component.html',
@@ -27,10 +29,23 @@ export class IdeComponent implements OnInit {
   // default_warn = console.warn;
   routeSub: Subscription;
   id: string;
+  form: FormGroup;
+  isSubmitted  =  false;
 
-  constructor(private router: Router, private route: ActivatedRoute) { }
+  constructor(private router: Router, private route: ActivatedRoute, private projectService : ProjectService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
+    this.form  =  this.formBuilder.group({
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      optimizer:  ['', Validators.required],
+      loss:  ['', Validators.required],
+      metrics:  ['', Validators.required],
+      tsize:  ['', Validators.required],
+      bsize:  ['', Validators.required],
+      bperReduce:  ['', Validators.required],
+      turl:  ['', Validators.required]
+    });
     this._routeSubs();
     this.element = document.getElementById('editor');
     this.codeEditor = ace.edit(this.element, {
@@ -50,6 +65,7 @@ export class IdeComponent implements OnInit {
         theme: 'ace/theme/ambiance',
         mode: 'ace/mode/javascript'
     });
+    
       // (function () {
         // console.log = function (...args) {
         //   for (let arg of args) {
@@ -98,6 +114,7 @@ export class IdeComponent implements OnInit {
         //     }
         // }
       // })();
+    
   }
   exec(){
     eval(this.codeEditor.getValue());
@@ -108,9 +125,14 @@ export class IdeComponent implements OnInit {
     console.clear();
   }
   upload(){
-    const payload = JSON.parse(this.codeEditor.getValue());
+    // const payload = JSON.parse(this.codeEditor.getValue());
 
-    console.log(payload);
+    // console.log(payload);
+    this.isSubmitted=true;
+    console.log(this.form.value);
+    if(this.form.invalid){
+        return;
+    }
   }
   private _routeSubs() {
     this.routeSub = this.route.params
@@ -118,4 +140,9 @@ export class IdeComponent implements OnInit {
         this.id = params['projectID'];
     });
   }
+
+  get formControls() { 
+    return this.form.controls;
+  }
+  
 }
