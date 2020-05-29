@@ -80,6 +80,7 @@ Front-end:
 * [JQuery](https://jquery.com)
 * [Angular](https://angular.io)
 * [HTML5](https://en.wikipedia.org/wiki/HTML5)
+
 Back-end:
 * [MongoDB](https://www.mongodb.com)
 * [RabbitMQ](https://www.rabbitmq.com)
