@@ -37,7 +37,14 @@ export class IdeComponent implements OnInit {
   ngOnInit() {
     this.form  =  this.formBuilder.group({
       title: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', Validators.required],
+      optimizer:  ['', Validators.required],
+      loss:  ['', Validators.required],
+      metrics:  ['', Validators.required],
+      tsize:  ['', Validators.required],
+      bsize:  ['', Validators.required],
+      bperReduce:  ['', Validators.required],
+      turl:  ['', Validators.required]
     });
     this._routeSubs();
     this.element = document.getElementById('editor');
