@@ -21,3 +21,4 @@ services:
         environment: 
             - MONGO_URL=mongodb://database
             - AMQP_URL=rabbitmq
+            - NODE_ENV=production
