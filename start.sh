@@ -7,4 +7,5 @@ rm MLTogether/ml-together-angular-frontend -rf
 rm MLTogether/ml-together-fronted -rf
 cd MLTogether/ml-together-backend
 npm install
+export NODE_ENV=production
 npm start
