@@ -29,8 +29,7 @@ module.exports = new Confidence.Store({
             $filter: {
                 $env: 'NODE_ENV'
             },
-            $default: '0.0.0.0',
-            production: 'mltogether.com'
+            $default: '0.0.0.0'
         },
         port: 3000,
         routes: {
@@ -87,6 +86,11 @@ module.exports = new Confidence.Store({
                         temporaryPath: Path.join(__dirname, '../test/tmp/tmp'),
                         templatesPath: Path.join(__dirname, '../test/utils'),
                         doBundle: false
+                    },
+                    production: {
+                        wsURL: 'mltogether.com',
+                        publicPath: Path.join(__dirname, '../public/worker-web-app/projects'),
+                        temporaryPath: Path.join(__dirname, '../tmp')
                     },
                     $default: {
                         publicPath: Path.join(__dirname, '../public/worker-web-app/projects'),

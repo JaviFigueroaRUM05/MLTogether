@@ -38,6 +38,8 @@ class ScriptGeneratorService extends Schmervice.Service {
         this.webpackPrefix = this.options.webpackPrefix || 'main';
 
         this.doBundle = this.options.doBundle || true;
+
+        this.wsURL  = this.options.wsURL || `${this.server.info.host}:${this.server.info.port}`;
     }
 
     async initialize() {
