@@ -32,13 +32,7 @@ module.exports = new Confidence.Store({
             $default: '0.0.0.0',
             production: 'mltogether.com'
         },
-        port: {
-            $filter: {
-                $env: 'NODE_ENV'
-            },
-            production: 80,
-            $default: 3000
-        },
+        port: 3000,
         routes: {
             cors: true
         },
