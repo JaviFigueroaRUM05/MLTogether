@@ -83,7 +83,7 @@ MLTogether aims to provide developers a Browser-Based Volunteer Computing (BBVC)
 | [Bootstrap](https://getbootstrap.com)         | [Node.js](https://nodejs.org/en)      |
 
 ### Architecture
-Here goes the info about it, ya know
+<img src="ml-together-angular-frontend/src/assets/images/api-cont.png" alt="diag" width="250" height="250">
 
 
 <!-- GETTING STARTED -->
