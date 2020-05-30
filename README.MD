@@ -74,18 +74,13 @@
 MLTogether aims to provide developers a Browser-Based Volunteer Computing (BBVC) platform that is reliable and volunteer/developer friendly. The main idea is that researchers and/or programmers could request computational resources to train Machine Learning (ML) Models without additional software installation or complex technical knowledge.Since most dedicated grids and platforms for volunteer based distributed computing suffer from accessibility issues, there exists an opportunity to provide users computational resources through a BBVC system. Ideally, the user would be able to process data while benefiting from the ubiquity of browsers which, essentially, are available in most consumer electronic devices. 
 
 ### Built With
-Front-end: 
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
-* [Angular](https://angular.io)
-* [HTML5](https://en.wikipedia.org/wiki/HTML5)
 
-Back-end:
-* [MongoDB](https://www.mongodb.com)
-* [RabbitMQ](https://www.rabbitmq.com)
-* [Hapi.js](https://hapi.dev)
-* [Node.js](https://nodejs.org/en)
-
+| Front-end                                     | Back-end                              |
+| --------------------------------------------- | ------------------------------------- |
+| [Angular](https://angular.io)                 | [MongoDB](https://www.mongodb.com)    |
+| [HTML5](https://en.wikipedia.org/wiki/HTML5)  | [RabbitMQ](https://www.rabbitmq.com)  |
+| [JQuery](https://jquery.com)                  | [Hapi.js](https://hapi.dev)           |
+| [Bootstrap](https://getbootstrap.com)         | [Node.js](https://nodejs.org/en)      |
 
 ### Architecture
 Here goes the info about it, ya know
