@@ -96,7 +96,7 @@ class ScriptGeneratorService extends Schmervice.Service {
 
     async generateWorkerScript(projectId, mapFnString, reduceFnString, dataUrl) {
 
-        const host = `${this.server.info.host}:${this.server.info.port}`;
+        const host = this.wsURL;
         // copy template file into the public/projectId folder
 
         // Turn mapFn and reduceFn into a file
