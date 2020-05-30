@@ -41,14 +41,14 @@ module.exports = {
 
         const { taskService, queueService,
             intermediateResultsService, scriptGeneratorService } = request.services(true);
-        const host = request.server.info.host;
         const port = request.server.info.port;
         const projectId = request.params.projectId;
 
 
 
         // Create and save tasks
-        const modelHost = `http://${host}:${port}/api/projects/${projectId}/ir`;
+        const host = h.realm.pluginOptions.modelUrl;
+        const modelHost = `http://${host}/api/projects/${projectId}/ir`;
         const taskInfo = request.payload.taskInfo;
         const { trainingSetSize, batchSize, batchesPerReduce } = taskInfo;
 

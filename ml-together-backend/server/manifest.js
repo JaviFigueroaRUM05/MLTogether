@@ -129,6 +129,11 @@ module.exports = new Confidence.Store({
                             $env: 'APP_SECRET',
                             $default: '1B0765FACEFF119832996A609EDC113983186AD76DA6835574B892C55EE5AF4F'
                         }
+                    },
+                    modelURL: {
+                        $filter: { $env: 'NODE_ENV' },
+                        $default: 'http://0.0.0.0:3000',
+                        production: 'http://mltogether.com'
                     }
                 }
             },
