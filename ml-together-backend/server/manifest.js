@@ -25,12 +25,7 @@ Dotenv.config({
 // Glue manifest as a confidence store
 module.exports = new Confidence.Store({
     server: {
-        host: {
-            $filter: {
-                $env: 'NODE_ENV'
-            },
-            $default: '0.0.0.0'
-        },
+        host: '0.0.0.0',
         port: 3000,
         routes: {
             cors: true
