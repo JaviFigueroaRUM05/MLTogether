@@ -29,7 +29,7 @@
     "@tensorflow/tfjs-node": "^1.7.3",
     "amqplib": "^0.5.5",
     "base64-arraybuffer": "^0.2.0",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "ejs": "^3.1.2",
     "form-data": "^3.0.0",
     "hapi-auth-basic": "^5.0.0",
