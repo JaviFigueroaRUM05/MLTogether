@@ -148,7 +148,7 @@ class ScriptGeneratorService extends Schmervice.Service {
             const bundler = new Bundler(ejsOutputDir, options);
             const bundle = await bundler.bundle();
 
-            FS.rmdirSync(ejsOutputDir, { recursive: true });
+            // FS.rmdirSync(ejsOutputDir, { recursive: true });
 
 
             return Path.resolve(`${this.publicPath}/${projectId}`, webpackOutputFilename);

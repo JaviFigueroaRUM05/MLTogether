@@ -25,8 +25,8 @@ exports.plugin = {
                         try {
                             const { intermediateResultsService } = server.services();
                             const projectId = params.projectId;
-                            const ids = await intermediateResultsService.getResultsIdsFromProject(projectId);
-                            await socket.publish(`/models/${projectId}`,{ modelIds: ids });
+                            const id = await intermediateResultsService.getLatestResultId(projectId);
+                            await socket.publish(`/models/${projectId}`,{ latestModelId: id });
                         }
                         catch (err) {
                             console.error(err);

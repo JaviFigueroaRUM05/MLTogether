@@ -156,6 +156,7 @@ class ModelManager {
         }
 
         try {
+            console.log('heyyyyy')
             this.currentModel = await TF.loadLayersModel(
                 irRequest(url, modelId)
             );
@@ -266,17 +267,34 @@ const runWorker = async function (projectId) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
         const task = await getTask(projectId, nesClient);
+        let finished=false;
+        do{
+            try{
+                await new Promise( (resolve,reject) => {
+                    nesClient.subscribe(`/models/${projectId}`, (update, flags) => {
+                        try{
+                            const id = update.latestModelId.modelId;
+                            if(!id) reject();
+                            const found = (id >= task.modelId);
+                            if(found){
+                                resolve();
+                                finished=true;
+                            } 
+                        }catch(err){
+                            reject()
+                        }
+                        
+                    });
+        
+                });
+            }catch(err){
 
-        await new Promise( (resolve,reject) => {
-            nesClient.subscribe(`/models/${projectId}`, (update, flags) => {
-                const ids = update.modelIds;
-                const found = ids.find(x => x.modelId === task.modelId.toString());
-                if(found) resolve();
-            });
+            }
+            
+            await nesClient.unsubscribe(`/models/${projectId}`);
+        }while(!finished)
+        
 
-        });
-
-        await nesClient.unsubscribe(`/models/${projectId}`);
 
         const taskResults = await completeTask(task, modelManager, projectId);
 

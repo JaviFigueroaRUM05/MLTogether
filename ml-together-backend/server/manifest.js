@@ -88,6 +88,7 @@ module.exports = new Confidence.Store({
                         temporaryPath: Path.join(__dirname, '../tmp')
                     },
                     $default: {
+                        wsURL: '192.168.100.117:3000',
                         publicPath: Path.join(__dirname, '../public/worker-web-app/projects'),
                         temporaryPath: Path.join(__dirname, '../tmp')
                     }
@@ -132,15 +133,15 @@ module.exports = new Confidence.Store({
                     },
                     modelURL: {
                         $filter: { $env: 'NODE_ENV' },
-                        $default: 'http://0.0.0.0:3000',
+                        $default: 'http://192.168.100.117:3000',
                         production: 'http://mltogether.com'
                     }
                 }
             },
-            {
-                plugin: MNISTDataPlugin,
-                options: {}
-            },
+            // {
+            //     plugin: MNISTDataPlugin,
+            //     options: {}
+            // },
             {
                 plugin: {
                     $filter: {

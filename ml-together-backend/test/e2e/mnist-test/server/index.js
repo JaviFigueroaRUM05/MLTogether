@@ -6,9 +6,9 @@ const MainServer = require('../../../../server');
 const { deleteTestUsers, deleteTestProjects } = require('../../../utils/mongodb-manager');
 
 const GOAL_TITLE = 'MNIST';
-const TRAIN_DATA_URL = 'http://localhost:3000/mnist/data';
+const TRAIN_DATA_URL = 'http://192.168.100.117:3000/mnist/data';
 const BATCH_SIZE = 10;
-const BATCHES_PER_REDUCE = 20;
+const BATCHES_PER_REDUCE = 10;
 const TRAINING_DATA_LENGTH = 60000; //DO NOT REMOVE
 const MODEL_FN = require('./functions/model');
 const MAP_FN = require('./functions/map');

@@ -48,7 +48,7 @@ module.exports = {
 
         // Create and save tasks
         const host = h.realm.pluginOptions.modelUrl;
-        const modelHost = `http://mltogether.com/api/projects/${projectId}/ir`;
+        const modelHost = `http://192.168.100.117:3000/api/projects/${projectId}/ir`;
         const taskInfo = request.payload.taskInfo;
         const { trainingSetSize, batchSize, batchesPerReduce } = taskInfo;
 

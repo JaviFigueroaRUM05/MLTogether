@@ -18,7 +18,8 @@ const mapFn = `
             return TF.tidy(() => {
 
                 const labels = getPredictedLabels(x, model);
-                return TF.losses.softmaxCrossEntropy(y, labels).asScalar();
+                const loss = TF.losses.softmaxCrossEntropy(y, labels).asScalar();
+                return loss
             });
         };
 
@@ -34,7 +35,6 @@ const mapFn = `
 
     // get the gradients
     const { value, grads } = getGradientsAndSaveActions(trainDataX, trainDataY, model);
-
     // change tensor names and add them into a new object with different names
     const tensorNames = Object.keys(grads);
     const jsonGradients = {};
@@ -54,7 +54,7 @@ const mapFn = `
     tensorNames.forEach( (tensorName) => grads[tensorName].dispose() );
     trainDataX.dispose();
     trainDataY.dispose();
-    return { value, grads: jsonGradients };
+    return { value: value.asScalar().dataSync()[0], grads: jsonGradients };
 
 `;
 

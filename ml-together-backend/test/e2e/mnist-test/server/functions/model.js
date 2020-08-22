@@ -23,30 +23,34 @@ model.add(TF.layers.conv2d({
     inputShape: [28, 28, 1],
     filters: 32,
     kernelSize: 3,
-    activation: 'relu'
+    activation: 'relu',
+    kernelInitializer:'glorotUniform'
 }));
 model.add(TF.layers.conv2d({
     filters: 32,
     kernelSize: 3,
-    activation: 'relu'
+    activation: 'relu',
+    kernelInitializer:'glorotUniform'
 }));
 model.add(TF.layers.maxPooling2d({ poolSize: [2, 2] }));
 model.add(TF.layers.conv2d({
     filters: 64,
     kernelSize: 3,
-    activation: 'relu'
+    activation: 'relu',
+    kernelInitializer:'glorotUniform'
 }));
 model.add(TF.layers.conv2d({
     filters: 64,
     kernelSize: 3,
-    activation: 'relu'
+    activation: 'relu',
+    kernelInitializer:'glorotUniform'
 }));
 model.add(TF.layers.maxPooling2d({ poolSize: [2, 2] }));
 model.add(TF.layers.flatten());
 model.add(TF.layers.dropout({ rate: 0.25 }));
-model.add(TF.layers.dense({ units: 512, activation: 'relu' }));
+model.add(TF.layers.dense({ units: 512, activation: 'relu', kernelInitializer:'glorotUniform' }));
 model.add(TF.layers.dropout({ rate: 0.5 }));
-model.add(TF.layers.dense({ units: 10, activation: 'softmax' }));
+model.add(TF.layers.dense({ units: 10, activation: 'softmax', kernelInitializer:'glorotUniform' }));
 return model;
 `;
 

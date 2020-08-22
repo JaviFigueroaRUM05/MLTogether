@@ -8,17 +8,17 @@ const Dotenv = require('dotenv');
 Dotenv.config({ path: `${__dirname}/../../../server/.env` });
 
 
-const PROJECT_ID = 'mnist121';
+const PROJECT_ID = '5ed30d564c71605da9c81d58';
 const HOST = process.env.HOST || 'localhost:3000';
 const PORT = process.env.PORT || 3000;
-const MODEL_HOST = `http://${HOST}:${PORT}/projects/${PROJECT_ID}/ir`;
+const MODEL_HOST = `http://${HOST}:${PORT}/api/projects/${PROJECT_ID}/ir`;
 
 const runMNISTTest = async function () {
 
     let model = null;
     try {
         model = await TF.loadLayersModel(
-            IRRequest(`${MODEL_HOST}/300`, '300')
+            IRRequest(`${MODEL_HOST}/latest`, '1')
         );
         await model.compile({
             optimizer: 'rmsprop',

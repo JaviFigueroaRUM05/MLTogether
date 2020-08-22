@@ -31,7 +31,7 @@ const createIR = async function (request, h) {
 
     const results = await db.collection('intermediateResults').insertOne(payload);
 
-    await intermediateResultsService.publishResultsIds(request.params.projectId);
+    await intermediateResultsService.publishResultId(request.params.projectId);
 
     return h.response(results).code(201);
 };

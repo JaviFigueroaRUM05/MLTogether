@@ -16,7 +16,7 @@
  * =============================================================================
  */
 
-const TF = require('@tensorflow/tfjs');
+const TF = require('@tensorflow/tfjs-node');
 
 const model = TF.sequential();
 model.add(TF.layers.conv2d({
@@ -49,10 +49,5 @@ model.add(TF.layers.dropout({ rate: 0.5 }));
 model.add(TF.layers.dense({ units: 10, activation: 'softmax' }));
 
 const optimizer = 'rmsprop';
-model.compile({
-    optimizer,
-    loss: 'categoricalCrossentropy',
-    metrics: ['accuracy']
-});
 
 module.exports = model;

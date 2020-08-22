@@ -47,7 +47,7 @@ const onMessage = (server) =>
                 await queueService.sendToMapResultsQueue(projectId, msg.mapResultsId, results);
             }
             else {
-                server.log(['debug'], 'Done');
+                server.log(['debug'], `Done ${msg.mapResultsId}`);
             }
 
             activeSessions[socket.id].currentJob.status = 'done';

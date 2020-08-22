@@ -26,8 +26,18 @@ class IntermediateResultsService extends Schmervice.Service {
         const db = this.server.mongo.db;
         const resultsIds = await db.collection('intermediateResults')
             .find({ projectId }).project({ _id: 0,  modelId: 1 }).toArray();
+        
+        console.log(resultsIds)
 
         return resultsIds;
+    }
+
+    async getLatestResultId(projectId) {
+
+        const db = this.server.mongo.db;
+        const result = await db.collection('intermediateResults')
+            .find({ projectId }).project({ _id: 0, modelId: 1 }).sort({ _id: -1 }).limit(1).toArray();
+        return result[0];
     }
 
     async getLatestResult(projectId) {
@@ -42,6 +52,12 @@ class IntermediateResultsService extends Schmervice.Service {
 
         const ids = this.getResultsIdsFromProject(projectId);
         await this.server.publish(`/models/${projectId}`, { modelIds: ids } );
+    }
+
+    async publishResultId(projectId) {
+
+        const id = this.getLatestResultId(projectId);
+        await this.server.publish(`/models/${projectId}`, { latestModelId: id } );
     }
 
     async clearProjectIntermediateResults(projectId) {
