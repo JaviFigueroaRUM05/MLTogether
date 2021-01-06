@@ -56,7 +56,7 @@
     "@hapi/glue": "7.x.x",
     "@hapi/hapi": "19.x.x",
     "@hapi/lab": "22.x.x",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "confidence": "4.x.x",
